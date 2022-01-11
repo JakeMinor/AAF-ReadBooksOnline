@@ -1,10 +1,12 @@
-const dataAccess = require("../data/dataAccess")
+const dataAccess = require("../data-access/requests")
 const httpError = require("http-errors")
 
 exports.getAll = async () => {
-  let allBooks = await dataAccess.getAll()
-  if(allBooks.length === 0) throw httpError(404, "No Books were found")
-  return allBooks
+  let allRequests = await dataAccess.getAll()
+  if (allRequests.length === 0) {
+    throw httpError(404, "No Books were found")
+  }
+  return allRequests
 } 
 
 

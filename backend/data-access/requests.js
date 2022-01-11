@@ -1,4 +1,4 @@
-const dbo = require('../database/connection').getDatabase()
+const dbo = require('../database/database.config').getDatabase()
 
 exports.addBook = async (parsedData) => {
  await dbo.book.create(parsedData)

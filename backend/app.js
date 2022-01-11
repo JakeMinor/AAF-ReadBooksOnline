@@ -18,8 +18,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Passes app object to router file to assign routes
-require("./router")(app)
-require('./database/connection').connectToDb()
+require("./router/router.config")(app)
+require('./database/database.config').connectToDb()
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {

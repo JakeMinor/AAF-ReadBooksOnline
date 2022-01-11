@@ -1,6 +1,6 @@
 module.exports = mongoose => {
  return mongoose.model(
-   "book",
+   "request",
    mongoose.Schema(
      {
       name: String,

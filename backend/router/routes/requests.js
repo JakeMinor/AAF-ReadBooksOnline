@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router()
 const requestController = require('../../controllers/requests')
 
-router.get('/', requestController.getAll)
+router.get('/', requestController.getAllRequests)
+
 
 // router.get('/', (request, response,next) => {
 //  response.send("got a GET request at /")

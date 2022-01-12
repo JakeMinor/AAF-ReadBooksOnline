@@ -1,15 +1,15 @@
 const dbo = require('../database/database.config').getDatabase()
 
-exports.addBook = async (parsedData) => {
- await dbo.book.create(parsedData)
-   .then(res => {return res})
-   .catch(error => { throw error })
+//Get all requests from db
+exports.getAllRequests = async() => {
+ return await dbo.request.find()
+   .then((result) => {return result})
+   .catch((error) => {return error})
 }
 
-exports.getAll = async() => {
- return await dbo.book.find()
-}
-
-exports.findBook = async (id) => {
- await dbo.book.findById(id)
-}
+// //Create a new request in the db
+// exports.createRequest = async (data) => {
+//  await dbo.request.create(data)
+//    .then((result) => {return result})
+//    .catch((error) => {return error})
+// }

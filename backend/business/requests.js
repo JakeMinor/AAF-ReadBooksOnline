@@ -1,36 +1,37 @@
-const dataAccess = require("../data-access/requests")
 const utilities = require("../utilities")
 const httpError = require("http-errors")
+const DataAccess = require("../data-access/data-layer")
+const dataAccess = new DataAccess("request")
 
 
 module.exports = class requestBusiness {
  async getAllRequests() {
-  return dataAccess.getAllRequests()
+  return dataAccess.getAll()
     .catch(error => {throw httpError(404, error.message)})
  }
  
  async getRequestById(id){
   const requestId = utilities.convertToObjectId(id)
-  return dataAccess.getRequestById(requestId)
+  return dataAccess.getById(requestId)
     .catch(error => {throw httpError(404, error.message)})
  }
  
  async createRequest(requestData) {
   validateCreateRequestData(requestData)
-  return dataAccess.createRequest(requestData)
+  return dataAccess.create(requestData)
     .catch(error => {throw httpError(500, error.message)})
  }  
  
  async updateRequest(id, requestData){
   const requestId = utilities.convertToObjectId(id)
   validateUpdateRequestData(requestData)
-  return dataAccess.updateRequest(requestId, requestData)
+  return dataAccess.update(requestId, requestData)
     .catch(error => {throw httpError(404, error.message)})
  }
  
  async deleteRequest(id){
   const requestId = utilities.convertToObjectId(id)
-  return dataAccess.deleteRequest(requestId)
+  return dataAccess.delete(requestId)
     .catch(error => {throw httpError(404, error.message)})
  }
 }

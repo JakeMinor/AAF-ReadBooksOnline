@@ -25,7 +25,7 @@ module.exports = {
      process.exit()
     })
  },
- getDatabase: () => {
-  return dbModel
+ getModel: (modelName) => {
+  return dbModel.mongoose.model(modelName)
  }
 }

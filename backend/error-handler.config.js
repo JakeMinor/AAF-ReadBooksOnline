@@ -1,4 +1,5 @@
 let httpError = require('http-errors');
+
 module.exports = (app) => {
  //Throw a 404 for an invalid route
  app.use(function (request, result, next) { 
@@ -13,3 +14,4 @@ module.exports = (app) => {
   response.status(error.status || 500).send(error.message);
  });
 }
+

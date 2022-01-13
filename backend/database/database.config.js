@@ -4,13 +4,16 @@ const mongoose = require("mongoose")
 //Models
 const request = require('../database/models/request')(mongoose)
 const user = require('../database/models/user')(mongoose)
-const role = require('../database/models/role')(mongoose)
-const permission = require('../database/models/permission')(mongoose)
-
 
 mongoose.Promise = global.Promise
 
-const dbModel = {mongoose: mongoose, url: connectionString, request: request, user: user, role: role, permission: permission}
+const dbModel = {mongoose: mongoose, url: connectionString, request: request, user: user }
+
+mongoose.plugin(schema => {
+ schema.pre('createRequest', enableValidators)
+})
+
+function enableValidators() { this.setOptions({ runValidators: true}) }
 
 module.exports = {
  connectToDb() {

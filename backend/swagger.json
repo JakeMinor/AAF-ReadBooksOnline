@@ -1,0 +1,256 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ReadBooks Online API",
+    "version": "1.0.0",
+    "description": "This API is used for the ReadBooks Online website, this has been made as a part for the Applications and Frameworks module."
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Requests",
+      "description": "Manage book requests."
+    }
+  ],
+  "paths": {
+    "/request": {
+      "get": {
+        "tags": ["Requests"],
+        "summary": "Get all requests in the system.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Requests"
+            }
+          },
+          "404": {
+            "description": "NOT FOUND - No requests were found in the system."
+          }
+        }
+      },
+      "post": {
+        "tags": ["Requests"],
+        "summary": "Creates a new request.",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "description": "Request which is to be created.",
+            "schema": {
+              "$ref": "#/definitions/CreateRequest"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "schema": {
+              "$ref": "#/definitions/Requests"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST - Data was missing or invalid."
+          }
+        }
+      }
+    },
+    "/request/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The ObjectId of the request.",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["Requests"],
+        "summary": "Get a requests by an ID in the system.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Requests"
+            }
+          },
+          "404": {
+            "description": "NOT FOUND - No request was found with the provided ID."
+          },
+          "400": {
+            "description": "BAD REQUEST - The ID supplied was invalid."
+          }
+        }
+      },
+      "put": {
+        "tags": ["Requests"],
+        "summary": "Updates a requests by an ID in the system.",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "description": "Request Information which is to be updated.",
+            "schema": {
+              "$ref": "#/definitions/UpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Request"
+            }
+          },
+          "404": {
+            "description": "NOT FOUND - No request was found with the provided ID."
+          },
+          "400": {
+            "description": "BAD REQUEST - Book type must be 'Book' or 'Audiobook' or The ID supplied was invalid."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Requests"],
+        "summary": "Deletes a requests by an ID in the system.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "NOT FOUND - No request was found with the provided ID."
+          },
+          "400": {
+            "description": "BAD REQUEST - The ID supplied was invalid."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UpdateRequest": {
+      "properties": {
+        "bookName": {
+          "type": "string"
+        },
+        "bookType": {
+          "type": "string",
+          "enum": ["Book", "Audiobook"]
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "assignedTo": {
+          "type": "string"
+        },
+        "additionalInformation": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Pending Review",
+            "In Review",
+            "Additional Information Required",
+            "Purchased",
+            "Denied"
+          ],
+          "default": "Pending Review"
+        }
+      }
+    },
+    "CreateRequest":{
+      "required": ["bookName", "bookType", "author", "requestedDateTime", "requestedBy"],
+      "properties": {
+        "bookName": {
+          "type": "string"
+        },
+        "bookType": {
+          "type": "string",
+          "enum": [
+            "Book",
+            "Audiobook"
+          ]
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "requestedDateTime": {
+          "type": "string"
+        },
+        "requestedBy": {
+          "type": "string"
+        },
+        "assignedTo": {
+          "type": "string"
+        },
+        "additionalInformation": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Pending Review",
+            "In Review",
+            "Additional Information Required",
+            "Purchased",
+            "Denied"
+          ],
+          "default": "Pending Review"
+        }
+      }
+    },
+    "Request": {
+      "required": ["bookName", "bookType", "author", "requestedDateTime", "requestedBy"],
+      "properties": {
+        "_id": {
+          "type": "integer",
+          "uniqueItems": true
+        },
+        "bookName": {
+          "type": "string"
+        },
+        "bookType": {
+          "type": "string",
+          "enum": ["Book", "Audiobook"]
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "author":{
+          "type": "string"
+        },
+        "requestedDateTime": {
+          "type": "string"
+        },
+        "requestedBy": {
+          "type": "string"
+        },
+        "assignedTo": {
+          "type": "string"
+        },
+        "additionalInformation": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Pending Review", "In Review", "Additional Information Required", "Purchased", "Denied"],
+          "default": "Pending Review"
+        }
+      }
+    },
+    "Requests":{
+      "type": "array",
+      "$ref": "#/definitions/Request"
+    }
+  }
+}

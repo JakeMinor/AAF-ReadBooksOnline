@@ -32,7 +32,7 @@ module.exports = class DataService{
  async update(id, requestData) {
   return this.model.findByIdAndUpdate(id, requestData)
     .orFail(new Error("No Request Found"))
-    .then(() => this.model.request.findById(id)
+    .then(() => this.model.findById(id)
       .orFail(new Error("No Request Found"))
       .then((updatedRequest) => {return updatedRequest})
       .catch(error => {throw error})

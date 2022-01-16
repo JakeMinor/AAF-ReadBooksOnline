@@ -5,7 +5,7 @@ module.exports = class DataService{
  
  //Get all documents from collection
  async getAll() {
-  return this.model.find().orFail(new Error("No data found"))
+  return this.model.find()
     .then((result) => {return result})
     .catch(error => {throw error})
  }

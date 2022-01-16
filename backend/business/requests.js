@@ -7,7 +7,7 @@ const dataAccess = new DataAccess("request")
 module.exports = class requestBusiness {
  async getAllRequests() {
   return dataAccess.getAll()
-    .catch(error => {throw httpError(404, error.message)})
+    .catch(error => {throw httpError(500, error.message)})
  }
  
  async getRequestById(id){

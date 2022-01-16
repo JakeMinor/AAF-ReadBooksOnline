@@ -14,7 +14,7 @@
     }
   ],
   "paths": {
-    "/request": {
+    "/bookRequest": {
       "get": {
         "tags": ["Requests"],
         "summary": "Get all requests in the system.",
@@ -24,9 +24,6 @@
             "schema": {
               "$ref": "#/definitions/Requests"
             }
-          },
-          "404": {
-            "description": "NOT FOUND - No requests were found in the system."
           }
         }
       },
@@ -57,7 +54,7 @@
         }
       }
     },
-    "/request/{id}": {
+    "/bookRequest/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -250,7 +247,10 @@
     },
     "Requests":{
       "type": "array",
-      "$ref": "#/definitions/Request"
+      "items": {
+        "$ref": "#/definitions/Request"
+      }
+
     }
   }
 }

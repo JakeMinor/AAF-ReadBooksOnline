@@ -15,6 +15,6 @@ require("./router/router.config")(app)
 // Passes app object to error handler config file
 require('./error-handler.config')(app)
 // Connects the API to the DB
-require('./database/database.config').connectToDb()
+require('./database/database.config').connectToDb().catch(error => {console.log(error)})
 
 module.exports = app

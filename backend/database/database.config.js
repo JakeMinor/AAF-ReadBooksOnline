@@ -3,12 +3,12 @@ const mongoose = require("mongoose")
 const { MongoMemoryServer } = require('mongodb-memory-server')
 let testDb = null
 //Models
-const request = require('../database/models/request')(mongoose)
 const user = require('../database/models/user')(mongoose)
+const request = require('../database/models/request')(mongoose)
 
 mongoose.Promise = global.Promise
 
-const dbModel = {mongoose: mongoose, url: connectionString, request: request, user: user }
+const dbModel = {mongoose: mongoose, url: connectionString, user: user, request: request }
 
 mongoose.plugin(schema => {
  schema.pre('createRequest', enableValidators)
@@ -41,7 +41,31 @@ module.exports = {
    }
   }
  },
+ async seedTestData() {
+  if (process.env.NODE_ENV === "test") {
+   let user = await dbModel.mongoose.model("user").create({
+    "username": "TEST USER",
+    "email": "TEST EMAIL",
+    "password": "TEST PASSWORD",
+    "role": "Client"
+   }).catch(error => {
+    console.log(error)
+   })
+   
+   dbModel.mongoose.model("request").create({
+    "bookName": "SEEDED BOOK",
+    "bookType": "Book",
+    "author": "SEEDED AUTHOR",
+    "requestedDateTime": new Date().toUTCString(),
+    "requestedBy": user._id
+   }).catch(error => {
+    console.log(error)
+   })
+   return user._id
+  }
+ },
  getModel: (modelName) => {
   return dbModel.mongoose.model(modelName)
  },
 }
+

@@ -210,7 +210,7 @@
       "required": ["bookName", "bookType", "author", "requestedDateTime", "requestedBy"],
       "properties": {
         "_id": {
-          "type": "integer",
+          "type": "string",
           "uniqueItems": true
         },
         "bookName": {

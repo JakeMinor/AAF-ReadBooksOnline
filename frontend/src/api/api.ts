@@ -32,7 +32,7 @@ export interface CreateRequest {
 }
 
 export interface Request {
-  _id?: number;
+  _id?: string;
   bookName: string;
   bookType: "Book" | "Audiobook";
   isbn?: string;

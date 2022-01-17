@@ -13,7 +13,7 @@ module.exports = class DataService{
  //Get a document by _id from the collection
  async getById(id){
   return this.model.findById(id)
-    .orFail(new Error("No data Found"))
+    .orFail(new Error("No data found."))
     .then((result) => {return result})
     .catch(error => {throw error})
  }
@@ -31,9 +31,9 @@ module.exports = class DataService{
  //Update a request in the database
  async update(id, requestData) {
   return this.model.findByIdAndUpdate(id, requestData)
-    .orFail(new Error("No Request Found"))
+    .orFail(new Error("No data found."))
     .then(() => this.model.findById(id)
-      .orFail(new Error("No Request Found"))
+      .orFail(new Error("No data found."))
       .then((updatedRequest) => {return updatedRequest})
       .catch(error => {throw error})
     )
@@ -43,7 +43,7 @@ module.exports = class DataService{
 //Delete a request in the database
  async delete(id) {
   return this.model.findByIdAndDelete(id)
-    .orFail(new Error("No Request Found"))
+    .orFail(new Error("No data found."))
     .catch(error => {throw error})
  }
 }

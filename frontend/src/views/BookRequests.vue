@@ -86,7 +86,7 @@ export default Vue.extend({
       this.createForm.author = ''
     },
     openEditModal (item : Request) {
-      this.id = item._id
+      this.id = item._id ?? ''
       this.createForm.bookName = item.bookName
       this.createForm.author = item.author
       this.createForm.bookType = item.bookType

@@ -1,7 +1,6 @@
 let connectionString = "mongodb://localhost:27017/readBooksOnlineDb"
 const mongoose = require("mongoose")
 const { MongoMemoryServer } = require('mongodb-memory-server')
-let testDb = null
 //Models
 const user = require('../database/models/user')(mongoose)
 const request = require('../database/models/request')(mongoose)
@@ -19,8 +18,7 @@ function enableValidators() { this.setOptions({ runValidators: true}) }
 module.exports = {
  async connectToDb() {
   if(process.env.NODE_ENV === "test"){
-   testDb = await MongoMemoryServer.create()
-   connectionString = testDb.getUri()
+   connectionString = (await MongoMemoryServer.create()).getUri()
   }
   dbModel.mongoose
     .connect(connectionString, {useNewUrlParser: true, useUnifiedTopology: true})

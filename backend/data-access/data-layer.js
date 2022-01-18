@@ -17,15 +17,21 @@ module.exports = class DataService{
     .then((result) => {return result})
     .catch(error => {throw error})
  }
-
+ 
+ async getByFilter(filter){
+  return this.model.findOne(filter)
+    .orFail(new Error("No data found."))
+    .then((result) => {return result})
+    .catch(error => {throw error})
+ }
+ 
  //Create a new document in the collection
  async create(requestData){
   return this.model.create(requestData)
-    .then(() => this.model.find()
-      .then((data) => {return data})
-      .catch((error) => {throw error})
-    )
-    .catch((error) => {throw error})
+    .catch((error) => {
+     if(error.code === 11000){ throw new Error("Email is already in use.")} //TODO: NOT SURE THIS WILL WORK LATER ON BUT WHO KNOWS LOL
+     throw error
+    })
  }
 
  //Update a request in the database

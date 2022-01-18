@@ -9,7 +9,7 @@ module.exports = mongoose => {
       },
       email: {
        type: String,
-       unique: [true, "There is already a user assigned "],
+       unique: true,
        required: [true, "An email is required."]
       },
       password: {
@@ -22,8 +22,7 @@ module.exports = mongoose => {
         values: ['Client', 'Employee', 'Authoriser'],
         default: 'Client',
         message: "{VALUE} is not valid role. Please use either 'Client', 'Employee' or 'Authoriser'."
-       },
-       required: [true, "A role is required."]
+       }
       }
      }
    )

@@ -11,6 +11,7 @@ const dbModel = {mongoose: mongoose, url: connectionString, user: user, request:
 
 mongoose.plugin(schema => {
  schema.pre('createRequest', enableValidators)
+ schema.pre('createUser', enableValidators)
 })
 
 function enableValidators() { this.setOptions({ runValidators: true}) }

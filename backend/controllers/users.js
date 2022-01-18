@@ -9,6 +9,6 @@ exports.createUser = async (request, response) => {
 
 exports.signIn = async (request, response) => {
  userBusiness.signInUser(request.body)
-   .then((token) => {return response.status(200).send(token)})
+   .then((token) => {return response.status(200).cookie("access_token", `Bearer ${token}`).send(token)})
    .catch(error => {return response.status(error.status).send(error.message)})
 }

@@ -1,7 +1,8 @@
 const httpError = require("http-errors")
 const bcrypt = require("bcrypt")
 const jsonWebToken = require("jsonwebtoken")
-const secret = require("../config/authentication.config").secret
+const accessSecret = require("../config/authentication.config").AccessSecret
+const accessLifetime = require("../config/authentication.config").AccessExpiryInSeconds
 const DataAccess = require("../data-access/data-layer")
 const dataAccess = new DataAccess("user")
 
@@ -28,8 +29,8 @@ function generateJWTToken(user){
   id: user._id,
   username: user.username,
   role: user.role
- }, secret, {
-  expiresIn: "1h"
+ }, accessSecret, {
+  expiresIn: `${accessLifetime}s`
  })
 }
 

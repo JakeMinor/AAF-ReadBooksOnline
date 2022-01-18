@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import BookRequests from '@/views/BookRequests.vue'
+import Login from '@/views/Login.vue'
 
 Vue.use(VueRouter)
 
@@ -13,6 +14,11 @@ const routes: Array<RouteConfig> = [
     path: '/book-requests',
     name: 'Book Requests',
     component: BookRequests
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
   }
 ]
 

@@ -1,6 +1,6 @@
 <template>
 <div>
-  <label>
+  <label class="w-100">
     {{label}}
     <b-form-select v-if="options" :options="options" v-bind="$attrs" v-on="$listeners"></b-form-select>
     <b-form-input v-else :type="type" v-bind="$attrs" v-on="$listeners"></b-form-input>

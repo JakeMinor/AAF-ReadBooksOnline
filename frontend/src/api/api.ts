@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export interface SignInDetails {
+  email?: string;
+  password?: string;
+}
+
 export interface UpdateRequest {
   bookName?: string;
   bookType?: "Book" | "Audiobook";
@@ -182,11 +187,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name BookRequestList
      * @summary Get all requests in the system.
      * @request GET:/bookRequest
+     * @secure
      */
     bookRequestList: (params: RequestParams = {}) =>
       this.request<Requests, any>({
         path: `/bookRequest`,
         method: "GET",
+        secure: true,
         ...params,
       }),
 
@@ -197,12 +204,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name BookRequestCreate
      * @summary Creates a new request.
      * @request POST:/bookRequest
+     * @secure
      */
     bookRequestCreate: (request: CreateRequest, params: RequestParams = {}) =>
       this.request<Requests, void>({
         path: `/bookRequest`,
         method: "POST",
         body: request,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -215,11 +224,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name BookRequestDetail
      * @summary Get a requests by an ID in the system.
      * @request GET:/bookRequest/{id}
+     * @secure
      */
     bookRequestDetail: (id: string, params: RequestParams = {}) =>
       this.request<Requests, void>({
         path: `/bookRequest/${id}`,
         method: "GET",
+        secure: true,
         ...params,
       }),
 
@@ -230,12 +241,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name BookRequestUpdate
      * @summary Updates a requests by an ID in the system.
      * @request PUT:/bookRequest/{id}
+     * @secure
      */
     bookRequestUpdate: (id: string, request: UpdateRequest, params: RequestParams = {}) =>
       this.request<Request, void>({
         path: `/bookRequest/${id}`,
         method: "PUT",
         body: request,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -247,11 +260,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name BookRequestDelete
      * @summary Deletes a requests by an ID in the system.
      * @request DELETE:/bookRequest/{id}
+     * @secure
      */
     bookRequestDelete: (id: string, params: RequestParams = {}) =>
       this.request<void, void>({
         path: `/bookRequest/${id}`,
         method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+  };
+  user = {
+    /**
+     * No description
+     *
+     * @tags User
+     * @name SignInCreate
+     * @summary Authenticate the user and supply a JWT Token.
+     * @request POST:/user/sign-in
+     * @secure
+     */
+    signInCreate: (SignInDetails: any, params: RequestParams = {}) =>
+      this.request<string, string>({
+        path: `/user/sign-in`,
+        method: "POST",
+        body: SignInDetails,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
         ...params,
       }),
   };

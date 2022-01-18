@@ -1,5 +1,14 @@
 {
   "swagger": "2.0",
+  "securityDefinitions": {
+    "bearerAuth":{
+      "name": "authorization",
+      "in": "header",
+      "type": "apiKey",
+      "description": "JWT Authorisation header"
+    }
+  },
+  "security": [{ "bearerAuth": [] }],
   "info": {
     "title": "ReadBooks Online API",
     "version": "1.0.0",
@@ -125,9 +134,52 @@
           }
         }
       }
+    },
+    "/user/sign-in": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Authenticate the user and supply a JWT Token.",
+        "parameters": [
+          {
+            "name": "SignInDetails",
+            "in": "body",
+            "description": "Sign in details which are used to authenticate the user.",
+            "schema": {
+              "$ref": "#/definitions/SignIn"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "SIGNED IN",
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZTZlMTdhMDE2ODQzNzIyZjE5MjI1YyIsInVzZXJuYW1lIjoiQ2xpZW50Iiwicm9sZSI6IkNsaWVudCIsImlhdCI6MTY0MjUyMDk2NywiZXhwIjoxNjQyNjA3MzY3fQ.M4TyDk9cadU-z-rESrlFuRNtHXStjwLusAMvWBNLAV4"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "Your email or password was wrong."
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
+    "SignInDetails": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "UpdateRequest": {
       "properties": {
         "bookName": {

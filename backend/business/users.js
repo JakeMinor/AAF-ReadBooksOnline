@@ -23,19 +23,6 @@ module.exports = class userBusiness {
  }
 }
 
-async function validateCredentials(signInDetails){
- const user = await dataAccess.getByFilter({"email": signInDetails.email})
-                        .then((user) => {return user})
-                        .catch(error => {throw httpError(401, "Your email or password was wrong.")})
-
- if(!bcrypt.compare(signInDetails.password, user.password))
- {
-  throw httpError(401, "Your email or password was wrong.")
- }
- 
- return user
-}
-
 function generateJWTToken(user){
  return jsonWebToken.sign({
   id: user._id,
@@ -57,3 +44,14 @@ function validateNewUserData(newUserData) {
  }
 }
 
+async function validateCredentials(signInDetails) {
+ const user = await dataAccess.getByFilter({"email": signInDetails.email})
+   .then((user) => {return user})
+   .catch(() => {throw httpError(401, "Your email or password was wrong.")})
+   
+ await bcrypt.compare(signInDetails.password, user.password)
+   .then(match => {if(!match) {throw httpError(401, "Your email or password was wrong.")}})
+   .catch(() => {throw httpError(401, "Your email or password was wrong.")})
+ 
+ return user
+}

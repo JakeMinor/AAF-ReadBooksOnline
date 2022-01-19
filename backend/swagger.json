@@ -145,18 +145,14 @@
             "in": "body",
             "description": "Sign in details which are used to authenticate the user.",
             "schema": {
-              "$ref": "#/definitions/SignIn"
+              "$ref": "#/definitions/SignInDetails"
             }
           }
         ],
         "produces": ["application/json"],
         "responses": {
           "200": {
-            "description": "SIGNED IN",
-            "schema": {
-              "type": "string",
-              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZTZlMTdhMDE2ODQzNzIyZjE5MjI1YyIsInVzZXJuYW1lIjoiQ2xpZW50Iiwicm9sZSI6IkNsaWVudCIsImlhdCI6MTY0MjUyMDk2NywiZXhwIjoxNjQyNjA3MzY3fQ.M4TyDk9cadU-z-rESrlFuRNtHXStjwLusAMvWBNLAV4"
-            }
+            "description": "SIGNED IN"
           },
           "401": {
             "description": "UNAUTHORISED",
@@ -167,9 +163,53 @@
           }
         }
       }
+    },
+    "/user/sign-up": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Create a new user in the system.",
+        "parameters": [
+          {
+            "name": "CreateUserDetails",
+            "in": "body",
+            "description": "User details for the created user.",
+            "schema": {
+              "$ref": "#/definitions/CreateUserDetails"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "USER CREATED"
+          },
+          "400": {
+            "description": "Data provided is invalid.",
+            "schema": {
+              "example": "'Email is already in use.' or 'Data was missing or invalid.'"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
+    "CreateUserDetails": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    },
     "SignInDetails": {
       "properties": {
         "email": {

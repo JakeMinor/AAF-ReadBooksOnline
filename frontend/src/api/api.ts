@@ -9,6 +9,13 @@
  * ---------------------------------------------------------------
  */
 
+export interface CreateUserDetails {
+  email?: string;
+  username?: string;
+  password?: string;
+  role?: string;
+}
+
 export interface SignInDetails {
   email?: string;
   password?: string;
@@ -280,14 +287,32 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/user/sign-in
      * @secure
      */
-    signInCreate: (SignInDetails: any, params: RequestParams = {}) =>
-      this.request<string, string>({
+    signInCreate: (SignInDetails: SignInDetails, params: RequestParams = {}) =>
+      this.request<void, string>({
         path: `/user/sign-in`,
         method: "POST",
         body: SignInDetails,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name SignUpCreate
+     * @summary Create a new user in the system.
+     * @request POST:/user/sign-up
+     * @secure
+     */
+    signUpCreate: (CreateUserDetails: CreateUserDetails, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/user/sign-up`,
+        method: "POST",
+        body: CreateUserDetails,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
   };

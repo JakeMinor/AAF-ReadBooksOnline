@@ -1,14 +1,15 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import BookRequests from '@/views/BookRequests.vue'
-import Login from '@/views/Login.vue'
+import SignIn from '@/views/SignIn.vue'
+import SignUp from '@/views/SignUp.vue'
 
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    redirect: '/book-requests'
+    redirect: '/sign-in'
   },
   {
     path: '/book-requests',
@@ -16,9 +17,14 @@ const routes: Array<RouteConfig> = [
     component: BookRequests
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login
+    path: '/sign-in',
+    name: 'Sign In',
+    component: SignIn
+  },
+  {
+    path: '/sign-up',
+    name: 'Sign Up',
+    component: SignUp
   }
 ]
 

@@ -1,5 +1,6 @@
 let connectionString = "mongodb://localhost:27017/readBooksOnlineDb"
 const mongoose = require("mongoose")
+const bcrypt = require("bcrypt")
 const { MongoMemoryServer } = require('mongodb-memory-server')
 //Models
 const user = require('../database/models/user')(mongoose)
@@ -43,9 +44,9 @@ module.exports = {
  async seedTestData() {
   if (process.env.NODE_ENV === "test") {
    let user = await dbModel.mongoose.model("user").create({
-    "username": "TEST USER",
-    "email": "TEST EMAIL",
-    "password": "TEST PASSWORD",
+    "username": "SEEDED USER",
+    "email": "SEEDED EMAIL",
+    "password": await bcrypt.hash("SEEDED PASSWORD", 10),
     "role": "Client"
    }).catch(error => {
     console.log(error)

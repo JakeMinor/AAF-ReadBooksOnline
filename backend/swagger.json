@@ -191,33 +191,84 @@
           }
         }
       }
-    }
-  },
-  "definitions": {
-    "CreateUserDetails": {
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get all users in the system.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
         }
       }
     },
-    "SignInDetails": {
+    "/user/{id}": {}
+  },
+  "definitions": {
+    "Request": {
+      "required": [
+        "bookName",
+        "bookType",
+        "author",
+        "requestedDateTime",
+        "requestedBy"
+      ],
       "properties": {
-        "email": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "bookName": {
           "type": "string"
         },
-        "password": {
+        "bookType": {
+          "type": "string",
+          "enum": [
+            "Book",
+            "Audiobook"
+          ]
+        },
+        "isbn": {
           "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "requestedDateTime": {
+          "type": "string"
+        },
+        "requestedBy": {
+          "type": "string"
+        },
+        "assignedTo": {
+          "type": "string"
+        },
+        "additionalInformation": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Pending Review",
+            "In Review",
+            "Additional Information Required",
+            "Purchased",
+            "Denied"
+          ],
+          "default": "Pending Review"
         }
+      }
+    },
+    "Requests": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Request"
       }
     },
     "UpdateRequest": {
@@ -298,51 +349,56 @@
         }
       }
     },
-    "Request": {
-      "required": ["bookName", "bookType", "author", "requestedDateTime", "requestedBy"],
+    "User": {
       "properties": {
         "_id": {
           "type": "string",
           "uniqueItems": true
         },
-        "bookName": {
+        "username": {
           "type": "string"
         },
-        "bookType": {
-          "type": "string",
-          "enum": ["Book", "Audiobook"]
-        },
-        "isbn": {
-          "type": "string"
-        },
-        "author":{
-          "type": "string"
-        },
-        "requestedDateTime": {
-          "type": "string"
-        },
-        "requestedBy": {
-          "type": "string"
-        },
-        "assignedTo": {
-          "type": "string"
-        },
-        "additionalInformation": {
+        "email": {
           "type": "string"
         },
         "status": {
           "type": "string",
-          "enum": ["Pending Review", "In Review", "Additional Information Required", "Purchased", "Denied"],
-          "default": "Pending Review"
+          "enum": ["Client", "Employee", "Authoriser"],
+          "default": "Client"
         }
       }
     },
-    "Requests":{
+    "Users": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/Request"
+        "$ref": "#/definitions/User"
       }
-
+    },
+    "CreateUserDetails": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "SignInDetails": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
     }
   }
 }

@@ -4,41 +4,64 @@ const should = chai.should();
 const expect = chai.expect
 const baseUrl = '/bookRequest/'
 const dbConfig = require("../database/database.config")
+const jwt = require("jsonwebtoken")
+const accessSecret = require("../config/authentication.config").AccessSecret
 chai.use(require('chai-http'))
 let userId = ""
+let existingRequest = null
+let authToken = ""
 
 describe("Request", function() {
- it('GetAll should return 1 request and a 200 status', async function () {
-  const result = await chai.request(server).get(baseUrl)
-  result.should.have.status(200)
-  result.body.should.be.lengthOf(1)
+ //AUTHENTICATION WITH NO ROLES REQUIRED
+ //GET ALL REQUESTS
+ it('GetAllRequests should return 200 and all requests', async function () {
+  const getAllRequestResult = await chai.request(server).get(baseUrl).set("Cookie", authToken)
+  getAllRequestResult.should.have.status(200)
+  getAllRequestResult.body.should.be.lengthOf(1)
  })
- 
- it('GetById should return 1 request and a 200 status', async function () {
-  const requestId = (await chai.request(server).get(baseUrl)).body[0]._id
-  const result = await chai.request(server).get(`${baseUrl}${requestId}`)
 
-  result.should.have.status(200)
-  result.body.should.have.property("bookName", "SEEDED BOOK")
- })
- 
- it('GetById should return 400 if the ID passed in isnt valid', async function () {
-  const result = await chai.request(server).get(`${baseUrl}1`)
+ it('GetAllRequests should return 401 if user isnt authorised', async function () {
+  const getAllRequestResult = await chai.request(server).get(`${baseUrl}`)
 
-  result.should.have.status(400)
-  result.text.should.be.equal("ID is not valid.")
+  getAllRequestResult.should.have.status(401)
+  getAllRequestResult.text.should.be.equal("The provided token is invalid or has expired.")
+ })
+
+ //GET REQUEST BY ID
+ it('GetRequestById should return a request and a 200 status', async function () {
+  const GetRequestByIdResult = await chai.request(server).get(`${baseUrl}${existingRequest._id}`).set("Cookie", authToken)
+
+  GetRequestByIdResult.should.have.status(200)
+  GetRequestByIdResult.body.should.have.property("bookName", "SEEDED BOOK")
  })
  
- it('GetById should return 404 if the ID passed doesnt exist in the database', async function () {
-  const id = "61e59bba7c2128f042a44eea"
+ it('GetRequestById should return 400 if the ID passed in isnt valid', async function () {
+  const invalidId = "INVALIDID"
   
-  const result = await chai.request(server).get(`${baseUrl}${id}`)
+  const GetRequestByIdResult = await chai.request(server).get(`${baseUrl}${invalidId}`).set("Cookie", authToken)
 
-  result.should.have.status(404)
-  result.text.should.be.equal("No data found.")
+  GetRequestByIdResult.should.have.status(400)
+  GetRequestByIdResult.text.should.be.equal("ID is not valid.")
+ })
+
+ it('GetRequestById should return 401 if user isnt authorised', async function () {
+  const GetRequestByIdResult = await chai.request(server).get(`${baseUrl}${existingRequest._id}`)
+
+  GetRequestByIdResult.should.have.status(401)
+  GetRequestByIdResult.text.should.be.equal("The provided token is invalid or has expired.")
  })
  
- it('Create should create a request and return a 201 status', async function() {
+ it('GetRequestById should return 404 if the ID passed doesnt exist in the database', async function () {
+  const invalidId = "61e59bba7c2128f042a44eea"
+  
+  const GetRequestByIdResult = await chai.request(server).get(`${baseUrl}${invalidId}`).set("Cookie", authToken)
+
+  GetRequestByIdResult.should.have.status(404)
+  GetRequestByIdResult.text.should.be.equal("No data found.")
+ })
+ 
+ //CREATE REQUEST
+ it('CreateRequest should create a request and return a 201 status', async function() {
   const newRequest = {
    "bookName": "TEST BOOK",
    "bookType": "Book",
@@ -47,12 +70,12 @@ describe("Request", function() {
    "requestedBy": userId
   }
   
-  const result = await chai.request(server).post(baseUrl).send(newRequest)
-  result.should.have.status(201)
-  result.body[1].should.be.property("bookName", "TEST BOOK")
+  const createRequestResult = await chai.request(server).post(baseUrl).set("Cookie", authToken).send(newRequest)
+  createRequestResult.should.have.status(201)
+  createRequestResult.body.should.be.property("bookName", "TEST BOOK")
  })
  
- it('Create should return a 400 if the book name isnt included', async function () {
+ it('CreateRequest should return a 400 if the book name isnt included', async function () {
   const newRequest = {
    "bookName": "",
    "bookType": "Book",
@@ -61,12 +84,12 @@ describe("Request", function() {
    "requestedBy": userId
   }
 
-  const result = await chai.request(server).post(baseUrl).send(newRequest)
-  result.should.have.status(400)
-  result.text.should.be.equal("Data was missing or invalid.")
+  const createRequestResult = await chai.request(server).post(baseUrl).set("Cookie", authToken).send(newRequest)
+  createRequestResult.should.have.status(400)
+  createRequestResult.text.should.be.equal("Data was missing or invalid.")
  })
 
- it('Create should return a 400 if the book type isnt included', async function () {
+ it('CreateRequest should return a 400 if the book type isnt included', async function () {
   const newRequest = {
    "bookName": "TEST BOOK",
    "bookType": "",
@@ -75,12 +98,12 @@ describe("Request", function() {
    "requestedBy": userId
   }
 
-  const result = await chai.request(server).post(baseUrl).send(newRequest)
-  result.should.have.status(400)
-  result.text.should.be.equal("Data was missing or invalid.")
+  const createRequestResult = await chai.request(server).post(baseUrl).set("Cookie", authToken).send(newRequest)
+  createRequestResult.should.have.status(400)
+  createRequestResult.text.should.be.equal("Data was missing or invalid.")
  })
  
- it('Create should return a 400 if the book type isnt Book or Audiobook', async function () {
+ it('CreateRequest should return a 400 if the book type isnt Book or Audiobook', async function () {
   const newRequest = {
    "bookName": "",
    "bookType": "NOT A BOOK",
@@ -89,12 +112,12 @@ describe("Request", function() {
    "requestedBy": userId
   }
 
-  const result = await chai.request(server).post(baseUrl).send(newRequest)
-  result.should.have.status(400)
-  result.text.should.be.equal("Data was missing or invalid.")
+  const createRequestResult = await chai.request(server).post(baseUrl).set("Cookie", authToken).send(newRequest)
+  createRequestResult.should.have.status(400)
+  createRequestResult.text.should.be.equal("Data was missing or invalid.")
  })
 
- it('Create should return a 400 if the author isnt included', async function () {
+ it('CreateRequest should return a 400 if the author isnt included', async function () {
   const newRequest = {
    "bookName": "TEST BOOK",
    "bookType": "Book",
@@ -103,12 +126,12 @@ describe("Request", function() {
    "requestedBy": userId
   }
 
-  const result = await chai.request(server).post(baseUrl).send(newRequest)
-  result.should.have.status(400)
-  result.text.should.be.equal("Data was missing or invalid.")
+  const createRequestResult = await chai.request(server).post(baseUrl).set("Cookie", authToken).send(newRequest)
+  createRequestResult.should.have.status(400)
+  createRequestResult.text.should.be.equal("Data was missing or invalid.")
  })
 
- it('Create should return a 400 if the requested date time isnt included', async function () {
+ it('CreateRequest should return a 400 if the requested date time isnt included', async function () {
   const newRequest = {
    "bookName": "TEST BOOK",
    "bookType": "Book",
@@ -117,12 +140,12 @@ describe("Request", function() {
    "requestedBy": userId
   }
 
-  const result = await chai.request(server).post(baseUrl).send(newRequest)
-  result.should.have.status(400)
-  result.text.should.be.equal("Data was missing or invalid.")
+  const createRequestResult = await chai.request(server).post(baseUrl).set("Cookie", authToken).send(newRequest)
+  createRequestResult.should.have.status(400)
+  createRequestResult.text.should.be.equal("Data was missing or invalid.")
  })
 
- it('Create should return a 400 if the requested by ID isnt included', async function () {
+ it('CreateRequest should return a 400 if the requested by ID isnt included', async function () {
   const newRequest = {
    "bookName": "TEST BOOK",
    "bookType": "Book",
@@ -131,71 +154,101 @@ describe("Request", function() {
    "requestedBy": ""
   }
 
-  const result = await chai.request(server).post(baseUrl).send(newRequest)
-  result.should.have.status(400)
-  result.text.should.be.equal("Data was missing or invalid.")
+  const createRequestResult = await chai.request(server).post(baseUrl).set("Cookie", authToken).send(newRequest)
+  createRequestResult.should.have.status(400)
+  createRequestResult.text.should.be.equal("Data was missing or invalid.")
+ })
+
+ it('CreateRequest should return 401 if user isnt authorised', async function () {
+  const newRequest = {
+   "bookName": "TEST BOOK",
+   "bookType": "Book",
+   "author": "TEST AUTHOR",
+   "requestedDateTime": new Date().toUTCString(),
+   "requestedBy": ""
+  }
+
+  const createRequestResult = await chai.request(server).post(baseUrl).send(newRequest)
+
+  createRequestResult.should.have.status(401)
+  createRequestResult.text.should.be.equal("The provided token is invalid or has expired.")
+ })
+
+
+ //UPDATE REQUEST
+ it('UpdateRequest should update a request and return a 200 status', async function () {
+  existingRequest.bookName = "NEW BOOK NAME"
+  
+  const updateRequestResult = await chai.request(server).put(`${baseUrl}${existingRequest._id}`).set("Cookie", authToken).send(existingRequest)
+
+  updateRequestResult.should.have.status(200)
+  updateRequestResult.body.should.be.property("bookName", "NEW BOOK NAME")
+ })
+
+ it('UpdateRequest should return a 400 if the book type isnt included', async function () {
+  existingRequest.bookType = ""
+
+  const updateRequestResult = await chai.request(server).put(`${baseUrl}${existingRequest._id}`).set("Cookie", authToken).send(existingRequest)
+  updateRequestResult.should.have.status(400)
+  updateRequestResult.text.should.be.equal("Book type must be 'Book' or 'Audiobook'.")
+ })
+
+ it('UpdateRequest should return a 400 if the book type isnt Book or Audiobook', async function () {
+  existingRequest.bookType = "NOT A BOOK"
+
+  const updateRequestResult = await chai.request(server).put(`${baseUrl}${existingRequest._id}`).set("Cookie", authToken).send(existingRequest)
+  updateRequestResult.should.have.status(400)
+  updateRequestResult.text.should.be.equal("Book type must be 'Book' or 'Audiobook'.")
+ })
+
+ it('UpdateRequest should return 401 if user isnt authorised', async function () {
+  const updateRequestResult = await chai.request(server).put(`${baseUrl}${existingRequest._id}`).send(existingRequest)
+
+  updateRequestResult.should.have.status(401)
+  updateRequestResult.text.should.be.equal("The provided token is invalid or has expired.")
  })
  
- it('Update should update a request and return a 200 status', async function () {
-  let requestToUpdate = (await chai.request(server).get(baseUrl)).body[0]
-  requestToUpdate.bookName = "NEW BOOK NAME"
-  
-  const result = await chai.request(server).put(`${baseUrl}${requestToUpdate._id}`).send(requestToUpdate)
-  
-  result.should.have.status(200)
-  result.body.should.be.property("bookName", "NEW BOOK NAME")
+ //DELETE REQUEST
+ it('DeleteRequest should delete a request and return a 200 status', async function () {
+  const deleteRequestResult = await chai.request(server).delete(`${baseUrl}${existingRequest._id}`).set("Cookie", authToken).send()
+  const getAllRequestsResult = (await chai.request(server).get(baseUrl).set("Cookie", authToken)).body
+
+  deleteRequestResult.should.have.status(200)
+  getAllRequestsResult.should.be.lengthOf(0)
  })
 
- it('Update should return a 400 if the book type isnt included', async function () {
-  let requestToUpdate = (await chai.request(server).get(baseUrl)).body[0]
-  requestToUpdate.bookType = ""
-
-  const result = await chai.request(server).put(`${baseUrl}${requestToUpdate._id}`).send(requestToUpdate)
-  result.should.have.status(400)
-  result.text.should.be.equal("Book type must be 'Book' or 'Audiobook'.")
- })
-
- it('Update should return a 400 if the book type isnt Book or Audiobook', async function () {
-  let requestToUpdate = (await chai.request(server).get(baseUrl)).body[0]
-  requestToUpdate.bookType = "NOT A BOOK"
-
-  const result = await chai.request(server).put(`${baseUrl}${requestToUpdate._id}`).send(requestToUpdate)
-  result.should.have.status(400)
-  result.text.should.be.equal("Book type must be 'Book' or 'Audiobook'.")
- })
- 
- it('Delete should delete a request and return a 200 status', async function () {
-  const requestToDelete = (await chai.request(server).get(baseUrl)).body[0]
-
-  const deleteResult = await chai.request(server).delete(`${baseUrl}${requestToDelete._id}`).send(requestToDelete)
-  const getAllResult = (await chai.request(server).get(baseUrl)).body
-
-  deleteResult.should.have.status(200)
-  getAllResult.should.be.lengthOf(0)
- })
-
- it('Delete should return a 400 status if the ID passed isnt valid', async function () {
+ it('DeleteRequest should return a 400 status if the ID passed isnt valid', async function () {
   const fakeId = "FAKE ID"
-  const requestToDelete = (await chai.request(server).get(baseUrl)).body[0]
 
-  const result = await chai.request(server).delete(`${baseUrl}${fakeId}`).send(requestToDelete)
+  const deleteRequestResult = await chai.request(server).delete(`${baseUrl}${fakeId}`).set("Cookie", authToken).send()
 
-  result.should.have.status(400)
-  result.text.should.be.equal("ID is not valid.")
+  deleteRequestResult.should.have.status(400)
+  deleteRequestResult.text.should.be.equal("ID is not valid.")
+ })
+
+ it('DeleteRequest should return 401 if user isnt authorised', async function () {
+  const deleteRequestResult = await chai.request(server).delete(`${baseUrl}${existingRequest._id}`).send()
+
+  deleteRequestResult.should.have.status(401)
+  deleteRequestResult.text.should.be.equal("The provided token is invalid or has expired.")
  })
  
- it('Delete should return 404 if the ID passed doesnt exist in the database', async function () {
+ it('DeleteRequest should return 404 if the ID passed doesnt exist in the database', async function () {
   const id = "61e59bba7c2128f042a44eea"
-  const requestToDelete = (await chai.request(server).get(baseUrl)).body[0]
 
-  const result = await chai.request(server).delete(`${baseUrl}${id}`).send(requestToDelete)
+  const deleteRequestResult = await chai.request(server).delete(`${baseUrl}${id}`).set("Cookie", authToken).send()
 
-  result.should.have.status(404)
-  result.text.should.be.equal("No data found.")
+  deleteRequestResult.should.have.status(404)
+  deleteRequestResult.text.should.be.equal("No data found.")
  })
- 
+
  beforeEach("Initialise Database", async function() {
   await dbConfig.clearTestDb()
   userId = await dbConfig.seedTestData()
+  existingRequest = (await chai.request(server).get(baseUrl).set("Cookie", authToken)).body[0]
+ })
+ 
+ before("Authenticate", async function() {
+  authToken = `Bearer%20${jwt.sign({}, accessSecret, {})}`
  })
 })

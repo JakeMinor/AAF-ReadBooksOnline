@@ -7,8 +7,7 @@ module.exports = {
    verifyToken(request)
     .then((payload) => {
      if(role !== ""){
-      if (payload.role !== role) {return response.status(403).send("You do not have the correct permissions to access this content.")} 
-      else {next()}
+      if (payload.role !== role) {return response.status(403).send("You do not have the correct permissions to access this content.")}
      }
      next()
     })
@@ -18,7 +17,7 @@ module.exports = {
 
 async function verifyToken(request) {
  try {
-  return await jsonWebToken.verify(request.headers.authorization.split(" ")[1], secret)
+  return await jsonWebToken.verify(request.headers.cookie.split("%20")[1], secret)
  } catch (error) {
   throw httpError(401, "The provided token is invalid or has expired.")
  }

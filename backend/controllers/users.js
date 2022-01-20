@@ -25,6 +25,14 @@ exports.signUp = async (request, response) => {
    .catch(error => {return response.status(error.status).send(error.message)});
 }
 
+exports.signOut = async (request, response) => {
+ try {
+  return response.status(200).clearCookie("access_token").send()
+ } catch(error){
+  return response.status(500).send("You could not be logged out, please try again.")
+ }
+}
+
 exports.createUser = async (request, response) => {
  userBusiness.createUser(request.body)
    .then((allUsers) => {return response.status(201).send(allUsers)})

@@ -9,7 +9,10 @@ router.post('/sign-up', userController.signUp)
 //SIGN IN
 router.post('/sign-in', userController.signIn)
 
-//REQUIRES VALID TOKEN WITH AUTHORISER ROLE
+//REQUIRES USER TO BE AUTHENTICATED
+router.post('/sign-out', (req, res, next) => grantAccess("", req, res, next), userController.signOut)
+
+//REQUIRES USER TO BE AUTHENTICATED WITH AUTHORISER ROLE
 
 //GET ALL USERS
 router.get('/', (req, res, next) => grantAccess("Authoriser", req, res, next), userController.getAllUsers)

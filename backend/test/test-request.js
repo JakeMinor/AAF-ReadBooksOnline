@@ -20,7 +20,7 @@ describe("Request", function() {
   getAllRequestResult.body.should.be.lengthOf(1)
  })
 
- it('GetAllRequests should return 401 if user isnt authorised', async function () {
+ it('GetAllRequests should return 401 if user isnt authenticated', async function () {
   const getAllRequestResult = await chai.request(server).get(`${baseUrl}`)
 
   getAllRequestResult.should.have.status(401)
@@ -44,7 +44,7 @@ describe("Request", function() {
   GetRequestByIdResult.text.should.be.equal("ID is not valid.")
  })
 
- it('GetRequestById should return 401 if user isnt authorised', async function () {
+ it('GetRequestById should return 401 if user isnt authenticated', async function () {
   const GetRequestByIdResult = await chai.request(server).get(`${baseUrl}${existingRequest._id}`)
 
   GetRequestByIdResult.should.have.status(401)
@@ -159,7 +159,7 @@ describe("Request", function() {
   createRequestResult.text.should.be.equal("Data was missing or invalid.")
  })
 
- it('CreateRequest should return 401 if user isnt authorised', async function () {
+ it('CreateRequest should return 401 if user isnt authenticated', async function () {
   const newRequest = {
    "bookName": "TEST BOOK",
    "bookType": "Book",
@@ -201,7 +201,7 @@ describe("Request", function() {
   updateRequestResult.text.should.be.equal("Book type must be 'Book' or 'Audiobook'.")
  })
 
- it('UpdateRequest should return 401 if user isnt authorised', async function () {
+ it('UpdateRequest should return 401 if user isnt authenticated', async function () {
   const updateRequestResult = await chai.request(server).put(`${baseUrl}${existingRequest._id}`).send(existingRequest)
 
   updateRequestResult.should.have.status(401)
@@ -226,7 +226,7 @@ describe("Request", function() {
   deleteRequestResult.text.should.be.equal("ID is not valid.")
  })
 
- it('DeleteRequest should return 401 if user isnt authorised', async function () {
+ it('DeleteRequest should return 401 if user isnt authenticated', async function () {
   const deleteRequestResult = await chai.request(server).delete(`${baseUrl}${existingRequest._id}`).send()
 
   deleteRequestResult.should.have.status(401)

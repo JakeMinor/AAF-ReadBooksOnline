@@ -21,7 +21,7 @@ describe("User", function () {
   getAllUsersResult.body.should.have.lengthOf(1)
  })
  
- it('GetAllUsers should return 401 if user isnt authorised', async function () {
+ it('GetAllUsers should return 401 if user isnt authenticated', async function () {
   const getAllUsersResult = await chai.request(server).get(`${baseUrl}`)
 
   getAllUsersResult.should.have.status(401)
@@ -52,7 +52,7 @@ describe("User", function () {
   getByIDResult.text.should.be.equal("ID is not valid.")
  })
 
- it('GetUserById should return 401 if user isnt authorised', async function () {
+ it('GetUserById should return 401 if user isnt authenticated', async function () {
   const getByIDResult = await chai.request(server).get(`${baseUrl}${userId}`)
 
   getByIDResult.should.have.status(401)
@@ -170,7 +170,7 @@ describe("User", function () {
   createUserResult.text.should.be.equal("Invalid role, the supplied role should be either Client, Employee or Authoriser.")
  })
 
- it('CreateUser should return 401 if user isnt authorised', async function () {
+ it('CreateUser should return 401 if user isnt authenticated', async function () {
   const newUser = {
    "username": "NEW USER",
    "email": "NEWUSER@EMAIL.COM",
@@ -219,7 +219,7 @@ describe("User", function () {
   updateRoleResult.text.should.be.equal("ID is not valid.")
  })
 
- it('UpdateRole should return 401 if user isnt authorised', async function () {
+ it('UpdateRole should return 401 if user isnt authenticated', async function () {
   const newRole = {role: "Employee"}
 
   const updateRoleResult = await chai.request(server).put(`${baseUrl}${userId}`).send(newRole)
@@ -256,7 +256,7 @@ describe("User", function () {
   getAllUsersResult.should.be.lengthOf(0)
  })
 
- it('DeleteUser should return 401 if user isnt authorised', async function () {
+ it('DeleteUser should return 401 if user isnt authenticated', async function () {
   const deleteResult = await chai.request(server).delete(`${baseUrl}${userId}`).send()
 
   deleteResult.should.have.status(401)
@@ -288,6 +288,21 @@ describe("User", function () {
   deleteResult.text.should.be.equal("No data found.")
  })
 
+ //AUTHENTICATION WITH ANY ROLE
+ it('SignOut should return 200 and delete the access token cookie', async function () {
+  const signOutResult = await chai.request(server).post(`${baseUrl}sign-out`).set("Cookie", clientAuthToken).send()
+
+  signOutResult.should.have.status(200)
+  signOutResult.headers['set-cookie'][0].should.equal('access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT')
+ })
+
+ it('SignOut should return 401 if the user isnt authenticated', async function () {
+  const signOutResult = await chai.request(server).post(`${baseUrl}sign-out`).send()
+
+  signOutResult.should.have.status(401)
+  signOutResult.text.should.be.equal("The provided token is invalid or has expired.")
+ })
+ 
  //NO ROLE OR AUTHENTICATION REQUIRED
  //SIGN IN
  it('SignIn should return 200 and set authentication cookie', async function () {

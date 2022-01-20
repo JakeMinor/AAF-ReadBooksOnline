@@ -1,14 +1,16 @@
 {
   "swagger": "2.0",
+  "security": [{
+    "cookie": []
+  }],
   "securityDefinitions": {
-    "bearerAuth":{
-      "name": "authorization",
+    "cookie": {
+      "name": "access_token",
       "in": "header",
       "type": "apiKey",
       "description": "JWT Authorisation header"
     }
   },
-  "security": [{ "bearerAuth": [] }],
   "info": {
     "title": "ReadBooks Online API",
     "version": "1.0.0",
@@ -20,25 +22,36 @@
     {
       "name": "Requests",
       "description": "Manage book requests."
+    },
+    {
+      "name": "Users",
+      "description": "Manage users"
     }
   ],
   "paths": {
     "/bookRequest": {
       "get": {
         "tags": ["Requests"],
-        "summary": "Get all requests in the system.",
+        "summary": "Get all requests in the system. Requires authentication with any role",
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/Requests"
             }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
           }
         }
       },
       "post": {
         "tags": ["Requests"],
-        "summary": "Creates a new request.",
+        "summary": "Creates a new request. Requires authentication with any role",
         "parameters": [
           {
             "name": "request",
@@ -58,7 +71,18 @@
             }
           },
           "400": {
-            "description": "BAD REQUEST - Data was missing or invalid."
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "Data was missing or invalid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
           }
         }
       }
@@ -75,7 +99,7 @@
       ],
       "get": {
         "tags": ["Requests"],
-        "summary": "Get a requests by an ID in the system.",
+        "summary": "Get a requests by an ID in the system. Requires authentication with any role",
         "responses": {
           "200": {
             "description": "OK",
@@ -83,17 +107,32 @@
               "$ref": "#/definitions/Requests"
             }
           },
-          "404": {
-            "description": "NOT FOUND - No request was found with the provided ID."
-          },
           "400": {
-            "description": "BAD REQUEST - The ID supplied was invalid."
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "ID is not valid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
           }
         }
       },
       "put": {
         "tags": ["Requests"],
-        "summary": "Updates a requests by an ID in the system.",
+        "summary": "Updates a requests by an ID in the system. Requires authentication with any role",
         "parameters": [
           {
             "name": "request",
@@ -111,34 +150,64 @@
               "$ref": "#/definitions/Request"
             }
           },
-          "404": {
-            "description": "NOT FOUND - No request was found with the provided ID."
-          },
           "400": {
-            "description": "BAD REQUEST - Book type must be 'Book' or 'Audiobook' or The ID supplied was invalid."
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "'ID is not valid.' or 'Book type must be 'Book' or 'Audiobook''"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
           }
         }
       },
       "delete": {
         "tags": ["Requests"],
-        "summary": "Deletes a requests by an ID in the system.",
+        "summary": "Deletes a requests by an ID in the system. Requires authentication with any role",
         "responses": {
           "200": {
             "description": "OK"
           },
-          "404": {
-            "description": "NOT FOUND - No request was found with the provided ID."
-          },
           "400": {
-            "description": "BAD REQUEST - The ID supplied was invalid."
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "ID is not valid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
           }
         }
       }
     },
     "/user/sign-in": {
       "post": {
-        "tags": ["User"],
-        "summary": "Authenticate the user and supply a JWT Token.",
+        "tags": ["Users"],
+        "summary": "Authenticate the user using a cookie.",
         "parameters": [
           {
             "name": "SignInDetails",
@@ -149,7 +218,6 @@
             }
           }
         ],
-        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "SIGNED IN"
@@ -166,22 +234,20 @@
     },
     "/user/sign-up": {
       "post": {
-        "tags": ["User"],
-        "summary": "Create a new user in the system.",
+        "tags": ["Users"],
+        "summary": "Sign a new user up to the system.",
         "parameters": [
           {
-            "name": "CreateUserDetails",
+            "name": "SignUpDetails",
             "in": "body",
-            "description": "User details for the created user.",
+            "description": "Sign up details which are used to create the user.",
             "schema": {
-              "$ref": "#/definitions/CreateUserDetails"
+              "$ref": "#/definitions/SignUpDetails"
             }
-          }
-        ],
-        "produces": ["application/json"],
+          }],
         "responses": {
           "201": {
-            "description": "USER CREATED"
+            "description": "USER SIGNED UP"
           },
           "400": {
             "description": "Data provided is invalid.",
@@ -192,23 +258,220 @@
         }
       }
     },
+    "/user/sign-out": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Delete the authentication token from the cookie.",
+        "responses": {
+          "200": {
+            "description": "SIGNED OUT"
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          }
+        }
+      }
+    },
     "/user": {
       "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Get all users in the system.",
+        "tags": ["Users"],
+        "summary": "Get all users in the system. Requires authentication with any Authoriser role.",
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/Users"
             }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create a user in the system. Requires authentication with any Authoriser role.",
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "'Username, email or password was missing.' or 'Invalid role, the supplied role should be either Client, Employee or Authoriser.'"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
           }
         }
       }
     },
-    "/user/{id}": {}
+    "/user/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The ObjectId of the user.",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get a user in the system using their id. Requires authentication with any Authoriser role.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Updates a users role in the system. Requires authentication with Authoriser role",
+        "parameters": [
+          {
+            "name": "Role",
+            "in": "body",
+            "description": "The new role which is to be assigned to the user.",
+            "schema": {
+              "$ref": "#/definitions/UpdateRole"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "ID is not valid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete a user in the system. Requires authentication with Authoriser role",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "ID is not valid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
+          }
+        }
+      }
+    }
   },
   "definitions": {
     "Request": {
@@ -361,7 +624,7 @@
         "email": {
           "type": "string"
         },
-        "status": {
+        "role": {
           "type": "string",
           "enum": ["Client", "Employee", "Authoriser"],
           "default": "Client"
@@ -374,7 +637,20 @@
         "$ref": "#/definitions/User"
       }
     },
-    "CreateUserDetails": {
+    "SignUpDetails": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "CreateUser": {
       "properties": {
         "email": {
           "type": "string"
@@ -396,6 +672,13 @@
           "type": "string"
         },
         "password": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateRole": {
+      "properties": {
+        "role": {
           "type": "string"
         }
       }

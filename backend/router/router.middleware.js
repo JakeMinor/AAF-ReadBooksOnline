@@ -17,7 +17,12 @@ module.exports = {
 
 async function verifyToken(request) {
  try {
-  return await jsonWebToken.verify(request.headers.cookie.split("%20")[1], secret)
+  let token 
+  if(request.headers.referer === "http://localhost:3000/api-docs/") {
+   token = request.headers.access_token.split("%20")[1]
+  } else { token = request.headers.cookie.split("%20")[1] }
+
+  return await jsonWebToken.verify(token, secret)
  } catch (error) {
   throw httpError(401, "The provided token is invalid or has expired.")
  }

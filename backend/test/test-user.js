@@ -256,6 +256,15 @@ describe("User", function () {
   getAllUsersResult.should.be.lengthOf(0)
  })
 
+ it('DeleteUser should return a 400 status if the ID passed isnt valid', async function () {
+  const fakeId = "FAKE ID"
+
+  const deleteResult = await chai.request(server).delete(`${baseUrl}${fakeId}`).set("Cookie", authoriserAuthToken).send()
+
+  deleteResult.should.have.status(400)
+  deleteResult.text.should.be.equal("ID is not valid.")
+ })
+
  it('DeleteUser should return 401 if user isnt authenticated', async function () {
   const deleteResult = await chai.request(server).delete(`${baseUrl}${userId}`).send()
 
@@ -269,16 +278,7 @@ describe("User", function () {
   deleteResult.should.have.status(403)
   deleteResult.text.should.be.equal("You do not have the correct permissions to access this content.")
  })
-
- it('DeleteUser should return a 400 status if the ID passed isnt valid', async function () {
-  const fakeId = "FAKE ID"
-
-  const deleteResult = await chai.request(server).delete(`${baseUrl}${fakeId}`).set("Cookie", authoriserAuthToken).send()
-
-  deleteResult.should.have.status(400)
-  deleteResult.text.should.be.equal("ID is not valid.")
- })
-
+ 
  it('DeleteUser should return 404 if the ID passed doesnt exist in the database', async function () {
   const id = "61e59bba7c2128f042a44eea"
 
@@ -317,7 +317,7 @@ describe("User", function () {
   signInResult.headers.should.have.property("set-cookie")
  })
 
- it('SignIn should return 401 if  email isnt included', async function () {
+ it('SignIn should return 401 if email isnt included', async function () {
   const signInDetails = {
    "email": "",
    "password": "NEW PASSWORD"

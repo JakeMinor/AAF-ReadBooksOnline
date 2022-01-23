@@ -5,10 +5,11 @@ const { MongoMemoryServer } = require('mongodb-memory-server')
 //Models
 const user = require('../database/models/user')(mongoose)
 const request = require('../database/models/request')(mongoose)
+const status = require('../database/models/status')(mongoose)
 
 mongoose.Promise = global.Promise
 
-const dbModel = {mongoose: mongoose, url: connectionString, user: user, request: request }
+const dbModel = {mongoose: mongoose, url: connectionString, user: user, request: request, status: status }
 
 mongoose.plugin(schema => {
  schema.pre('createRequest', enableValidators)

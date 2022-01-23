@@ -1,5 +1,5 @@
 <template>
-  <div class="h-100 d-flex align-items-center justify-content-center">
+  <div class="vh-100 d-flex align-items-center justify-content-center">
     <b-card class="w-75" title="Sign up to ReadBooks Online">
       <template #default>
         <b-input-group class="flex-column p-3">
@@ -10,7 +10,6 @@
           <b-button variant="primary" class="mt-3" @click="signIn">Sign up</b-button>
           <span class="mt-4">Already have an account? <b-link to="sign-in">Sign in!</b-link></span>
         </b-input-group>
-
       </template>
     </b-card>
   </div>
@@ -18,7 +17,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Api from '@/helper'
+import { api } from '@/helper'
 import CustomInput from '@/components/CustomInput.vue'
 export default Vue.extend({
   name: 'SignUp',
@@ -34,8 +33,8 @@ export default Vue.extend({
     }
   },
   methods: {
-    signIn () {
-      Api.user.signUpCreate({ email: this.email, username: this.username, password: this.password, role: 'Client' })
+    async signIn () {
+      await api.user.signUpCreate({ email: this.email, username: this.username, password: this.password })
       this.$router.push({ name: 'Sign In' })
     }
   }

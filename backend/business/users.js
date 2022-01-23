@@ -9,8 +9,8 @@ const dataAccess = new DataAccess("user")
 
 module.exports = class userBusiness {
  async getAllUsers() {
-  return dataAccess.getAll().then((users) => {
-   return users.map(user => { return {id: user._id, username: user.username, email: user.email, role: user.role} })
+  return dataAccess.getAll({}, {}).then((users) => {
+   return users.map(user => {return {id: user._id, username: user.username, email: user.email, role: user.role} })
   }).catch(error => {throw httpError(500, error.message)})
  }
  
@@ -65,7 +65,8 @@ function generateJWTToken(user){
  return jsonWebToken.sign({
   id: user._id,
   username: user.username,
-  role: user.role
+  role: user.role,
+  email: user.email,
  }, accessSecret, {
   expiresIn: `${accessLifetime}s`
  })

@@ -4,16 +4,39 @@ module.exports = class DataService{
  }
  
  //Get all documents from collection
- async getAll() {
-  return this.model.find()
+ async getAll(filter) {
+  return this.model
+    .find(JSON.parse(JSON.stringify(filter)))
     .then((result) => {return result})
-    .catch(error => {throw error})
+    .catch(error => {
+     if(error.message.includes("ObjectId"))
+      throw new Error("Could not convert value to ObjectId")
+    })
+ }
+ 
+ async getAllAndPopulate(filter, populateFilter) {
+  return this.model
+    .find(JSON.parse(JSON.stringify(filter)))
+    .populate(JSON.parse(JSON.stringify(populateFilter)))
+    .then((result) => {return result})
+    .catch(error => {
+     if (error.message.includes("ObjectId"))
+      throw new Error("Could not convert value to ObjectId")
+    })
  }
 
  //Get a document by _id from the collection
  async getById(id){
   return this.model.findById(id)
     .orFail(new Error("No data found."))
+    .then((result) => {return result})
+    .catch(error => {throw error})
+ }
+ 
+ async getByIdAndPopulate(id, populateFilter){
+  return this.model.findById(id)
+    .orFail(new Error("No data found."))
+    .populate(populateFilter)
     .then((result) => {return result})
     .catch(error => {throw error})
  }

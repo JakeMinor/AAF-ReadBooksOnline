@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const requestController = require('../../controllers/requests')
+const statusController = require('../../controllers/statuses')
 const grantAccess = require('../router.middleware').grantAccess
 //Request routes
 
@@ -17,6 +18,9 @@ router.post('/', (req, res, next) => grantAccess("", req, res, next), requestCon
 
 //UPDATE REQUEST
 router.put('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.updateRequest)
+
+//UPDATE REQUEST STATUS
+router.put('/:id/status', (req, res, next) => grantAccess("Employee", req, res, next), statusController.updateStatus)
 
 //DELETE REQUEST
 router.delete('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.deleteRequest)

@@ -4,10 +4,25 @@ module.exports = class DataService{
  }
  
  //Get all documents from collection
- async getAll() {
-  return this.model.find()
+ async getAll(filter) {
+  return this.model
+    .find(JSON.parse(JSON.stringify(filter)))
     .then((result) => {return result})
-    .catch(error => {throw error})
+    .catch(error => {
+     if(error.message.includes("ObjectId"))
+      throw new Error("Could not convert value to ObjectId")
+    })
+ }
+ 
+ async getAllAndPopulate(filter, populateFilter) {
+  return this.model
+    .find(JSON.parse(JSON.stringify(filter)))
+    .populate(JSON.parse(JSON.stringify(populateFilter)))
+    .then((result) => {return result})
+    .catch(error => {
+     if (error.message.includes("ObjectId"))
+      throw new Error("Could not convert value to ObjectId")
+    })
  }
 
  //Get a document by _id from the collection
@@ -17,15 +32,29 @@ module.exports = class DataService{
     .then((result) => {return result})
     .catch(error => {throw error})
  }
-
+ 
+ async getByIdAndPopulate(id, populateFilter){
+  return this.model.findById(id)
+    .orFail(new Error("No data found."))
+    .populate(populateFilter)
+    .then((result) => {return result})
+    .catch(error => {throw error})
+ }
+ 
+ async getByFilter(filter){
+  return this.model.findOne(filter)
+    .orFail(new Error("No data found."))
+    .then((result) => {return result})
+    .catch(error => {throw error})
+ }
+ 
  //Create a new document in the collection
  async create(requestData){
   return this.model.create(requestData)
-    .then(() => this.model.find()
-      .then((data) => {return data})
-      .catch((error) => {throw error})
-    )
-    .catch((error) => {throw error})
+    .catch((error) => {
+     if(error.code === 11000){ throw new Error("Email is already in use.")} //TODO: NOT SURE THIS WILL WORK LATER ON BUT WHO KNOWS LOL
+     throw error
+    })
  }
 
  //Update a request in the database

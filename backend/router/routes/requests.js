@@ -1,22 +1,28 @@
 const express = require('express')
 const router = express.Router()
 const requestController = require('../../controllers/requests')
-
+const statusController = require('../../controllers/statuses')
+const grantAccess = require('../router.middleware').grantAccess
 //Request routes
 
-//GETALL
-router.get('/', requestController.getAllRequests)
+//REQUIRES VALID TOKEN WITH ANY ROLE
 
-//GETBYID
-router.get('/:id', requestController.getRequestById)
+//GET ALL REQUESTS
+router.get('/', (req, res, next) => grantAccess("", req, res, next), requestController.getAllRequests)
 
-//POST
-router.post('/', requestController.createNewRequest)
+//GET REQUEST BY ID
+router.get('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.getRequestById)
 
-//PUT
-router.put('/:id', requestController.updateRequest)
+//CREATE REQUEST
+router.post('/', (req, res, next) => grantAccess("", req, res, next), requestController.createNewRequest)
 
-//DELETE
-router.delete('/:id', requestController.deleteRequest)
+//UPDATE REQUEST
+router.put('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.updateRequest)
+
+//UPDATE REQUEST STATUS
+router.put('/:id/status', (req, res, next) => grantAccess("Employee", req, res, next), statusController.updateStatus)
+
+//DELETE REQUEST
+router.delete('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.deleteRequest)
 
 module.exports = router

@@ -9,6 +9,54 @@
  * ---------------------------------------------------------------
  */
 
+export interface Request {
+  _id?: string;
+  bookName: string;
+  bookType: "Book" | "Audiobook";
+  isbn?: string;
+  author: string;
+  requestedDateTime: string;
+  requestedBy: string;
+  assignedTo?: string;
+  additionalInformation?: string;
+  statusHistory?: Status[];
+  cost?: number;
+  authorised?: boolean;
+}
+
+export type Requests = Request[];
+
+export interface Status {
+  _id?: string;
+  requestID?: string;
+  status:
+    | "Pending Review"
+    | "In Review"
+    | "Additional Information Required"
+    | "Additional Information Supplied"
+    | "Awaiting Approval"
+    | "Purchased"
+    | "Denied";
+  message?: string;
+  date: string;
+  userId?: string;
+}
+
+export type Statuses = Status[];
+
+export interface UpdateStatus {
+  status:
+    | "Pending Review"
+    | "In Review"
+    | "Additional Information Required"
+    | "Additional Information Supplied"
+    | "Awaiting Approval"
+    | "Purchased"
+    | "Denied";
+  message?: string;
+  userId?: string;
+}
+
 export interface UpdateRequest {
   bookName?: string;
   bookType?: "Book" | "Audiobook";
@@ -31,20 +79,36 @@ export interface CreateRequest {
   status?: "Pending Review" | "In Review" | "Additional Information Required" | "Purchased" | "Denied";
 }
 
-export interface Request {
+export interface User {
   _id?: string;
-  bookName: string;
-  bookType: "Book" | "Audiobook";
-  isbn?: string;
-  author: string;
-  requestedDateTime: string;
-  requestedBy: string;
-  assignedTo?: string;
-  additionalInformation?: string;
-  status?: "Pending Review" | "In Review" | "Additional Information Required" | "Purchased" | "Denied";
+  username?: string;
+  email?: string;
+  role?: "Client" | "Employee" | "Authoriser";
 }
 
-export type Requests = Request[];
+export type Users = User[];
+
+export interface SignUpDetails {
+  email?: string;
+  username?: string;
+  password?: string;
+}
+
+export interface CreateUser {
+  email?: string;
+  username?: string;
+  password?: string;
+  role?: string;
+}
+
+export interface SignInDetails {
+  email?: string;
+  password?: string;
+}
+
+export interface UpdateRole {
+  role?: string;
+}
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 
@@ -180,13 +244,27 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Requests
      * @name BookRequestList
-     * @summary Get all requests in the system.
+     * @summary Get all requests in the system. Requires authentication with any role
      * @request GET:/bookRequest
+     * @secure
      */
-    bookRequestList: (params: RequestParams = {}) =>
-      this.request<Requests, any>({
+    bookRequestList: (
+      query?: {
+        bookName?: string;
+        bookType?: "Book" | "Audiobook";
+        isbn?: string;
+        author?: string;
+        requestedDateTime?: string;
+        requestedBy?: string;
+        assignedTo?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<Requests, string>({
         path: `/bookRequest`,
         method: "GET",
+        query: query,
+        secure: true,
         ...params,
       }),
 
@@ -195,14 +273,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Requests
      * @name BookRequestCreate
-     * @summary Creates a new request.
+     * @summary Creates a new request. Requires authentication with any role
      * @request POST:/bookRequest
+     * @secure
      */
     bookRequestCreate: (request: CreateRequest, params: RequestParams = {}) =>
-      this.request<Requests, void>({
+      this.request<Requests, string>({
         path: `/bookRequest`,
         method: "POST",
         body: request,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -213,13 +293,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Requests
      * @name BookRequestDetail
-     * @summary Get a requests by an ID in the system.
+     * @summary Get a requests by an ID in the system. Requires authentication with any role
      * @request GET:/bookRequest/{id}
+     * @secure
      */
     bookRequestDetail: (id: string, params: RequestParams = {}) =>
-      this.request<Requests, void>({
+      this.request<Requests, string>({
         path: `/bookRequest/${id}`,
         method: "GET",
+        secure: true,
         ...params,
       }),
 
@@ -228,14 +310,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Requests
      * @name BookRequestUpdate
-     * @summary Updates a requests by an ID in the system.
+     * @summary Updates a requests by an ID in the system. Requires authentication with any role
      * @request PUT:/bookRequest/{id}
+     * @secure
      */
     bookRequestUpdate: (id: string, request: UpdateRequest, params: RequestParams = {}) =>
-      this.request<Request, void>({
+      this.request<Request, string>({
         path: `/bookRequest/${id}`,
         method: "PUT",
         body: request,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -245,13 +329,181 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Requests
      * @name BookRequestDelete
-     * @summary Deletes a requests by an ID in the system.
+     * @summary Deletes a requests by an ID in the system. Requires authentication with any role
      * @request DELETE:/bookRequest/{id}
+     * @secure
      */
     bookRequestDelete: (id: string, params: RequestParams = {}) =>
-      this.request<void, void>({
+      this.request<void, string>({
         path: `/bookRequest/${id}`,
         method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Requests
+     * @name StatusUpdate
+     * @summary Update the status of a request. Requires authentication with an Employee role
+     * @request PUT:/bookRequest/{id}/status
+     * @secure
+     */
+    statusUpdate: (id: string, status: UpdateStatus, params: RequestParams = {}) =>
+      this.request<Status, string>({
+        path: `/bookRequest/${id}/status`,
+        method: "PUT",
+        body: status,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+  };
+  user = {
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name SignInCreate
+     * @summary Authenticate the user using a cookie.
+     * @request POST:/user/sign-in
+     * @secure
+     */
+    signInCreate: (SignInDetails: SignInDetails, params: RequestParams = {}) =>
+      this.request<void, string>({
+        path: `/user/sign-in`,
+        method: "POST",
+        body: SignInDetails,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name SignUpCreate
+     * @summary Sign a new user up to the system.
+     * @request POST:/user/sign-up
+     * @secure
+     */
+    signUpCreate: (SignUpDetails: SignUpDetails, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/user/sign-up`,
+        method: "POST",
+        body: SignUpDetails,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name SignOutCreate
+     * @summary Delete the authentication token from the cookie.
+     * @request POST:/user/sign-out
+     * @secure
+     */
+    signOutCreate: (params: RequestParams = {}) =>
+      this.request<void, string>({
+        path: `/user/sign-out`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UserList
+     * @summary Get all users in the system. Requires authentication with an Authoriser role.
+     * @request GET:/user
+     * @secure
+     */
+    userList: (params: RequestParams = {}) =>
+      this.request<Users, string>({
+        path: `/user`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UserCreate
+     * @summary Create a user in the system. Requires authentication with any Authoriser role.
+     * @request POST:/user
+     * @secure
+     */
+    userCreate: (params: RequestParams = {}) =>
+      this.request<User, string>({
+        path: `/user`,
+        method: "POST",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UserDetail
+     * @summary Get a user in the system using their id. Requires authentication with any Authoriser role.
+     * @request GET:/user/{id}
+     * @secure
+     */
+    userDetail: (id: string, params: RequestParams = {}) =>
+      this.request<User, string>({
+        path: `/user/${id}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UserUpdate
+     * @summary Updates a users role in the system. Requires authentication with Authoriser role
+     * @request PUT:/user/{id}
+     * @secure
+     */
+    userUpdate: (id: string, Role: UpdateRole, params: RequestParams = {}) =>
+      this.request<User, string>({
+        path: `/user/${id}`,
+        method: "PUT",
+        body: Role,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UserDelete
+     * @summary Delete a user in the system. Requires authentication with Authoriser role
+     * @request DELETE:/user/{id}
+     * @secure
+     */
+    userDelete: (id: string, params: RequestParams = {}) =>
+      this.request<void, string>({
+        path: `/user/${id}`,
+        method: "DELETE",
+        secure: true,
         ...params,
       }),
   };

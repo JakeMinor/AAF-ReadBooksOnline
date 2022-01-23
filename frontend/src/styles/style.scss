@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Spectral:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+$Font-Karla: 'Karla', sans-serif;
+$Font-Spectral: 'Spectral', serif;
+$Font-size: 18px;
+$header-font-size: 24px;
+
+$White-Text-Colour: #f9f8f6;
+$Black-Text-Colour: #231F20;
+$Green-Background-Colour: #073630;
+$Dark-Cream-Additional: #eee1d8;
+$Light-Cream-Additional: #F9F4F1;
+
+$theme-colors: (
+  "primary": $Green-Background-Colour
+);
+
+* {
+  color: $Black-Text-Colour;
+  font: $Font-size $Font-Karla;
+}
+
+h1 {
+  font-family: $Font-Spectral;
+  color: $White-Text-Colour;
+}
+
+h2 {
+  font-family: $Font-Spectral;
+  color: $White-Text-Colour;
+}
+
+.font-color-black{ 
+  color: $Black-Text-Colour; 
+}
+
+.font-color-white {
+  color: $White-Text-Colour;
+}
+
+.font-karla{
+  font-family: $Font-Karla;
+}
+
+.font-spectral{
+  font-family: $Font-Spectral;
+}
+
+.navbar {
+  background-color: $Green-Background-Colour;
+  color: $White-Text-Colour;
+}
+
+.navbar-links {
+  background-color: $White-Text-Colour;
+  padding: 0.25rem 1rem;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  font-family: $Font-Spectral;
+  color: $White-Text-Colour !important;
+}
+
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/src/index.scss';

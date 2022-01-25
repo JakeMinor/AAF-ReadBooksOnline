@@ -32,6 +32,10 @@ module.exports = mongoose => {
  schema.statics.isUserEmployee = async function(id, cb) {
   return ((await this.find({_id: id, role: "Employee"}).exec(cb)).length > 0)
  }
+
+ schema.statics.isUserAuthoriser = async function (id, cb) {
+  return ((await this.find({_id: id, role: "Authoriser"}).exec(cb)).length > 0)
+ }
  
  return mongoose.model(
    "user",

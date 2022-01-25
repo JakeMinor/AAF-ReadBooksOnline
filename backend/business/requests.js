@@ -5,7 +5,6 @@ const statusBusiness = new StatusBusiness()
 const DataAccess = require("../data-access/data-layer")
 const requestDataAccess = new DataAccess("request")
 
-
 module.exports = class requestBusiness {
  async getAllRequests(query) {
   const filter = {
@@ -19,13 +18,7 @@ module.exports = class requestBusiness {
   }
   return requestDataAccess
     .getAllAndPopulate(filter, { path: 'statusHistory', populate: { path: 'updatedBy', select: 'username'} })
-    .catch(error => {throw httpError(404, error.message)})
- }
- 
- async getRequestById(id){
-  const requestId = utilities.convertToObjectId(id)
-  return requestDataAccess.getById(requestId)
-    .catch(error => {throw httpError(404, error.message)})
+    .catch(error => {throw httpError(400, error.message)})
  }
  
  async getAllRequestsByUserId(id){
@@ -34,57 +27,80 @@ module.exports = class requestBusiness {
     .catch(error => {throw httpError(404, error.message)})
  }
  
- async createRequest(requestData) {
-  await validateCreateRequestData(requestData)
-  const request = {
-   bookName: requestData.bookName,
-   bookType: requestData.bookType,
-   isbn: requestData.isbn,
-   author: requestData.author,
-   requestedDateTime: requestData.requestedDateTime,
-   requestedBy: utilities.convertToObjectId(requestData.requestedBy)
+ async createRequest(request) {
+  await validateCreateRequestData(request.body)
+  const newRequest = {
+   bookName: request.body.bookName,
+   bookType: request.body.bookType,
+   isbn: request.body.isbn,
+   author: request.body.author,
+   requestedDateTime: new Date().toUTCString(),
+   requestedBy: utilities.convertToObjectId(request.session.userId),
+   status: "Pending Review"
   }
-  const status = {
-   status: "Pending Review",
-   message: "",
-   userId: requestData.requestedBy,
-  }
-  return requestDataAccess.create(request)
-    .then((request) => statusBusiness.updateStatus(request._id, status))
+  return requestDataAccess.create(newRequest)
+    .then((req) => {
+     statusBusiness.updateStatus(req._id, {status: "Pending Review", message: "", updatedBy: request.session.userId})
+    })
     .catch(error => {throw httpError(500, error.message)})
- }  
- 
- async updateRequest(id, requestData){
-  const requestId = utilities.convertToObjectId(id)
-  validateUpdateRequestData(requestData)
-  const request = {
-   bookName: requestData.bookName,
-   bookType: requestData.bookType,
-   isbn: requestData.isbn,
-   author: requestData.author,
-   additionalData: requestData.additionalData
-  }
-  return requestDataAccess.update(requestId, request)
-    .catch(error => {throw httpError(404, error.message)})
  }
  
- async deleteRequest(id){
+ async updateRequest(request) {
+  await validateUpdatedRequest(request)
+  const updatedRequest = {
+   bookName: request.body.bookName,
+   bookType: request.body.bookType,
+   isbn: request.body.isbn,
+   author: request.body.author,
+   assignedTo: request.body.assignedTo ? utilities.isUserEmployee(utilities.convertToObjectId(request.body.assignedTo)) : null,
+   authorised: request.body.authorised,
+   price: request.body.price,
+   status: request.body.status
+  }
+  
+  return requestDataAccess.update(request.params.id, updatedRequest)
+    .then((req) => {
+     statusBusiness.updateStatus(req._id, {status: request.body.status, message: request.body.statusMessage, updatedBy: request.session.userId})
+    })
+    .catch(error => {throw httpError(404, error.message)})
+ }
+
+ async deleteRequest(id) {
   const requestId = utilities.convertToObjectId(id)
   return requestDataAccess.delete(requestId)
-    .catch(error => {throw httpError(404, error.message)})
+    .catch(error => {
+     throw httpError(404, error.message)
+    })
  }
 }
 
-function validateUpdateRequestData(requestData){
- if(!utilities.bookTypes.includes(requestData.bookType)){
-  throw httpError(400, "Book type must be 'Book' or 'Audiobook'.")
+async function validateUpdatedRequest(request) {
+ await utilities.doesRequestExist(request.params.id)
+ 
+ switch(request.body.status){
+  case "Awaiting Approval":
+   await validateCompletedRequest(request)
+   break;
+  case "In Review":
+   await validateReviewer(request)
+   break;
  }
+}
+
+async function validateReviewer(request){
+ await utilities.isUserEmployee(request.body.assignedTo)
+}
+
+async function validateCompletedRequest(request){
+ await utilities.isUserEmployee(request.session.user.id)
+ if (!(request.body.bookName && request.body.author &&
+   request.body.price && request.body.isbn && utilities.bookTypes.includes(request.body.bookType))) {
+   throw httpError(400, "Data was missing or invalid.")
+  }
 }
 
 async function validateCreateRequestData(requestData){
- await utilities.doesUserExist(requestData.requestedBy)
- if (!(requestData.bookName && requestData.author && requestData.requestedDateTime 
-   && utilities.bookTypes.includes(requestData.bookType))){
+ if (!(requestData.bookName && requestData.author && utilities.bookTypes.includes(requestData.bookType))){
   throw httpError(400, "Data was missing or invalid.")
  }
 }

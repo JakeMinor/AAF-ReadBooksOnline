@@ -16,7 +16,7 @@ module.exports = class DataService{
  
  async getAllAndPopulate(filter, populateFilter) {
   return this.model
-    .find(JSON.parse(JSON.stringify(filter)))
+    .find(JSON.parse(JSON.stringify(filter, ((key, value) => value === "null" ? null : value))))
     .populate(JSON.parse(JSON.stringify(populateFilter)))
     .then((result) => {return result})
     .catch(error => {

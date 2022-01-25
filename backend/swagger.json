@@ -76,6 +76,18 @@
             "name": "assignedTo",
             "description": "Filter results down by the ID of Employee who is dealing with the request.",
             "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Filter results down by the status of the request.",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "price",
+            "description": "Filter results down by the price of the request.",
+            "type": "string"
           }
         ],
         "responses": {
@@ -90,6 +102,13 @@
             "schema": {
               "type": "string",
               "example": "The provided token is invalid or has expired."
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "Could not convert value to ObjectId."
             }
           }
         }
@@ -110,10 +129,7 @@
         "produces": ["application/json"],
         "responses": {
           "201": {
-            "description": "CREATED",
-            "schema": {
-              "$ref": "#/definitions/Requests"
-            }
+            "description": "CREATED"
           },
           "400": {
             "description": "BAD REQUEST",
@@ -133,18 +149,18 @@
       }
     },
     "/bookRequest/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "description": "The ObjectId of the request.",
-          "type": "string"
-        }
-      ],
       "get": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user.",
+            "type": "string"
+          }
+        ],
         "tags": ["Requests"],
-        "summary": "Get a requests by an ID in the system. Requires authentication with any role",
+        "summary": "Get all requests by user ID. Requires authentication with any role",
         "responses": {
           "200": {
             "description": "OK",
@@ -177,8 +193,15 @@
       },
       "put": {
         "tags": ["Requests"],
-        "summary": "Updates a requests by an ID in the system. Requires authentication with any role",
+        "summary": "Updates a request by an ID in the system. Requires authentication with any role",
         "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the request.",
+            "type": "string"
+          },
           {
             "name": "request",
             "in": "body",
@@ -190,16 +213,13 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Request"
-            }
+            "description": "OK"
           },
           "400": {
             "description": "BAD REQUEST",
             "schema": {
               "type": "string",
-              "example": "'ID is not valid.' or 'Book type must be 'Book' or 'Audiobook''"
+              "example": "'ID is not valid.' or 'Data was missing or invalid.' or 'User isn't an employee.'"
             }
           },
           "401": {
@@ -219,6 +239,15 @@
         }
       },
       "delete": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the request.",
+            "type": "string"
+          }
+        ],
         "tags": ["Requests"],
         "summary": "Deletes a requests by an ID in the system. Requires authentication with any role",
         "responses": {
@@ -274,10 +303,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Status"
-            }
+            "description": "OK"
           },
           "400": {
             "description": "BAD REQUEST",
@@ -611,20 +637,14 @@
         "assignedTo": {
           "type": "string"
         },
-        "additionalInformation": {
-          "type": "string"
-        },
-        "statusHistory": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Status"
-          }
-        },
-        "cost": {
-          "type": "number"
-        },
         "authorised": {
           "type": "boolean"
+        },
+        "price": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -632,6 +652,63 @@
       "type": "array",
       "items": {
         "$ref": "#/definitions/Request"
+      }
+    },
+    "CreateRequest": {
+      "required": [
+        "bookName",
+        "bookType",
+        "author"
+      ],
+      "properties": {
+        "bookName": {
+          "type": "string"
+        },
+        "bookType": {
+          "type": "string",
+          "enum": ["Book", "Audiobook"]
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateRequest": {
+      "properties": {
+        "bookName": {
+          "type": "string"
+        },
+        "bookType": {
+          "type": "string",
+          "enum": [
+            "Book",
+            "Audiobook"
+          ]
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "assignedTo": {
+          "type": "string"
+        },
+        "authorised": {
+          "type": "boolean"
+        },
+        "price": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string"
+        },
+        "statusMessage": {
+          "type": "string"
+        }
       }
     },
     "Status": {
@@ -646,7 +723,7 @@
           "type": "string",
           "uniqueItems": true
         },
-        "requestID": {
+        "requestId": {
           "type": "string"
         },
         "status": {
@@ -667,7 +744,7 @@
         "date": {
           "type": "string"
         },
-        "userId": {
+        "updatedBy": {
           "type": "string"
         }
       }
@@ -691,7 +768,6 @@
             "Pending Review",
             "In Review",
             "Additional Information Required",
-            "Additional Information Supplied",
             "Awaiting Approval",
             "Purchased",
             "Denied"
@@ -699,87 +775,6 @@
         },
         "message": {
           "type": "string"
-        },
-        "userId": {
-          "type": "string"
-        }
-      }
-    },
-    "UpdateRequest": {
-      "properties": {
-        "bookName": {
-          "type": "string"
-        },
-        "bookType": {
-          "type": "string",
-          "enum": ["Book", "Audiobook"]
-        },
-        "isbn": {
-          "type": "string"
-        },
-        "author": {
-          "type": "string"
-        },
-        "assignedTo": {
-          "type": "string"
-        },
-        "additionalInformation": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "Pending Review",
-            "In Review",
-            "Additional Information Required",
-            "Purchased",
-            "Denied"
-          ],
-          "default": "Pending Review"
-        }
-      }
-    },
-    "CreateRequest":{
-      "required": ["bookName", "bookType", "author", "requestedDateTime", "requestedBy"],
-      "properties": {
-        "bookName": {
-          "type": "string"
-        },
-        "bookType": {
-          "type": "string",
-          "enum": [
-            "Book",
-            "Audiobook"
-          ]
-        },
-        "isbn": {
-          "type": "string"
-        },
-        "author": {
-          "type": "string"
-        },
-        "requestedDateTime": {
-          "type": "string"
-        },
-        "requestedBy": {
-          "type": "string"
-        },
-        "assignedTo": {
-          "type": "string"
-        },
-        "additionalInformation": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "Pending Review",
-            "In Review",
-            "Additional Information Required",
-            "Purchased",
-            "Denied"
-          ],
-          "default": "Pending Review"
         }
       }
     },

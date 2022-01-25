@@ -10,17 +10,14 @@ const grantAccess = require('../router.middleware').grantAccess
 //GET ALL REQUESTS
 router.get('/', (req, res, next) => grantAccess("", req, res, next), requestController.getAllRequests)
 
-//GET REQUEST BY ID
-router.get('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.getRequestById)
-
 //CREATE REQUEST
 router.post('/', (req, res, next) => grantAccess("", req, res, next), requestController.createNewRequest)
 
-//UPDATE REQUEST
+//UPDATE THE REQUESTS ADDITIONAL INFORMATION
 router.put('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.updateRequest)
 
 //UPDATE REQUEST STATUS
-router.put('/:id/status', (req, res, next) => grantAccess("Employee", req, res, next), statusController.updateStatus)
+router.put('/:id/status', (req, res, next) => grantAccess("", req, res, next), statusController.updateStatus)
 
 //DELETE REQUEST
 router.delete('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.deleteRequest)

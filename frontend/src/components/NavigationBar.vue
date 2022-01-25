@@ -16,9 +16,8 @@
     </b-navbar>
     <div class="navbar-links" >
       <router-link class="pl-1 pr-3" to="/catalog">Catalog</router-link>
-      <router-link v-if="isClient"  to="/book-requests">My Requests</router-link>
-      <router-link class="pl-1 pr-3" v-if="isEmployee" to="#">Unallocated Requests</router-link>
-      <router-link class="pl-1 pr-3" v-if="isEmployee" to="#">My Allocated Requests</router-link>
+      <router-link v-if="isClient"  to="/my-requests">My Requests</router-link>
+      <router-link class="pl-1 pr-3" v-if="isEmployee" to="/employee-requests">Requests</router-link>
       <router-link class="pl-1 pr-3" v-if="isAuthoriser" to="#">Review Requests</router-link>
     </div>
   </div>

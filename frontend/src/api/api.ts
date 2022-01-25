@@ -18,17 +18,35 @@ export interface Request {
   requestedDateTime: string;
   requestedBy: string;
   assignedTo?: string;
-  additionalInformation?: string;
-  statusHistory?: Status[];
-  cost?: number;
   authorised?: boolean;
+  price?: number;
+  status?: string;
 }
 
 export type Requests = Request[];
 
+export interface CreateRequest {
+  bookName: string;
+  bookType: "Book" | "Audiobook";
+  isbn?: string;
+  author: string;
+}
+
+export interface UpdateRequest {
+  bookName?: string;
+  bookType?: "Book" | "Audiobook";
+  isbn?: string;
+  author?: string;
+  assignedTo?: string;
+  authorised?: boolean;
+  price?: number;
+  status?: string;
+  statusMessage?: string;
+}
+
 export interface Status {
   _id?: string;
-  requestID?: string;
+  requestId: string;
   status:
     | "Pending Review"
     | "In Review"
@@ -39,7 +57,7 @@ export interface Status {
     | "Denied";
   message?: string;
   date: string;
-  userId?: string;
+  updatedBy?: string;
 }
 
 export type Statuses = Status[];
@@ -49,34 +67,10 @@ export interface UpdateStatus {
     | "Pending Review"
     | "In Review"
     | "Additional Information Required"
-    | "Additional Information Supplied"
     | "Awaiting Approval"
     | "Purchased"
     | "Denied";
   message?: string;
-  userId?: string;
-}
-
-export interface UpdateRequest {
-  bookName?: string;
-  bookType?: "Book" | "Audiobook";
-  isbn?: string;
-  author?: string;
-  assignedTo?: string;
-  additionalInformation?: string;
-  status?: "Pending Review" | "In Review" | "Additional Information Required" | "Purchased" | "Denied";
-}
-
-export interface CreateRequest {
-  bookName: string;
-  bookType: "Book" | "Audiobook";
-  isbn?: string;
-  author: string;
-  requestedDateTime: string;
-  requestedBy: string;
-  assignedTo?: string;
-  additionalInformation?: string;
-  status?: "Pending Review" | "In Review" | "Additional Information Required" | "Purchased" | "Denied";
 }
 
 export interface User {
@@ -257,6 +251,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         requestedDateTime?: string;
         requestedBy?: string;
         assignedTo?: string;
+        status?: string;
+        price?: string;
       },
       params: RequestParams = {},
     ) =>
@@ -278,13 +274,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     bookRequestCreate: (request: CreateRequest, params: RequestParams = {}) =>
-      this.request<Requests, string>({
+      this.request<void, string>({
         path: `/bookRequest`,
         method: "POST",
         body: request,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -293,7 +288,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Requests
      * @name BookRequestDetail
-     * @summary Get a requests by an ID in the system. Requires authentication with any role
+     * @summary Get all requests by user ID. Requires authentication with any role
      * @request GET:/bookRequest/{id}
      * @secure
      */
@@ -310,12 +305,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Requests
      * @name BookRequestUpdate
-     * @summary Updates a requests by an ID in the system. Requires authentication with any role
+     * @summary Updates a request by an ID in the system. Requires authentication with any role
      * @request PUT:/bookRequest/{id}
      * @secure
      */
     bookRequestUpdate: (id: string, request: UpdateRequest, params: RequestParams = {}) =>
-      this.request<Request, string>({
+      this.request<void, string>({
         path: `/bookRequest/${id}`,
         method: "PUT",
         body: request,
@@ -351,7 +346,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     statusUpdate: (id: string, status: UpdateStatus, params: RequestParams = {}) =>
-      this.request<Status, string>({
+      this.request<void, string>({
         path: `/bookRequest/${id}/status`,
         method: "PUT",
         body: status,

@@ -25,13 +25,24 @@ module.exports = class Utilities{
   }
  }
  
+ static async isUserAuthoriser(userId) {
+  await this.doesUserExist(userId)
+  if (!(await userDataAccess.model.isUserAuthoriser(userId))) {
+   throw httpError(400, "User isn't an authoriser.")
+  }
+ }
+ 
  static async doesRequestExist(requestId) {
   if (!(await requestDataAccess.model.doesRequestExist(requestId))) {
    throw httpError(404, "Request does not exist in the database.")
   }
  }
  
- static statuses = ['Pending Review', 'In Review', 'Additional Information Required', 'Additional Information Supplied', 'Awaiting Approval', 'Purchased', 'Denied']
+ static async getLoggedInUsersId(){
+  
+ }
+ 
+ static statuses = ['Pending Review', 'In Review', 'Additional Information Required', 'Awaiting Approval', 'Purchased', 'Denied']
  static bookTypes = ['Audiobook', 'Book']
  static roles = ['Client', 'Employee', 'Authoriser']
 }

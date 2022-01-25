@@ -6,6 +6,7 @@ import SignIn from '@/views/SignIn.vue'
 import SignUp from '@/views/SignUp.vue'
 import Error from '@/views/Error.vue'
 import store from '@/store/index'
+import EmployeeRequests from '@/views/EmployeeRequests.vue'
 
 Vue.use(VueRouter)
 
@@ -15,12 +16,17 @@ const routes: Array<RouteConfig> = [
     redirect: '/catalog'
   },
   {
-    path: '/book-requests',
-    name: 'Book Requests',
+    path: '/my-requests',
+    name: 'My Requests',
     component: BookRequests,
     meta: {
       roles: ['Client']
     }
+  },
+  {
+    path: '/employee-requests',
+    name: 'Employee',
+    component: EmployeeRequests
   },
   {
     path: '/catalog',

@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import './styles/style.scss'
+import './validation'
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)

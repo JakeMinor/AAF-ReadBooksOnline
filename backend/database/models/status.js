@@ -8,7 +8,7 @@ module.exports = mongoose => {
    status: {
     type: String,
     enum: {
-     values: ['Pending Review', 'In Review', 'Additional Information Required', 'Additional Information Supplied', 'Awaiting Approval', 'Purchased', 'Denied'],
+     values: ['Pending Review', 'In Review', 'Additional Information Required', 'Awaiting Approval', 'Purchased', 'Denied'],
      message: "{VALUE} is not valid status. Please use either 'Pending Review', 'In Review', 'Additional Information Required', 'Additional Information Supplied', 'Awaiting Approval', 'Purchased' or 'Denied'."
     },
     required: [true, "You must supply the status."]

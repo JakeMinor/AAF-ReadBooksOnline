@@ -15,11 +15,8 @@
       </b-collapse>
     </b-navbar>
     <div class="navbar-links" >
-      <router-link class="pl-1 pr-3" to="/catalog">Catalog</router-link>
-      <router-link v-if="isClient"  to="/book-requests">My Requests</router-link>
-      <router-link class="pl-1 pr-3" v-if="isEmployee" to="#">Unallocated Requests</router-link>
-      <router-link class="pl-1 pr-3" v-if="isEmployee" to="#">My Allocated Requests</router-link>
-      <router-link class="pl-1 pr-3" v-if="isAuthoriser" to="#">Review Requests</router-link>
+      <router-link class="ml-1 mr-3" :to="{ name: 'Catalog' }">Catalog</router-link>
+      <router-link :to="{ name: 'Requests' }">Requests</router-link>
     </div>
   </div>
 </template>
@@ -34,14 +31,8 @@ export default Vue.extend({
     user () {
       return store.getters['user/user']
     },
-    isClient () {
-      return (store.getters['user/user'].role === 'Client')
-    },
-    isEmployee () {
-      return (store.getters['user/user'].role === 'Employee')
-    },
     isAuthoriser () {
-      return (store.getters['user/user'].role === 'Authoriser')
+      return store.getters['user/isAuthoriser']
     }
   },
   methods: {

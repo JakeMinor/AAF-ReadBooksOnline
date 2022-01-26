@@ -31,9 +31,9 @@ module.exports = mongoose => {
      type: mongoose.Schema.Types.ObjectId,
      ref: "user"
     },
-    additionalInformation: String,
-    cost: Number,
-    authorised: Boolean
+    authorised: Boolean,
+    price: Number,
+    status: String
    }
  )
  requestSchema.set('toJSON', {virtuals: true});

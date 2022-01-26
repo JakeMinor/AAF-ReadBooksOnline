@@ -11,6 +11,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import NavigationBar from '@/components/NavigationBar.vue'
+import { ValidationObserver } from 'vee-validate'
 
 export default Vue.extend({
   name: 'App',

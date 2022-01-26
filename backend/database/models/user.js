@@ -14,14 +14,7 @@ module.exports = mongoose => {
      type: String,
      required: [true, "A password is required."]
     },
-    role: {
-     type: String,
-     enum: {
-      values: ['Client', 'Employee', 'Authoriser'],
-      default: 'Client',
-      message: "{VALUE} is not valid role. Please use either 'Client', 'Employee' or 'Authoriser'."
-     }
-    }
+    roles: [mongoose.Schema.Types.ObjectId]
    }
  )
  

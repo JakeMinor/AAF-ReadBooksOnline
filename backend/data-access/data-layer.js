@@ -17,8 +17,9 @@ module.exports = class DataService{
  async getAllAndPopulate(filter, populateFilter) {
   return this.model
     .find(JSON.parse(JSON.stringify(filter, ((key, value) => value === "null" ? null : value))))
+    .limit(filter.limit)
+    .skip((filter.offset * filter.limit))
     .populate(JSON.parse(JSON.stringify(populateFilter)))
-    .then((result) => {return result})
     .catch(error => {
      if (error.message.includes("ObjectId"))
       throw new Error("Could not convert value to ObjectId")

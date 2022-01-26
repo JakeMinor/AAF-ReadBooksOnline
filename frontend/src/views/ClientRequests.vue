@@ -2,7 +2,7 @@
   <div>
     <h1 class="font-color-black">My Requests</h1>
     <b-button class="mt-2 mb-2 ml-auto" variant="primary" v-b-modal.createModal>Create</b-button>
-    <b-table responsive striped hover :items="requests" :fields="requestTableHeaders" show-empty empty-text="You have no requests, why not make one!">
+    <b-table responsive striped hover :items="requests" :fields="requestTableHeaders" :current-page="offset" :per-page="0" show-empty empty-text="You have no requests, why not make one!">
       <template #cell(requesteddatetime)="cell">
         {{formatDate(cell.item.requestedDateTime)}}
       </template>
@@ -20,6 +20,14 @@
         <status-timeline v-if="selectedRequest" :selected-request="selectedRequest" @AdditionalInformationSupplied="getTableItems"/>
       </template>
     </b-table>
+    <div class="d-flex justify-content-between align-items-baseline">
+      <span class="input-group w-auto align-items-baseline">
+        <span class="input-group-append mr-2">Per Page: </span>
+        <b-form-select v-model="limit" :options="[5, 10, 15]" class="custom-select custom-select-sm" @change="getTableItems" />
+      </span>
+      <b-pagination :per-page="limit" :total-rows="totalCount" v-model="offset" @input="getTableItems"></b-pagination>
+      <span>{{totalCount}} requests in {{Math.ceil(totalCount / limit)}} pages</span>
+    </div>
     <create-request-modal @Created="modalClose"/>
     <edit-request-modal @Updated="modalClose" @Closed="selectedRequest = null" :selected-request="selectedRequest" v-if="selectedRequest"/>
   </div>
@@ -40,7 +48,10 @@ export default Vue.extend({
   data () {
     return {
       requests: [] as Request[],
-      selectedRequest: null as Request | null
+      selectedRequest: null as Request | null,
+      totalCount: 0,
+      offset: 1,
+      limit: 10
     }
   },
   computed: {
@@ -54,7 +65,9 @@ export default Vue.extend({
   methods: {
     formatDate,
     async getTableItems () {
-      this.requests = (await api.bookRequest.bookRequestList({ requestedBy: this.$store.getters['user/user'].id })).data
+      const data = (await api.bookRequest.bookRequestList({ requestedBy: this.$store.getters['user/user'].id, limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+      this.requests = data.requests
+      this.totalCount = data.count
     },
     showStatusHistory (row : BRow) {
       this.selectedRequest = row.item

@@ -23,7 +23,10 @@ export interface Request {
   status?: string;
 }
 
-export type Requests = Request[];
+export interface Requests {
+  requests: Request[];
+  count: number;
+}
 
 export interface CreateRequest {
   bookName: string;
@@ -253,6 +256,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         assignedTo?: string;
         status?: string;
         price?: string;
+        limit?: string;
+        offset?: string;
       },
       params: RequestParams = {},
     ) =>

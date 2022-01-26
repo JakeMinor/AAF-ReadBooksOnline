@@ -88,6 +88,20 @@
             "name": "price",
             "description": "Filter results down by the price of the request.",
             "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Filter the amount of items which are included on a page.",
+            "type": "string",
+            "default": 10
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Filter the amount of items to skip.",
+            "type": "string",
+            "default": 0
           }
         ],
         "responses": {
@@ -649,9 +663,22 @@
       }
     },
     "Requests": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Request"
+      "type": "object",
+      "required": [
+        "requests",
+        "count",
+        "pages"
+      ],
+      "properties": {
+        "requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Request"
+          }
+        },
+        "count": {
+          "type": "number"
+        }
       }
     },
     "CreateRequest": {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="font-color-black">Authorise Requests</h1>
-    <b-table responsive striped hover :items="tableItems" :fields="tableHeaders" show-empty empty-text="No Request to Authorise.">
+    <b-table responsive striped hover :items="requests" :fields="tableHeaders" :current-page="offset" :per-page="0" show-empty empty-text="No Request to Authorise.">
       <template #cell(requesteddatetime)="cell">
         {{ formatDate(cell.item.requestedDateTime) }}
       </template>
@@ -19,6 +19,15 @@
         <status-timeline v-if="selectedRequest" :selected-request="selectedRequest" />
       </template>
     </b-table>
+    <div class="d-flex justify-content-between align-items-baseline">
+      <span class="input-group w-auto align-items-baseline">
+        <span class="input-group-append mr-2">Per Page: </span>
+        <b-form-select v-model="limit" :options="[5, 10, 15]" class="custom-select custom-select-sm"
+                       @change="getTableItems" />
+      </span>
+      <b-pagination :per-page="limit" :total-rows="totalCount" v-model="offset" @input="getTableItems"></b-pagination>
+      <span>{{ totalCount }} requests in {{ Math.ceil(totalCount / limit) }} pages</span>
+    </div>
   </div>
 </template>
 
@@ -33,8 +42,11 @@ export default Vue.extend({
   components: { StatusTimeline },
   data () {
     return {
-      tableItems: [] as Request[],
-      selectedRequest: null as Request | null
+      requests: [] as Request[],
+      selectedRequest: null as Request | null,
+      totalCount: 0,
+      offset: 1,
+      limit: 10
     }
   },
   computed: {
@@ -46,7 +58,9 @@ export default Vue.extend({
     formatPrice,
     formatDate,
     async getTableItems () {
-      this.tableItems = (await api.bookRequest.bookRequestList({ status: 'Awaiting Approval' })).data
+      const data = (await api.bookRequest.bookRequestList({ status: 'Awaiting Approval', limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+      this.requests = data.requests
+      this.totalCount = data.count
     },
     async authorise (state : boolean, requestId : string) {
       const updatedRequest = {

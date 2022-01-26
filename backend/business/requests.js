@@ -15,10 +15,14 @@ module.exports = class requestBusiness {
    requestedDateTime: query.requestedDateTime,
    requestedBy: query.requestedBy,
    assignedTo: query.assignedTo,
-   status: query.status
+   status: query.status,
+   limit: query.limit ?? 10,
+   offset: query.offset ?? 0
   }
+  const totalDocuments = (await requestDataAccess.getAll(filter)).length
   return requestDataAccess
     .getAllAndPopulate(filter, { path: 'statusHistory', populate: { path: 'updatedBy', select: 'username'} })
+    .then((result) => { return {requests: result, count: totalDocuments}})
     .catch(error => {throw httpError(400, error.message)})
  }
  

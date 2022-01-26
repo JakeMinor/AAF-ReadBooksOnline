@@ -1,5 +1,5 @@
 module.exports = mongoose => {
- let schema = {
+ let roleSchema = mongoose.Schema({
   name: {
    type: String,
    required: [true, "A name for the role is required."]
@@ -8,10 +8,12 @@ module.exports = mongoose => {
    type: String
   },
   permissions: [mongoose.Schema.Types.ObjectId]
- }
+ })
+
+ roleSchema.set('toJSON', {virtuals: true});
 
  return mongoose.model(
    "role",
-   schema
+   roleSchema
  )
 }

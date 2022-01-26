@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const requestController = require('../../controllers/requests')
-const statusController = require('../../controllers/statuses')
 const grantAccess = require('../router.middleware').grantAccess
 //Request routes
 

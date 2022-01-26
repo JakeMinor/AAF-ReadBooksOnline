@@ -9,15 +9,15 @@ const userDataAccess = new DataAccess("user")
 
 module.exports = class userBusiness {
  async getAllUsers() {
-  return userDataAccess.getAll({}, {}).then((users) => {
+  return userDataAccess.getAll({}).then((users) => {
    return users.map(user => {return {id: user._id, username: user.username, email: user.email, role: user.role} })
   }).catch(error => {throw httpError(500, error.message)})
  }
  
  async getUserById(id) {
   const userId = utilities.convertToObjectId(id)
-  return userDataAccess.getById(userId).then((user) => {
-   return {id: user._id, username: user.username, email: user.email, role: user.role}
+  return userDataAccess.getByIdAndPopulate(userId, {path: 'roles', populate: {path: 'permissions', select: 'name'}}).then((user) => {
+   return {id: user._id, username: user.username, email: user.email, roles: user.roles, permissions: user.permissions}
   }).catch(error => {throw httpError(404, error.message)})
  }
 
@@ -87,6 +87,7 @@ function validateNewUserData(newUserData) {
 }
 
 function validateRole(role) {
+ 
  if(!(role === "Client" || role === "Employee" || role === "Authoriser")){
   throw httpError(400, "Invalid role, the supplied role should be either Client, Employee or Authoriser.")
  }

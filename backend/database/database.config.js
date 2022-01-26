@@ -11,7 +11,7 @@ const permission = require('../database/models/permission')(mongoose)
 
 mongoose.Promise = global.Promise
 
-const dbModel = {mongoose: mongoose, url: connectionString, request: request, status: status, user: user, role: role, permission: permission }
+const dbModel = {mongoose: mongoose, url: connectionString, permission: permission, role: role,  request: request, status: status, user: user }
 
 mongoose.plugin(schema => {
  schema.pre('createRequest', enableValidators)

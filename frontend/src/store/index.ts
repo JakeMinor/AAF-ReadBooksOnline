@@ -40,7 +40,8 @@ export default new Vuex.Store({
       },
       getters: {
         user: state => state.user,
-        token: state => state.token
+        token: state => state.token,
+        isAuthoriser: state => state.user.role === 'Authoriser'
       }
     }
   }

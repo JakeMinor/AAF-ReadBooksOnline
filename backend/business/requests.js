@@ -14,7 +14,8 @@ module.exports = class requestBusiness {
    author: query.author,
    requestedDateTime: query.requestedDateTime,
    requestedBy: query.requestedBy,
-   assignedTo: query.assignedTo
+   assignedTo: query.assignedTo,
+   status: query.status
   }
   return requestDataAccess
     .getAllAndPopulate(filter, { path: 'statusHistory', populate: { path: 'updatedBy', select: 'username'} })
@@ -52,15 +53,17 @@ module.exports = class requestBusiness {
    bookType: request.body.bookType,
    isbn: request.body.isbn,
    author: request.body.author,
-   assignedTo: request.body.assignedTo ? utilities.isUserEmployee(utilities.convertToObjectId(request.body.assignedTo)) : null,
+   assignedTo: request.body.assignedTo ? utilities.convertToObjectId(request.body.assignedTo) : undefined,
    authorised: request.body.authorised,
    price: request.body.price,
    status: request.body.status
   }
   
+  
   return requestDataAccess.update(request.params.id, updatedRequest)
     .then((req) => {
      statusBusiness.updateStatus(req._id, {status: request.body.status, message: request.body.statusMessage, updatedBy: request.session.userId})
+       .catch(error => {throw error})
     })
     .catch(error => {throw httpError(404, error.message)})
  }
@@ -88,11 +91,13 @@ async function validateUpdatedRequest(request) {
 }
 
 async function validateReviewer(request){
- await utilities.isUserEmployee(request.body.assignedTo)
+ if(!request.body.statusMessage){
+  await utilities.isUserEmployee(request.body.assignedTo)
+ }
 }
 
 async function validateCompletedRequest(request){
- await utilities.isUserEmployee(request.session.user.id)
+ await utilities.isUserEmployee(request.session.userId)
  if (!(request.body.bookName && request.body.author &&
    request.body.price && request.body.isbn && utilities.bookTypes.includes(request.body.bookType))) {
    throw httpError(400, "Data was missing or invalid.")

@@ -38,10 +38,6 @@ module.exports = class Utilities{
   }
  }
  
- static async getLoggedInUsersId(){
-  
- }
- 
  static statuses = ['Pending Review', 'In Review', 'Additional Information Required', 'Awaiting Approval', 'Purchased', 'Denied']
  static bookTypes = ['Audiobook', 'Book']
  static roles = ['Client', 'Employee', 'Authoriser']

@@ -3,10 +3,10 @@
       <template #default>
         <ValidationObserver ref="observer">
           <b-form ref="createRequestForm" @submit.stop.prevent="createRequest">
-            <custom-input label="Book Name" v-model="createForm.bookName" rules="required" />
-            <custom-input label="Author" v-model="createForm.author" rules="required" />
-            <custom-input label="Book Type" :options="bookTypes" v-model="createForm.bookType" rules="required" />
-            <custom-input label="ISBN" v-model="createForm.isbn" />
+            <custom-input label="Book Name" v-model="createForm.bookName" rules="required"/>
+            <custom-input label="Author" v-model="createForm.author" rules="required" class="mt-3"/>
+            <custom-input label="Book Type" :options="bookTypes" v-model="createForm.bookType" rules="required" class="mt-3"/>
+            <custom-input label="ISBN" v-model="createForm.isbn" class="mt-3"/>
           </b-form>
         </ValidationObserver>
       </template>
@@ -55,14 +55,14 @@ export default Vue.extend({
 
       await api.bookRequest.bookRequestCreate(newRequest)
 
-      this.$bvModal.hide('createModal')
+      this.closeModal()
       this.$emit('Created')
-      this.$nextTick(() => {
-        (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
-      })
     },
     closeModal () {
       this.$bvModal.hide('createModal')
+      this.$nextTick(() => {
+        (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
+      })
       this.createForm.bookName = ''
       this.createForm.isbn = ''
       this.createForm.bookType = ''

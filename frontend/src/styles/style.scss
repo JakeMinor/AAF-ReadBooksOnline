@@ -53,11 +53,28 @@ h2 {
 .navbar-links {
   background-color: $White-Text-Colour;
   padding: 0.25rem 1rem;
+  a {
+    color: $Black-Text-Colour !important;
+  }
 }
 
 .navbar-light .navbar-nav .nav-link {
   font-family: $Font-Spectral;
   color: $White-Text-Colour !important;
+}
+
+.link {
+  text-decoration: underline;
+}
+
+a {
+  color: $Black-Text-Colour
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 75% !important;
+  }
 }
 
 @import '~bootstrap/scss/bootstrap';

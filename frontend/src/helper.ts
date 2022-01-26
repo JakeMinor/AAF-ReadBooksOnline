@@ -18,3 +18,7 @@ export function getPayload (token : string) {
 export function formatDate (date : string) {
   return dayjs(date).format('ddd D MMM YYYY @ H:mm')
 }
+
+export function formatPrice (price : string) {
+  return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'GBP' }).format(Number.parseInt(price))
+}

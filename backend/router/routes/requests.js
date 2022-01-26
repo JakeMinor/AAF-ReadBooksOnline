@@ -13,11 +13,8 @@ router.get('/', (req, res, next) => grantAccess("", req, res, next), requestCont
 //CREATE REQUEST
 router.post('/', (req, res, next) => grantAccess("", req, res, next), requestController.createNewRequest)
 
-//UPDATE THE REQUESTS ADDITIONAL INFORMATION
+//UPDATE REQUEST
 router.put('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.updateRequest)
-
-//UPDATE REQUEST STATUS
-router.put('/:id/status', (req, res, next) => grantAccess("", req, res, next), statusController.updateStatus)
 
 //DELETE REQUEST
 router.delete('/:id', (req, res, next) => grantAccess("", req, res, next), requestController.deleteRequest)

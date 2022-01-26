@@ -4,52 +4,46 @@
     <b-form-group>
       <b-form-radio-group buttons button-variant="outline-primary" v-model="page" :options="pages" @change="getTableItems"/>
     </b-form-group>
-    <b-table responsive striped hover :items="tableItems" :fields="tableHeaders">
+    <b-table responsive striped hover :items="tableItems" :fields="tableHeaders" show-empty :empty-text="page === 'Unallocated Requests' ? 'No requests to allocate.' : 'You have no requests allocated to you.'">
       <template #cell(requesteddatetime)="cell">
         {{ formatDate(cell.item.requestedDateTime) }}
       </template>
       <template #cell(status)="cell">
-        {{ cell.item.statusHistory[cell.item.statusHistory.length - 1].status }}
+        {{ cell.item.status }}
       </template>
       <template #cell(actions)="row">
         <div class="d-flex flex-column">
           <b-link class="pb-2" v-if="page === 'Unallocated Requests'" @click="allocate(row.item._id)">Allocate</b-link>
-          <b-link class="pb-2" v-if="page === 'My Requests'" @click="openModal('completeRequestModal', row.item)">Complete Request</b-link>
-          <b-link class="pb-2" v-if="page === 'My Requests'">Ask for more information</b-link>
+          <b-link class="pb-2" v-if="page === 'My Requests'" v-b-modal.completeRequestModal @click="selectedRequest = row.item">Complete Request</b-link>
+          <b-link class="pb-2" v-if="page === 'My Requests'" v-b-modal.moreInformationModal @click="selectedRequest = row.item">Ask for more information</b-link>
+          <b-link class="mb-2" @click="showStatusHistory(row)">Status History <b-icon :icon="row.detailsShowing ? 'chevron-up' : 'chevron-down'" /></b-link>
         </div>
+      </template>
+      <template #row-details>
+        <status-timeline v-if="selectedRequest" :selected-request="selectedRequest" @AdditionalInformationSupplied="getTableItems" />
       </template>
     </b-table>
-    <b-modal title="Complete Request" id="completeRequestModal" hide-header-close>
-      <template #default>
-        <b-form ref="editRequestForm" @submit.stop.prevent="completeRequest">
-          <custom-input label="Book Name" v-model="selectedRequest.bookName" />
-          <custom-input label="Author" v-model="selectedRequest.author" />
-          <custom-input label="Book Type" :options="bookTypes" v-model="selectedRequest.bookType" />
-          <custom-input label="ISBN" v-model="selectedRequest.isbn" />
-          <custom-input label="Price £" type="number" v-model="selectedRequest.cost" />
-        </b-form>
-      </template>
-      <template #modal-footer>
-        <div>
-          <b-button variant="primary-outline" @click="closeModal('completeRequestModal')">Cancel</b-button>
-          <b-button variant="primary" @click="completeRequest">Complete Request</b-button>
-        </div>
-      </template>
-    </b-modal>
+    <request-more-information-modal v-if="selectedRequest" :request-id="selectedRequest.id" @MoreInformationRequested="modalClose" @closed="selectedRequest = null"/>
+    <complete-request-modal v-if="selectedRequest" :selected-request="selectedRequest" @Completed="modalClose" @Closed="selectedRequest = null"/>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { Request, UpdateRequest } from '@/api/api'
-import { api, formatDate } from '@/helper'
-import CustomInput from '@/components/CustomInput.vue'
+import { api, formatDate, bookTypes } from '@/helper'
+import { BRow } from 'bootstrap-vue'
+import StatusTimeline from '@/components/StatusTimeline.vue'
+import RequestMoreInformationModal from '@/components/EmployeeRequests/RequestMoreInformationModal.vue'
+import CompleteRequestModal from '@/components/EmployeeRequests/CompleteRequestModal.vue'
 type pages = 'Unallocated Requests' | 'My Requests'
 
 export default Vue.extend({
   name: 'EmployeeRequests',
   components: {
-    CustomInput
+    RequestMoreInformationModal,
+    CompleteRequestModal,
+    StatusTimeline
   },
   data () {
     return {
@@ -62,39 +56,35 @@ export default Vue.extend({
   computed: {
     tableHeaders () {
       return ['bookName', 'author', 'isbn', 'bookType', 'requestedDateTime', 'Actions']
+    },
+    bookTypes () {
+      return bookTypes
     }
   },
   methods: {
     formatDate,
     async getTableItems () {
       if (this.page === 'Unallocated Requests') {
-        this.tableItems = (await api.bookRequest.bookRequestList({ assignedTo: 'null' })).data
+        this.tableItems = (await api.bookRequest.bookRequestList({ status: 'Pending Review' })).data
       } else {
-        this.tableItems = (await api.bookRequest.bookRequestList({ assignedTo: this.$store.getters['user/user'].id })).data
+        this.tableItems = (await api.bookRequest.bookRequestList({ assignedTo: this.$store.getters['user/user'].id, status: 'In Review' })).data
       }
     },
     async allocate (requestId : string) {
       const userToAllocate = {
-        assignedTo: this.$store.getters['user/user'].id
+        assignedTo: this.$store.getters['user/user'].id,
+        status: 'In Review'
       } as UpdateRequest
       await api.bookRequest.bookRequestUpdate(requestId, userToAllocate)
       await this.getTableItems()
     },
-    async completeRequest () {
-      const updatedRequest = {
-        ...this.selectedRequest
-      } as UpdateRequest
-      await api.bookRequest.bookRequestUpdate(this.selectedRequest!._id!, updatedRequest)
-      await this.getTableItems()
-      this.closeModal('completeRequestModal')
+    showStatusHistory (row: BRow) {
+      this.selectedRequest = row.item
+      row.toggleDetails()
     },
-    openModal (modalId : string, item : Request) {
-      this.selectedRequest = item
-      this.$bvModal.show(modalId)
-    },
-    closeModal (modalId : string) {
-      this.$bvModal.hide(modalId)
+    async modalClose () {
       this.selectedRequest = null
+      await this.getTableItems()
     }
   },
   async created () {

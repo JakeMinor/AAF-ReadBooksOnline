@@ -15,13 +15,14 @@ module.exports = class statusBusiness {
    date: new Date().toUTCString()
   }
   return statusDataAccess.create(status)
-    .catch(error => {throw httpError(500, error)})
+    .catch(error => {throw error})
  }
 }
 
 async function validateStatusDetails(statusDetails) {
- if((statusDetails.status === "Pending Review" && (statusDetails.status === "In Review" && statusDetails.message === "Request has been updated."))){
-  await utilities.isUserEmployee(statusDetails.userId)
+ console.log(statusDetails.updatedBy)
+ if((statusDetails.status === "Pending Review" && (statusDetails.status === "In Review" && statusDetails.message))){
+  await utilities.isUserEmployee(statusDetails.updatedBy)
  }
  if (!(utilities.statuses.includes(statusDetails.status))) {
   throw httpError(400, "Data was missing or invalid.")

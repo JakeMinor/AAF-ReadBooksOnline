@@ -1,14 +1,14 @@
 <template>
 <div class="vh-100 d-flex align-items-center justify-content-center">
-    <b-card class="w-75" title="Sign in to ReadBooks Online">
+    <b-card class="w-50" title="Sign in to ReadBooks Online">
       <template #default>
         <b-input-group class="flex-column p-3">
           <ValidationObserver ref="observer">
             <custom-input id="email" label="Email" v-model="email" rules="required|email"></custom-input>
-            <custom-input label="Password" type="password" v-model="password" rules="required"></custom-input>
+            <custom-input label="Password" type="password" v-model="password" rules="required" class="mt-3"></custom-input>
           </ValidationObserver>
           <b-button variant="primary" class="mt-3" @click="signIn">Sign in</b-button>
-          <span class="mt-4">New here? <b-link to="sign-up">Sign up!</b-link></span>
+          <span class="mt-4">New here? <b-link to="sign-up" class="link">Sign up!</b-link></span>
         </b-input-group>
       </template>
     </b-card>
@@ -34,7 +34,6 @@ export default Vue.extend({
   },
   methods: {
     async signIn () {
-      console.log(this)
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return

@@ -20,9 +20,16 @@ module.exports = class statusBusiness {
 }
 
 async function validateStatusDetails(statusDetails) {
- console.log(statusDetails.updatedBy)
  if((statusDetails.status === "Pending Review" && (statusDetails.status === "In Review" && statusDetails.message))){
-  await utilities.isUserEmployee(statusDetails.updatedBy)
+  switch(statusDetails.status){
+   case "Additional Information Required":
+    await utilities.hasCorrectPermission(statusDetails.updatedBy, "RequestMoreInformation")
+    break;
+   case "Denied":
+   case "Purchased":
+    await utilities.hasCorrectPermission(statusDetails.updatedBy, "AuthoriseRequest")
+    break;
+  }
  }
  if (!(utilities.statuses.includes(statusDetails.status))) {
   throw httpError(400, "Data was missing or invalid.")

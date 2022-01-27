@@ -8,35 +8,35 @@ const grantAccess = require('../router.middleware').grantAccess
 //REQUIRES VALID TOKEN WITH AUTHORISER ROLE
 
 //GET ALL ROLES
-router.get('/role/', (req, res, next) => grantAccess("Authoriser", "", req, res, next), roleController.getAllRoles)
+router.get('/role/', (req, res, next) => grantAccess("ReadRole", req, res, next), roleController.getAllRoles)
 
 //GET ROLE BY NAME
-router.get('/role/:name', (req, res, next) => grantAccess("Authoriser", "", req, res, next), roleController.getRoleByName)
+router.get('/role/:name', (req, res, next) => grantAccess("ReadRole", req, res, next), roleController.getRoleByName)
 
 //CREATE ROLE
-router.post('/role/', (req, res, next) => grantAccess("Authoriser", "", req, res, next), roleController.createRole)
+router.post('/role/', (req, res, next) => grantAccess("CreateRole", req, res, next), roleController.createRole)
 
 //UPDATE ROLE
-router.put('/role/:id', (req, res, next) => grantAccess("Authoriser", "", req, res, next), roleController.updateRole)
+router.put('/role/:id', (req, res, next) => grantAccess("UpdateRole", req, res, next), roleController.updateRole)
 
 //DELETE ROLE
-router.delete('/role/:id', (req, res, next) => grantAccess("Authoriser", "", req, res, next), roleController.deleteRole)
+router.delete('/role/:id', (req, res, next) => grantAccess("DeleteRole", req, res, next), roleController.deleteRole)
 
 //PERMISSION ROUTES
 
 //GET ALL PERMISSIONS
-router.get('/permission/', (req, res, next) => grantAccess("Authoriser", "", "", req, res, next), permissionController.getAllPermissions)
+router.get('/permission/', (req, res, next) => grantAccess("ReadPermission", req, res, next), permissionController.getAllPermissions)
 
 //GET PERMISSION BY NAME
-router.get('/permission/:name', (req, res, next) => grantAccess("Authoriser", "", req, res, next), permissionController.getPermissionByName)
+router.get('/permission/:name', (req, res, next) => grantAccess("ReadPermission", req, res, next), permissionController.getPermissionByName)
 
 //CREATE PERMISSION
-router.post('/permission/', (req, res, next) => grantAccess("Authoriser", "", req, res, next), permissionController.createPermission)
+router.post('/permission/', (req, res, next) => grantAccess("CreatePermission", req, res, next), permissionController.createPermission)
 
 //UPDATE PERMISSION
-router.put('/permission/:id', (req, res, next) => grantAccess("Authoriser", "", req, res, next), permissionController.updatePermission)
+router.put('/permission/:id', (req, res, next) => grantAccess("UpdatePermission", req, res, next), permissionController.updatePermission)
 
 //DELETE PERMISSION
-router.delete('/permission/:id', (req, res, next) => grantAccess("Authoriser", "", req, res, next), permissionController.deletePermission)
+router.delete('/permission/:id', (req, res, next) => grantAccess("DeletePermission", req, res, next), permissionController.deletePermission)
 
 module.exports = router

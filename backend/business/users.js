@@ -95,8 +95,6 @@ async function validateNewUserData(newUserData) {
 
 async function validateRoles(roles) {
  const rolesInDb = (await rolesBusiness.getAllRoles({})).roles
- console.log(roles)
- console.log(rolesInDb)
  const valid = roles.every(role => rolesInDb.find(dbRole => dbRole._id.toString() === role))
  if(!(valid)){
   throw httpError(400, `Invalid role, the supplied role should be either ${rolesInDb.values()}.`)
@@ -104,9 +102,7 @@ async function validateRoles(roles) {
 }
 
 async function validateCredentials(signInDetails) {
- const user = userDataAccess.getByFilterAndPopulate({"email": signInDetails.email}, {path: 'roles', populate: {path: 'permissions', select: 'name'}})
-   .then((user) => {
-    return user})
+ const user = await userDataAccess.getByFilterAndPopulate({"email": signInDetails.email}, {path: 'roles', populate: {path: 'permissions', select: 'name'}})
    .catch(() => {throw httpError(401, "Your email or password is invalid, please try again.")})
  
  await bcrypt.compare(signInDetails.password, user.password)

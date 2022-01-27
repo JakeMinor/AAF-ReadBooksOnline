@@ -40,9 +40,11 @@ exports.createUser = async (request, response) => {
 }
 
 exports.updateUserRole = async (request, response) => {
- userBusiness.updateRole(request.params.id, request.body.role)
+ userBusiness.updateRoles(request.params.id, request.body)
    .then((updatedUser) => {return response.status(200).send(updatedUser)})
-   .catch(error => {return response.status(error.status).send(error.message)});
+   .catch(error => {
+    console.log(error)
+    return response.status(error.status).send(error.message)});
 }
 
 exports.deleteUser = async (request, response) => {

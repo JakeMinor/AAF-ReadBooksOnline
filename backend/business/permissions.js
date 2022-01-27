@@ -20,6 +20,7 @@ module.exports = class permissionBusiness {
  }
  
  async createPermission(permissionDetails) {
+  hasRequiredFields(permissionDetails)
   await isPermissionNameTaken(permissionDetails.name)
   const newPermission = {
    name: permissionDetails.name,
@@ -34,11 +35,11 @@ module.exports = class permissionBusiness {
   const permissionId = utilities.convertToObjectId(id)
   await doesPermissionExist(permissionId)
   await isPermissionNameTaken(permissionDetails.name)
-  const newPermission = {
+  const updatedPermission = {
    name: permissionDetails.name,
    description: permissionDetails.description
   }
-  return permissionDataAccess.update(permissionId, newPermission)
+  return permissionDataAccess.update(permissionId, updatedPermission)
     .then(updatedPermission => {return updatedPermission})
     .catch(error => {throw httpError(404, error.message)})
  }
@@ -52,6 +53,12 @@ module.exports = class permissionBusiness {
 async function doesPermissionExist(id) {
  if(!(await permissionDataAccess.model.doesPermissionExist(id))){
   throw httpError(404, "Permission does not exist in the database.")
+ }
+}
+
+function hasRequiredFields(permissionDetails){
+ if (!permissionDetails.name) {
+  throw httpError(400, 'A name for the permission is required.')
  }
 }
 

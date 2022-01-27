@@ -8,10 +8,11 @@ const status = require('../database/models/status')(mongoose)
 const user = require('../database/models/user')(mongoose)
 const role = require('../database/models/role')(mongoose)
 const permission = require('../database/models/permission')(mongoose)
+const config = require('../database/models/config')(mongoose)
 
 mongoose.Promise = global.Promise
 
-const dbModel = {mongoose: mongoose, url: connectionString, permission: permission, role: role,  request: request, status: status, user: user }
+const dbModel = {mongoose: mongoose, url: connectionString, permission: permission, role: role,  request: request, status: status, user: user, config: config }
 
 mongoose.plugin(schema => {
  schema.pre('createRequest', enableValidators)

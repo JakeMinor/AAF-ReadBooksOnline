@@ -80,10 +80,13 @@ export interface User {
   _id?: string;
   username?: string;
   email?: string;
-  role?: "Client" | "Employee" | "Authoriser";
+  roles?: Role[];
 }
 
-export type Users = User[];
+export interface Users {
+  roles?: User[];
+  count?: number;
+}
 
 export interface SignUpDetails {
   email?: string;
@@ -103,8 +106,49 @@ export interface SignInDetails {
   password?: string;
 }
 
+export interface Permission {
+  _id?: string;
+  name: string;
+  description?: string;
+}
+
+export interface Permissions {
+  roles?: Permission[];
+  count?: number;
+}
+
+export interface CreatePermission {
+  name: string;
+  description?: string;
+}
+
+export interface UpdatePermission {
+  name: string;
+  description?: string;
+}
+
+export interface Role {
+  _id?: string;
+  name: string;
+  description?: string;
+  permissions?: Permission[];
+}
+
+export interface Roles {
+  roles?: Role[];
+  count?: number;
+}
+
+export interface CreateRole {
+  name: string;
+  description?: string;
+  permissions?: string[];
+}
+
 export interface UpdateRole {
-  role?: string;
+  name: string;
+  description?: string;
+  permissions?: string[];
 }
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
@@ -502,6 +546,195 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     userDelete: (id: string, params: RequestParams = {}) =>
       this.request<void, string>({
         path: `/user/${id}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+  };
+  admin = {
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name PermissionList
+     * @summary Get all permissions in the system. Requires authentication with an Authoriser role.
+     * @request GET:/admin/permission
+     * @secure
+     */
+    permissionList: (query?: { limit?: string; offset?: string }, params: RequestParams = {}) =>
+      this.request<Permissions, string>({
+        path: `/admin/permission`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name PermissionCreate
+     * @summary Creates a new permission. Requires authentication with Authoriser role
+     * @request POST:/admin/permission
+     * @secure
+     */
+    permissionCreate: (permission: CreatePermission, params: RequestParams = {}) =>
+      this.request<Permission, string>({
+        path: `/admin/permission`,
+        method: "POST",
+        body: permission,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name PermissionDetail
+     * @summary Get a permission by its name. Requires authentication with an Authoriser role.
+     * @request GET:/admin/permission/{name}
+     * @secure
+     */
+    permissionDetail: (name: string, params: RequestParams = {}) =>
+      this.request<Permission, string>({
+        path: `/admin/permission/${name}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name PermissionUpdate
+     * @summary Updates a permission in the system. Requires authentication with Authoriser role
+     * @request PUT:/admin/permission/{id}
+     * @secure
+     */
+    permissionUpdate: (id: string, Permission: UpdatePermission, params: RequestParams = {}) =>
+      this.request<Permission, string>({
+        path: `/admin/permission/${id}`,
+        method: "PUT",
+        body: Permission,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name PermissionDelete
+     * @summary Delete a permission in the system. Requires authentication with Authoriser role
+     * @request DELETE:/admin/permission/{id}
+     * @secure
+     */
+    permissionDelete: (id: string, params: RequestParams = {}) =>
+      this.request<void, string>({
+        path: `/admin/permission/${id}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name RoleList
+     * @summary Get all roles in the system. Requires authentication with an Authoriser role.
+     * @request GET:/admin/role
+     * @secure
+     */
+    roleList: (query?: { limit?: string; offset?: string }, params: RequestParams = {}) =>
+      this.request<Roles, string>({
+        path: `/admin/role`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name RoleCreate
+     * @summary Creates a new role. Requires authentication with Authoriser role
+     * @request POST:/admin/role
+     * @secure
+     */
+    roleCreate: (Role: CreateRole, params: RequestParams = {}) =>
+      this.request<Role, string>({
+        path: `/admin/role`,
+        method: "POST",
+        body: Role,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name RoleDetail
+     * @summary Get a role by its name. Requires authentication with an Authoriser role.
+     * @request GET:/admin/role/{name}
+     * @secure
+     */
+    roleDetail: (name: string, params: RequestParams = {}) =>
+      this.request<Role, string>({
+        path: `/admin/role/${name}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name RoleUpdate
+     * @summary Updates a role in the system. Requires authentication with Authoriser role
+     * @request PUT:/admin/role/{id}
+     * @secure
+     */
+    roleUpdate: (id: string, Permission: UpdateRole, params: RequestParams = {}) =>
+      this.request<Role, string>({
+        path: `/admin/role/${id}`,
+        method: "PUT",
+        body: Permission,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name RoleDelete
+     * @summary Delete a Role in the system. Requires authentication with Authoriser role
+     * @request DELETE:/admin/role/{id}
+     * @secure
+     */
+    roleDelete: (id: string, params: RequestParams = {}) =>
+      this.request<void, string>({
+        path: `/admin/role/${id}`,
         method: "DELETE",
         secure: true,
         ...params,

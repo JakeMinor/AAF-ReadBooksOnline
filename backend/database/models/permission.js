@@ -1,6 +1,6 @@
 
 module.exports = mongoose => {
- let schema = mongoose.Schema({
+ let permissionSchema = mongoose.Schema({
   name: {
    type: String,
    required: [true, "A name for the permission is required."],
@@ -11,16 +11,16 @@ module.exports = mongoose => {
   }
  })
  
- schema.statics.doesPermissionExist = async function(id, cb) {
+ permissionSchema.statics.doesPermissionExist = async function(id, cb) {
   return ((await this.find({_id: id}).exec(cb)).length > 0)
  } 
  
- schema.statics.isPermissionNameTaken = async function(name, cb) {
+ permissionSchema.statics.isPermissionNameTaken = async function(name, cb) {
   return ((await this.find({name: name}).exec(cb)).length > 0)
  }
  
  return mongoose.model(
    "permission",
-   schema
+   permissionSchema
  )
 }

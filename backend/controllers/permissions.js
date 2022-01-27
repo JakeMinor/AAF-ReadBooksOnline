@@ -1,4 +1,4 @@
-const PermissionBusiness = require("../business/permission")
+const PermissionBusiness = require("../business/permissions")
 const permissionBusiness = new PermissionBusiness()
 
 exports.getAllPermissions = async (request, response) => {

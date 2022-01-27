@@ -14,7 +14,7 @@ module.exports = mongoose => {
      type: String,
      required: [true, "A password is required."]
     },
-    roles: [mongoose.Schema.Types.ObjectId]
+    roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "role"}]
    }
  )
  

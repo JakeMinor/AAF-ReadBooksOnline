@@ -22,3 +22,11 @@ export function formatDate (date : string) {
 export function formatPrice (price : string) {
   return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'GBP' }).format(Number.parseInt(price))
 }
+
+export function generateId () {
+  const idPart = () => {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+  }
+  return `${idPart()}${idPart()}-${idPart()}-${idPart()}-${idPart()}-${idPart()}${idPart()}${idPart()}`
+}

@@ -11,6 +11,7 @@
       </template>
       <template #cell(actions)="row">
         <div class="d-flex flex-column">
+          <b-link class="mb-2" v-b-modal.supportChatModal @click="startChat(row)">Support Chat</b-link>
           <b-link class="mb-2" v-b-modal.editModal @click="selectedRequest = row.item" v-if="row.item.status === 'Pending Review' || row.item.status === 'Additional Information Required'">Edit</b-link>
           <b-link class="mb-2" @click="deleteRequest(row.item._id)" v-if="row.item.status === 'Pending Review'">Delete</b-link>
           <b-link class="mb-2" @click="showStatusHistory(row)">Status History <b-icon :icon="row.detailsShowing ? 'chevron-up' : 'chevron-down'" /></b-link>
@@ -30,6 +31,7 @@
     </div>
     <create-request-modal @Created="modalClose"/>
     <edit-request-modal @Updated="modalClose" @Closed="selectedRequest = null" :selected-request="selectedRequest" v-if="selectedRequest"/>
+    <chat-modal :chat-history="selectedRequest.chatHistory" :id="selectedRequest._id" v-if="selectedRequest" />
   </div>
 </template>
 
@@ -41,10 +43,11 @@ import CreateRequestModal from '@/components/BookRequests/CreateRequestModal.vue
 import EditRequestModal from '@/components/BookRequests/EditRequestModal.vue'
 import { api, formatDate } from '@/helper'
 import { BRow } from 'bootstrap-vue'
+import ChatModal from '@/components/ChatModal.vue'
 
 export default Vue.extend({
   name: 'bookRequests',
-  components: { StatusTimeline, CreateRequestModal, EditRequestModal },
+  components: { ChatModal, StatusTimeline, CreateRequestModal, EditRequestModal },
   data () {
     return {
       requests: [] as Request[],
@@ -80,6 +83,12 @@ export default Vue.extend({
     async modalClose () {
       this.selectedRequest = null
       await this.getTableItems()
+    },
+    startChat (row : BRow) {
+      this.selectedRequest = row.item
+      console.log(this.selectedRequest)
+      this.$socket.client.connect()
+      this.$socket.client.emit('join_request_chat', this.selectedRequest!._id!)
     }
   },
   async created () {

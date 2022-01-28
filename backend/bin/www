@@ -88,3 +88,24 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+/**
+ * Server for live chat
+ */
+const socketIO = require("socket.io")(server, {
+  cors: {
+    origin: ["http://localhost:8080"]
+  }
+})
+
+socketIO.on("connection", (socket) => {
+  let id = ""
+  socket.on("join_request_chat", function (requestId) {
+    id = requestId
+    socket.join(id)
+    console.log(`Joining Room ${id}`)
+  })
+  socket.on("send_message", function (message) {
+    socket.to(id).emit("updated_messages", message)
+  })
+})

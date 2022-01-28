@@ -14,6 +14,7 @@
       <template #cell(actions)="row">
         <div class="d-flex flex-column">
           <b-link class="pb-2" v-if="page === 'Unallocated Requests'" @click="allocate(row.item._id)">Allocate</b-link>
+          <b-link class="pb-2" v-if="page === 'My Requests'" v-b-modal.supportChatModal @click="startChat(row)">Support Chat</b-link>
           <b-link class="pb-2" v-if="page === 'My Requests'" v-b-modal.completeRequestModal @click="selectedRequest = row.item">Complete Request</b-link>
           <b-link class="pb-2" v-if="page === 'My Requests'" v-b-modal.moreInformationModal @click="selectedRequest = row.item">Ask for more information</b-link>
           <b-link class="mb-2" @click="showStatusHistory(row)">Status History <b-icon :icon="row.detailsShowing ? 'chevron-up' : 'chevron-down'" /></b-link>
@@ -34,6 +35,7 @@
     </div>
     <request-more-information-modal v-if="selectedRequest" :request-id="selectedRequest.id" @MoreInformationRequested="modalClose" @closed="selectedRequest = null"/>
     <complete-request-modal v-if="selectedRequest" :selected-request="selectedRequest" @Completed="modalClose" @Closed="selectedRequest = null"/>
+    <chat-modal :chat-history="selectedRequest.chatHistory" :id="selectedRequest._id" v-if="selectedRequest"/>
   </div>
 </template>
 
@@ -45,11 +47,13 @@ import { BRow } from 'bootstrap-vue'
 import StatusTimeline from '@/components/StatusTimeline.vue'
 import RequestMoreInformationModal from '@/components/EmployeeRequests/RequestMoreInformationModal.vue'
 import CompleteRequestModal from '@/components/EmployeeRequests/CompleteRequestModal.vue'
+import ChatModal from '@/components/ChatModal.vue'
 type pages = 'Unallocated Requests' | 'My Requests'
 
 export default Vue.extend({
   name: 'EmployeeRequests',
   components: {
+    ChatModal,
     RequestMoreInformationModal,
     CompleteRequestModal,
     StatusTimeline
@@ -100,6 +104,11 @@ export default Vue.extend({
     async modalClose () {
       this.selectedRequest = null
       await this.getTableItems()
+    },
+    startChat (row : BRow) {
+      this.selectedRequest = row.item
+      this.$socket.client.connect()
+      this.$socket.client.emit('join_request_chat', this.selectedRequest!._id!)
     }
   },
   async created () {

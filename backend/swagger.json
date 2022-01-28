@@ -1130,7 +1130,8 @@
         "bookType",
         "author",
         "requestedDateTime",
-        "requestedBy"
+        "requestedBy",
+        "chatHistory"
       ],
       "properties": {
         "_id": {
@@ -1170,6 +1171,12 @@
         },
         "status": {
           "type": "string"
+        },
+        "chatHistory": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Message"
+          }
         }
       }
     },
@@ -1245,6 +1252,12 @@
         },
         "statusMessage": {
           "type": "string"
+        },
+        "chatHistory": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Message"
+          }
         }
       }
     },
@@ -1537,6 +1550,29 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "Message": {
+      "required": [
+        "message",
+        "username",
+        "timeSent",
+        "_id"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "message": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "timeSent": {
+          "type": "string"
         }
       }
     }

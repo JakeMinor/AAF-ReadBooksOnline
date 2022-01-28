@@ -21,6 +21,7 @@ export interface Request {
   authorised?: boolean;
   price?: number;
   status?: string;
+  chatHistory: Message[];
 }
 
 export interface Requests {
@@ -45,6 +46,7 @@ export interface UpdateRequest {
   price?: number;
   status?: string;
   statusMessage?: string;
+  chatHistory?: Message[];
 }
 
 export interface Status {
@@ -152,6 +154,13 @@ export interface UpdateRole {
   name: string;
   description?: string;
   permissions?: string[];
+}
+
+export interface Message {
+  _id: string;
+  message: string;
+  username: string;
+  timeSent: string;
 }
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";

@@ -6,12 +6,28 @@
                           @change="getTableItems" />
     </b-form-group>
     <b-button variant="primary" class="mb-2" @click="openCreateModal">Create</b-button>
-    <b-table responsive striped hover :items="tableData" :fields="tableHeaders" :current-page="offset" :per-page="0"
+    <b-table responsive striped hover :items="filteredList" :fields="tableHeaders" :current-page="offset" :per-page="0"
              show-empty empty-text="No data to show.">
+      <template #head(username)="head">
+        {{head.label}}
+        <b-input v-model="filters.username" size="sm" class="mt-2" placeholder="Username..."></b-input>
+      </template>
+      <template #head(email)="head">
+        {{ head.label }}
+        <b-input v-model="filters.email" size="sm" class="mt-2" placeholder="Email..."></b-input>
+      </template>
+      <template #head(name)="head">
+        {{ head.label }}
+        <b-input v-model="filters.name" size="sm" class="mt-2" placeholder="Name..."></b-input>
+      </template>
+      <template #head(description)="head">
+        {{ head.label }}
+        <b-input v-model="filters.description" size="sm" class="mt-2" placeholder="Description..."></b-input>
+      </template>
       <template #cell(roles)="row">
         <b-badge class="mr-2" variant="primary" v-for="role in row.item.roles" :key="role._id">{{role.name}}</b-badge>
       </template>
-      <template #cell(permissions)="row">
+      <template #cell(permissions)="row" >
         <b-badge class="mr-2" variant="primary" v-for="permission in row.item.permissions" :key="permission._id">{{ permission.name }}</b-badge>
       </template>
       <template #cell(actions)="row">
@@ -74,7 +90,13 @@ export default Vue.extend({
       rolesOptions: [] as Role[],
       totalCount: 0,
       offset: 1,
-      limit: 10
+      limit: 10,
+      filters: {
+        username: '',
+        email: '',
+        name: '',
+        description: ''
+      }
     }
   },
   computed: {
@@ -93,6 +115,21 @@ export default Vue.extend({
         return [{ key: 'name', sortable: true },
           { key: 'description', sortable: true },
           { key: 'Actions', sortable: false }]
+      }
+    },
+    filteredList () {
+      if (this.page === 'Users') {
+        return this.$data.tableData.filter((data : User) =>
+          data.username?.includes(this.filters.username) &&
+          data.email?.includes(this.filters.email))
+      } else if (this.page === 'Roles') {
+        return this.$data.tableData.filter((data: Role) =>
+          data.name?.includes(this.filters.name) &&
+          data.description?.includes(this.filters.description))
+      } else {
+        return this.$data.tableData.filter((data: Permission) =>
+          data.name?.includes(this.filters.name) &&
+          data.description?.includes(this.filters.description))
       }
     }
   },

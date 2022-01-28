@@ -2,7 +2,27 @@
   <div>
     <h1 class="font-color-black">My Requests</h1>
     <b-button class="mt-2 mb-2 ml-auto" variant="primary" v-b-modal.createModal>Create</b-button>
-    <b-table responsive striped hover :items="requests" :fields="requestTableHeaders" :current-page="offset" :per-page="0" show-empty empty-text="You have no requests, why not make one!">
+    <b-table responsive striped hover :items="filteredList" :fields="requestTableHeaders" :current-page="offset" :per-page="0" show-empty empty-text="You have no requests, why not make one!">
+      <template #head(bookName)="head">
+        {{ head.label }}
+        <b-input v-model="filters.bookName" size="sm" class="mt-2" placeholder="Book Name..."></b-input>
+      </template>
+      <template #head(author)="head">
+        {{ head.label }}
+        <b-input v-model="filters.author" size="sm" class="mt-2" placeholder="Author..."></b-input>
+      </template>
+      <template #head(isbn)="head">
+        {{ head.label }}
+        <b-input v-model="filters.isbn" size="sm" class="mt-2" placeholder="ISBN..."></b-input>
+      </template>
+      <template #head(bookType)="head">
+        {{ head.label }}
+        <b-select :options="bookTypes" v-model="filters.bookType" size="sm" class="mt-2"></b-select>
+      </template>
+      <template #head(status)="head">
+        {{ head.label }}
+        <b-select :options="statuses" v-model="filters.status" size="sm" class="mt-2"></b-select>
+      </template>
       <template #cell(requesteddatetime)="cell">
         {{formatDate(cell.item.requestedDateTime)}}
       </template>
@@ -41,7 +61,7 @@ import { Request } from '@/api/api'
 import StatusTimeline from '@/components/StatusTimeline.vue'
 import CreateRequestModal from '@/components/BookRequests/CreateRequestModal.vue'
 import EditRequestModal from '@/components/BookRequests/EditRequestModal.vue'
-import { api, formatDate } from '@/helper'
+import { api, BookType, Status, bookTypes, statuses, formatDate } from '@/helper'
 import { BRow } from 'bootstrap-vue'
 import ChatModal from '@/components/ChatModal.vue'
 
@@ -52,6 +72,13 @@ export default Vue.extend({
     return {
       requests: [] as Request[],
       selectedRequest: null as Request | null,
+      filters: {
+        bookName: '',
+        author: '',
+        isbn: '',
+        bookType: '' as BookType,
+        status: '' as Status
+      },
       totalCount: 0,
       offset: 1,
       limit: 10
@@ -68,7 +95,19 @@ export default Vue.extend({
         { key: 'Actions', sortable: false }]
     },
     bookTypes () {
-      return ['Book', 'Audiobook']
+      return ['', ...bookTypes]
+    },
+    statuses () {
+      return ['', ...statuses]
+    },
+    filteredList () {
+      return this.$data.requests.filter(request =>
+        request.bookName.includes(this.filters.bookName) &&
+        request.author.includes(this.filters.author) &&
+        request.bookType.includes(this.filters.bookType) &&
+        request.status.includes(this.filters.status) &&
+        request.isbn?.includes(this.filters.isbn)
+      )
     }
   },
   methods: {

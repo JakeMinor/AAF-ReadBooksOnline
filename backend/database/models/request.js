@@ -1,3 +1,4 @@
+const utilities = require('../../utilities')
 module.exports = mongoose => {
  const requestSchema = mongoose.Schema(
    {
@@ -46,7 +47,14 @@ module.exports = mongoose => {
  })
  
  requestSchema.statics.doesRequestExist = async function(id, cb) {
-  return (await this.find({_id: id}).exec(cb)).length > 0
+  return await this.find({_id: id}).exec(cb)
+ }
+ 
+ requestSchema.methods.hasRequestBeenThroughPreviousStatuses = async function(newStatus, cb) {
+  const statuses = ['Pending Review', 'In Review', 'Additional Information Required', 'Awaiting Approval', 'Purchased', 'Denied']
+  const statusHistory = await this.model('status').find({requestId: this._id}).exec(cb)
+  const previousStatuses = statuses.slice(0, (statuses.indexOf(newStatus) - 1)).filter(status => status !== 'Additional Information Required' && status !== 'Purchased' && status !== 'Denied')
+  return previousStatuses.every(status => statusHistory.find(statush => statush.status === status))
  }
  
  return mongoose.model(

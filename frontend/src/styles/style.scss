@@ -51,6 +51,7 @@ h2 {
 }
 
 .navbar-links {
+  display: flex;
   background-color: $White-Text-Colour;
   padding: 0.25rem 1rem;
   a {

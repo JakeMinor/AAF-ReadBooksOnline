@@ -8,15 +8,19 @@
             <template #button-content>
               {{ user.username }}
             </template>
-            <b-dropdown-item v-if="isAuthoriser">Admin</b-dropdown-item>
+            <b-dropdown-item v-if="isAdmin" :to="{ name: 'Admin' }">Admin</b-dropdown-item>
             <b-dropdown-item @click="signOut">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
     <div class="navbar-links" >
-      <router-link class="ml-1 mr-3" :to="{ name: 'Catalog' }">Catalog</router-link>
-      <router-link :to="{ name: 'Requests' }">Requests</router-link>
+      <router-link class="ml-1 mr-3 align-self-center" :to="{ name: 'Catalog' }">Catalog</router-link>
+      <b-nav-item-dropdown text="Requests" class="list-unstyled font-color-black">
+        <b-dropdown-item :to="{ name: 'ClientRequests' }" v-if="isClient">Requests</b-dropdown-item>
+        <b-dropdown-item :to="{ name: 'EmployeeRequests' }" v-if="isEmployee">Work on Requests</b-dropdown-item>
+        <b-dropdown-item :to="{ name: 'AuthoriserRequests' }" v-if="isAuthoriser">Authorise Requests</b-dropdown-item>
+      </b-nav-item-dropdown>
     </div>
   </div>
 </template>
@@ -33,6 +37,15 @@ export default Vue.extend({
     },
     isAuthoriser () {
       return store.getters['user/isAuthoriser']
+    },
+    isEmployee () {
+      return store.getters['user/isEmployee']
+    },
+    isClient () {
+      return store.getters['user/isClient']
+    },
+    isAdmin () {
+      return store.getters['user/isAdmin']
     }
   },
   methods: {

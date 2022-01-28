@@ -104,7 +104,7 @@ export default Vue.extend({
       return ['', ...bookTypes]
     },
     filteredList () {
-      return this.$data.requests.filter(request =>
+      return this.$data.requests.filter((request : Request) =>
         request.bookName.includes(this.filters.bookName) &&
         request.author.includes(this.filters.author) &&
         request.isbn?.includes(this.filters.isbn) &&

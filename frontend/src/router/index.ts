@@ -9,6 +9,7 @@ import SignUp from '@/views/SignUp.vue'
 import Error from '@/views/Error.vue'
 import store from '@/store/index'
 import UserManagement from '@/views/UserManagement.vue'
+import { Role } from '@/api/api'
 
 Vue.use(VueRouter)
 
@@ -19,18 +20,27 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/client-requests',
-    name: 'Requests',
-    component: ClientRequests
+    name: 'ClientRequests',
+    component: ClientRequests,
+    meta: {
+      role: 'Client'
+    }
   },
   {
     path: '/employee-requests',
     name: 'EmployeeRequests',
-    component: EmployeeRequests
+    component: EmployeeRequests,
+    meta: {
+      role: 'Employee'
+    }
   },
   {
     path: '/authoriser-requests',
     name: 'AuthoriserRequests',
-    component: AuthoriserRequests
+    component: AuthoriserRequests,
+    meta: {
+      role: 'Authoriser'
+    }
   },
   {
     path: '/catalog',
@@ -40,7 +50,10 @@ const routes: Array<RouteConfig> = [
   {
     path: '/admin',
     name: 'Admin',
-    component: UserManagement
+    component: UserManagement,
+    meta: {
+      role: 'UserManager'
+    }
   },
   {
     path: '/sign-in',
@@ -79,7 +92,7 @@ router.beforeEach((to, from, next) => {
     }
 
     if (to.meta && Object.keys(to.meta).length !== 0) {
-      if (!to.meta.roles.includes(store.getters['user/user'].role)) {
+      if (!store.getters['user/user'].roles.some((role : Role) => role.name === to.meta?.role)) {
         next({ name: 'Error' })
       }
     }

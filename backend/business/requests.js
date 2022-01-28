@@ -91,7 +91,13 @@ module.exports = class requestBusiness {
 }
 
 async function validateUpdatedRequest(request) {
- await utilities.doesRequestExist(request.params.id)
+ const req = await utilities.doesRequestExist(request.params.id)
+ 
+ if(request.body.status){
+  if(!(await req[0].hasRequestBeenThroughPreviousStatuses(request.body.status))){
+   throw httpError(400, "Request must go through the previous statuses.")
+  }
+ }
  
  switch(request.body.status){
   case "Awaiting Approval":

@@ -22,7 +22,9 @@ exports.createNewRequest = async (request, response) => {
 exports.updateRequest = async (request, response) => {
  requestBusiness.updateRequest(request)
    .then(() => {return response.status(200).send()})
-   .catch(error => {return response.status(error.status).send(error.message)});
+   .catch(error => {
+    console.log(error)
+    return response.status(error.status).send(error.message)});
 }
 
 exports.deleteRequest = async (request, response) => {

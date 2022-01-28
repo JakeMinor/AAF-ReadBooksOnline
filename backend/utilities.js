@@ -39,9 +39,11 @@ module.exports = class Utilities{
  }
  
  static async doesRequestExist(requestId) {
-  if (!(await requestDataAccess.model.doesRequestExist(requestId))) {
+  const request = await requestDataAccess.model.doesRequestExist(requestId)
+  if (!(request)) {
    throw httpError(404, "Request does not exist in the database.")
   }
+  return request
  }
  
  static statuses = ['Pending Review', 'In Review', 'Additional Information Required', 'Awaiting Approval', 'Purchased', 'Denied']

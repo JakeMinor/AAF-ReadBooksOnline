@@ -80,11 +80,19 @@ export default Vue.extend({
   computed: {
     tableHeaders () {
       if (this.page === 'Users') {
-        return ['username', 'email', 'roles', 'actions']
+        return [{ key: 'username', sortable: true },
+          { key: 'email', sortable: true },
+          { key: 'roles', sortable: false },
+          { key: 'Actions', sortable: false }]
       } else if (this.page === 'Roles') {
-        return ['name', 'description', 'permissions', 'actions']
+        return [{ key: 'name', sortable: true },
+          { key: 'description', sortable: true },
+          { key: 'permissions', sortable: false },
+          { key: 'Actions', sortable: false }]
       } else {
-        return ['name', 'description', 'actions']
+        return [{ key: 'name', sortable: true },
+          { key: 'description', sortable: true },
+          { key: 'Actions', sortable: false }]
       }
     }
   },

@@ -59,7 +59,13 @@ export default Vue.extend({
   },
   computed: {
     requestTableHeaders () {
-      return ['bookName', 'author', 'isbn', 'bookType', 'requestedDateTime', 'status', 'Actions']
+      return [{ key: 'bookName', sortable: true },
+        { key: 'author', sortable: true },
+        { key: 'isbn', sortable: true },
+        { key: 'bookType', sortable: true },
+        { key: 'requestedDateTime', sortable: true },
+        { key: 'status', sortable: true },
+        { key: 'Actions', sortable: false }]
     },
     bookTypes () {
       return ['Book', 'Audiobook']

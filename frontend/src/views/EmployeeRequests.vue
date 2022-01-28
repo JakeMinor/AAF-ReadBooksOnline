@@ -4,7 +4,7 @@
     <b-form-group>
       <b-form-radio-group buttons button-variant="outline-primary" v-model="page" :options="pages" @change="getTableItems"/>
     </b-form-group>
-    <b-table responsive striped hover :items="requests" :fields="tableHeaders" :current-page="offset" :per-page="0" show-empty :empty-text="page === 'Unallocated Requests' ? 'No requests to allocate.' : 'You have no requests allocated to you.'">
+    <b-table responsive striped hover sort-by sort-desc="true" :items="requests" :fields="tableHeaders" :current-page="offset" :per-page="0" show-empty :empty-text="page === 'Unallocated Requests' ? 'No requests to allocate.' : 'You have no requests allocated to you.'">
       <template #cell(requesteddatetime)="cell">
         {{ formatDate(cell.item.requestedDateTime) }}
       </template>
@@ -71,7 +71,12 @@ export default Vue.extend({
   },
   computed: {
     tableHeaders () {
-      return ['bookName', 'author', 'isbn', 'bookType', 'requestedDateTime', 'Actions']
+      return [{ key: 'bookName', sortable: true },
+        { key: 'author', sortable: true },
+        { key: 'isbn', sortable: true },
+        { key: 'bookType', sortable: true },
+        { key: 'requestedDateTime', sortable: true },
+        { key: 'Actions', sortable: false }]
     },
     bookTypes () {
       return bookTypes

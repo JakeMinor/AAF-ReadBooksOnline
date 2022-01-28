@@ -33,7 +33,7 @@ export default Vue.extend({
         bookName: null as string | null,
         author: null as string | null,
         bookType: null as BookType | null,
-        isbn: null as string | null
+        isbn: '' as string
       }
     }
   },

@@ -4,7 +4,23 @@
     <b-form-group>
       <b-form-radio-group buttons button-variant="outline-primary" v-model="page" :options="pages" @change="getTableItems"/>
     </b-form-group>
-    <b-table responsive striped hover :items="requests" :fields="tableHeaders" :current-page="offset" :per-page="0" show-empty :empty-text="page === 'Unallocated Requests' ? 'No requests to allocate.' : 'You have no requests allocated to you.'">
+    <b-table responsive striped hover :items="filteredList" :fields="tableHeaders" :current-page="offset" :per-page="0" show-empty :empty-text="page === 'Unallocated Requests' ? 'No requests to allocate.' : 'You have no requests allocated to you.'">
+      <template #head(bookName)="head">
+        {{head.label}}
+        <b-input v-model="filters.bookName" size="sm" class="mt-2" placeholder="Book Name..."></b-input>
+      </template>
+      <template #head(author)="head">
+        {{ head.label }}
+        <b-input v-model="filters.bookName" size="sm" class="mt-2" placeholder="Author..."></b-input>
+      </template>
+      <template #head(isbn)="head">
+        {{ head.label }}
+        <b-input v-model="filters.bookName" size="sm" class="mt-2" placeholder="ISBN..."></b-input>
+      </template>
+      <template #head(bookType)="head">
+        {{ head.label }}
+        <b-select :options="bookTypes" v-model="filters.bookType" size="sm" class="mt-2"></b-select>
+      </template>
       <template #cell(requesteddatetime)="cell">
         {{ formatDate(cell.item.requestedDateTime) }}
       </template>
@@ -42,7 +58,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Request, Requests, UpdateRequest } from '@/api/api'
-import { api, formatDate, bookTypes } from '@/helper'
+import { api, formatDate, bookTypes, BookType } from '@/helper'
 import { BRow } from 'bootstrap-vue'
 import StatusTimeline from '@/components/StatusTimeline.vue'
 import RequestMoreInformationModal from '@/components/EmployeeRequests/RequestMoreInformationModal.vue'
@@ -64,6 +80,12 @@ export default Vue.extend({
       pages: ['Unallocated Requests', 'My Requests'] as pages[],
       requests: [] as Request[],
       selectedRequest: null as Request | null,
+      filters: {
+        bookName: '',
+        author: '',
+        isbn: '',
+        bookType: ''
+      },
       totalCount: 0,
       offset: 1,
       limit: 10
@@ -71,10 +93,23 @@ export default Vue.extend({
   },
   computed: {
     tableHeaders () {
-      return ['bookName', 'author', 'isbn', 'bookType', 'requestedDateTime', 'Actions']
+      return [{ key: 'bookName', sortable: true },
+        { key: 'author', sortable: true },
+        { key: 'isbn', sortable: true },
+        { key: 'bookType', sortable: true },
+        { key: 'requestedDateTime', sortable: true },
+        { key: 'Actions', sortable: false }]
     },
     bookTypes () {
-      return bookTypes
+      return ['', ...bookTypes]
+    },
+    filteredList () {
+      return this.$data.requests.filter(request =>
+        request.bookName.includes(this.filters.bookName) &&
+        request.author.includes(this.filters.author) &&
+        request.isbn?.includes(this.filters.isbn) &&
+        request.bookType.includes(this.filters.bookType)
+      )
     }
   },
   methods: {

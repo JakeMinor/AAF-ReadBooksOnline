@@ -9,7 +9,6 @@ import SignUp from '@/views/SignUp.vue'
 import Error from '@/views/Error.vue'
 import store from '@/store/index'
 import UserManagement from '@/views/UserManagement.vue'
-import chat from '@/views/chat.vue'
 
 Vue.use(VueRouter)
 
@@ -57,11 +56,6 @@ const routes: Array<RouteConfig> = [
     path: '/error',
     name: 'Error',
     component: Error
-  },
-  {
-    path: '/chat',
-    name: 'Chat',
-    component: chat
   },
   {
     path: '*',

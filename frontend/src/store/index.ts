@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { getPayload } from '@/helper'
-import { User } from '@/api/api'
+import { Role, User } from '@/api/api'
 
 Vue.use(Vuex)
 
@@ -16,10 +16,10 @@ export default new Vuex.Store({
       mutations: {
         parseUser (state, payload) {
           state.user = {
-            id: payload._id,
+            id: payload.id,
             username: payload.username,
             email: payload.email,
-            role: payload.role
+            roles: payload.roles
           } as User
         },
         setToken (state, token) {
@@ -41,7 +41,10 @@ export default new Vuex.Store({
       getters: {
         user: state => state.user,
         token: state => state.token,
-        isAuthoriser: state => state.user.role === 'Authoriser'
+        isClient: state => state.user.roles?.some((role: Role) => role.name === 'Client'),
+        isEmployee: state => state.user.roles?.some((role: Role) => role.name === 'Employee'),
+        isAuthoriser: state => state.user.roles?.some((role: Role) => role.name === 'Authoriser'),
+        isAdmin: state => state.user.roles?.some((role : Role) => role.name === 'UserManager')
       }
     }
   }

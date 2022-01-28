@@ -101,11 +101,11 @@ export default Vue.extend({
       return ['', ...statuses]
     },
     filteredList () {
-      return this.$data.requests.filter(request =>
+      return this.$data.requests.filter((request : Request) =>
         request.bookName.includes(this.filters.bookName) &&
         request.author.includes(this.filters.author) &&
         request.bookType.includes(this.filters.bookType) &&
-        request.status.includes(this.filters.status) &&
+        request.status!.includes(this.filters.status) &&
         request.isbn?.includes(this.filters.isbn)
       )
     }

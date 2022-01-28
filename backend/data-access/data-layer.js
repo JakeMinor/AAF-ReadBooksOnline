@@ -8,8 +8,16 @@ module.exports = class DataService{
   return this.model
     .find(JSON.parse(JSON.stringify(filter)))
     .then((result) => {return result})
+    .catch(error => {return error})
+ }
+ 
+ async getAllAndPaginate(filter){
+  return this.model
+    .find()
+    .limit(filter.limit)
+    .skip((filter.offset * filter.limit))
     .catch(error => {
-     if(error.message.includes("ObjectId"))
+     if (error.message.includes("ObjectId"))
       throw new Error("Could not convert value to ObjectId")
     })
  }
@@ -46,6 +54,17 @@ module.exports = class DataService{
   return this.model.findOne(filter)
     .orFail(new Error("No data found."))
     .then((result) => {return result})
+    .catch(error => {throw error})
+ }
+ 
+ async getByFilterAndPopulate(filter, populateFilter) {
+  console.log(populateFilter)
+  return this.model.findOne(filter)
+    .orFail(new Error("No data found."))
+    .populate(populateFilter)
+    .then((result) => {
+     console.log(result)
+     return result})
     .catch(error => {throw error})
  }
  

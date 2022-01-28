@@ -77,5 +77,19 @@ a {
   }
 }
 
+.multiselect {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+.multiselect__tag {
+  background: $Green-Background-Colour !important;
+}
+
+.multiselect__option--highlight, .multiselect__option--highlight::after {
+  background: $Green-Background-Colour !important;
+}
+
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
+@import '~vue-multiselect/dist/vue-multiselect.min.css';

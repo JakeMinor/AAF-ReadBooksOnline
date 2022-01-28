@@ -418,6 +418,22 @@
     "/user": {
       "get": {
         "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Filter the amount of items which are included on a page.",
+            "type": "string",
+            "default": 10
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Filter the amount of items to skip.",
+            "type": "string",
+            "default": 0
+          }
+        ],
         "summary": "Get all users in the system. Requires authentication with an Authoriser role.",
         "produces": ["application/json"],
         "responses": {
@@ -447,6 +463,16 @@
         "tags": ["Users"],
         "summary": "Create a user in the system. Requires authentication with any Authoriser role.",
         "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User which is to be created.",
+            "schema": {
+              "$ref": "#/definitions/CreateUser"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "CREATED",
@@ -524,14 +550,14 @@
       },
       "put": {
         "tags": ["Users"],
-        "summary": "Updates a users role in the system. Requires authentication with Authoriser role",
+        "summary": "Updates a users roles in the system. Requires authentication with Authoriser role",
         "parameters": [
           {
             "name": "Role",
             "in": "body",
-            "description": "The new role which is to be assigned to the user.",
+            "description": "The new roles which are to be assigned to the user.",
             "schema": {
-              "$ref": "#/definitions/UpdateRole"
+              "$ref": "#/definitions/UpdateUser"
             }
           }
         ],
@@ -576,6 +602,491 @@
       "delete": {
         "tags": ["Users"],
         "summary": "Delete a user in the system. Requires authentication with Authoriser role",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "ID is not valid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
+          }
+        }
+      }
+    },
+    "/admin/permission": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Filter the amount of items which are included on a page.",
+            "type": "string",
+            "default": 10
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Filter the amount of items to skip.",
+            "type": "string",
+            "default": 0
+          }
+        ],
+        "summary": "Get all permissions in the system. Requires authentication with an Authoriser role.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Permissions"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "body",
+            "description": "Permission which is to be created.",
+            "schema": {
+              "$ref": "#/definitions/CreatePermission"
+            }
+          }
+        ],
+        "summary": "Creates a new permission. Requires authentication with Authoriser role",
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "schema": {
+              "$ref": "#/definitions/Permission"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "'Data was missing or invalid.' or 'ID is not valid.'"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          }
+        }
+      }
+    },
+    "/admin/permission/{name}": {
+      "parameters": [
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "description": "The name of the permission which is to be retrieved.",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get a permission by its name. Requires authentication with an Authoriser role.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Permission"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
+          }
+        }
+      }
+    },
+    "/admin/permission/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the permission.",
+          "type": "string"
+        }
+      ],
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Updates a permission in the system. Requires authentication with Authoriser role",
+        "parameters": [
+          {
+            "name": "Permission",
+            "in": "body",
+            "description": "The new details for the permission.",
+            "schema": {
+              "$ref": "#/definitions/UpdatePermission"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Permission"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "'A name for the permission is required.' or 'Permission with the name {PERMISSIONNAME} already exists.'"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "Permission does not exist in the database."
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Admin"],
+        "summary": "Delete a permission in the system. Requires authentication with Authoriser role",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "ID is not valid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
+          }
+        }
+      }
+    },
+    "/admin/role": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Filter the amount of items which are included on a page.",
+            "type": "string",
+            "default": 10
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Filter the amount of items to skip.",
+            "type": "string",
+            "default": 0
+          }
+        ],
+        "summary": "Get all roles in the system. Requires authentication with an Authoriser role.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Roles"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "ID is not valid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "Role",
+            "in": "body",
+            "description": "Role which is to be created.",
+            "schema": {
+              "$ref": "#/definitions/CreateRole"
+            }
+          }
+        ],
+        "summary": "Creates a new role. Requires authentication with Authoriser role",
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "schema": {
+              "$ref": "#/definitions/Role"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "'A name for the role is required.' or 'Role with the name {ROLENAME} already exists.'"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          }
+        }
+      }
+    },
+    "/admin/role/{name}": {
+      "parameters": [
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "description": "The name of the role which is to be retrieved.",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get a role by its name. Requires authentication with an Authoriser role.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Role"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
+          }
+        }
+      }
+    },
+    "/admin/role/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the role.",
+          "type": "string"
+        }
+      ],
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Updates a role in the system. Requires authentication with Authoriser role",
+        "parameters": [
+          {
+            "name": "Permission",
+            "in": "body",
+            "description": "The new details for the role.",
+            "schema": {
+              "$ref": "#/definitions/UpdateRole"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Role"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "'A name for the role is required.' or 'Permission with the name {ROLENAME} already exists.'"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "Role does not exist in the database."
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Delete a Role in the system. Requires authentication with Authoriser role",
         "responses": {
           "200": {
             "description": "OK"
@@ -666,8 +1177,7 @@
       "type": "object",
       "required": [
         "requests",
-        "count",
-        "pages"
+        "count"
       ],
       "properties": {
         "requests": {
@@ -817,17 +1327,29 @@
         "email": {
           "type": "string"
         },
-        "role": {
-          "type": "string",
-          "enum": ["Client", "Employee", "Authoriser"],
-          "default": "Client"
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Role"
+          }
         }
       }
     },
     "Users": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/User"
+      "required": [
+        "users",
+        "count"
+      ],
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "count": {
+          "type": "number"
+        }
       }
     },
     "SignUpDetails": {
@@ -853,9 +1375,16 @@
         },
         "password": {
           "type": "string"
-        },
-        "role": {
-          "type": "string"
+        }
+      }
+    },
+    "UpdateUser": {
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -869,10 +1398,145 @@
         }
       }
     },
-    "UpdateRole": {
+    "Permission":{
+      "required": ["name"],
       "properties": {
-        "role": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "name": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "description": {
           "type": "string"
+        }
+      }
+    },
+    "Permissions": {
+      "required": [
+        "permissions",
+        "count"
+      ],
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Permission"
+          }
+        },
+        "count": {
+          "type": "number"
+        }
+      }
+    },
+    "CreatePermission": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdatePermission": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "Role": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "name": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Permission"
+          }
+        }
+      }
+    },
+    "Roles": {
+      "required": [
+        "roles",
+        "count"
+      ],
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Role"
+          }
+        },
+        "count": {
+          "type": "number"
+        }
+      }
+    },
+    "CreateRole": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "UpdateRole": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }

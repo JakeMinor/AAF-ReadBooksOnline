@@ -18,6 +18,12 @@ module.exports = class Utilities{
   }
  }
  
+ static async hasCorrectPermission(userId, permission) {
+  if(!(await userDataAccess.model.hasCorrectPermission(userId, permission))){
+   throw(httpError(403, "You do not have the correct permission to access this content."))
+  }
+ }
+ 
  static async isUserEmployee(userId) {
   await this.doesUserExist(userId)
   if (!(await userDataAccess.model.isUserEmployee(userId))) {

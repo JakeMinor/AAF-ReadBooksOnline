@@ -96,12 +96,12 @@ async function validateUpdatedRequest(request) {
 
 async function validateReviewer(request){
  if(!request.body.statusMessage){
-  await utilities.isUserEmployee(request.body.assignedTo)
+  await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
  }
 }
 
 async function validateCompletedRequest(request){
- await utilities.isUserEmployee(request.session.userId)
+ await utilities.hasCorrectPermission(request.session.userId, "CompleteRequest")
  if (!(request.body.bookName && request.body.author &&
    request.body.price && request.body.isbn && utilities.bookTypes.includes(request.body.bookType))) {
    throw httpError(400, "Data was missing or invalid.")

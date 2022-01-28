@@ -33,7 +33,8 @@ module.exports = mongoose => {
     },
     authorised: Boolean,
     price: Number,
-    status: String
+    status: String,
+    chatHistory: [Object]
    }
  )
  requestSchema.set('toJSON', {virtuals: true});

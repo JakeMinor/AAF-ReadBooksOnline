@@ -5,7 +5,12 @@ import store from './store'
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import './styles/style.scss'
 import './validation'
+import VueSocketIOExt from 'vue-socket.io-extended'
+import { io } from 'socket.io-client'
 
+const socket = io('http://localhost:3000')
+
+Vue.use(VueSocketIOExt, socket)
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.config.productionTip = false

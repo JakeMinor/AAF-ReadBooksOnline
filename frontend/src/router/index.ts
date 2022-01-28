@@ -18,25 +18,19 @@ const routes: Array<RouteConfig> = [
     redirect: '/catalog'
   },
   {
-    path: '/requests',
+    path: '/client-requests',
     name: 'Requests',
-    component: {
-      render: (view) => {
-        switch (store.getters['user/user'].role) {
-          case 'Client':
-            return view(ClientRequests)
-          case 'Employee':
-            return view(EmployeeRequests)
-          case 'Authoriser':
-            return view(AuthoriserRequests)
-          default:
-            return view(Error)
-        }
-      }
-    },
-    meta: {
-      roles: ['Client', 'Employee', 'Authoriser']
-    }
+    component: ClientRequests
+  },
+  {
+    path: '/employee-requests',
+    name: 'EmployeeRequests',
+    component: EmployeeRequests
+  },
+  {
+    path: '/authoriser-requests',
+    name: 'AuthoriserRequests',
+    component: AuthoriserRequests
   },
   {
     path: '/catalog',

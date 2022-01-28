@@ -60,14 +60,23 @@ module.exports = class requestBusiness {
    assignedTo: request.body.assignedTo ? utilities.convertToObjectId(request.body.assignedTo) : undefined,
    authorised: request.body.authorised,
    price: request.body.price,
-   status: request.body.status
+   status: request.body.status,
+   chatHistory: request.body.chatHistory
   }
   
   
   return requestDataAccess.update(request.params.id, updatedRequest)
     .then((req) => {
-     statusBusiness.updateStatus(req._id, {status: request.body.status, message: request.body.statusMessage, updatedBy: request.session.userId})
-       .catch(error => {throw error})
+     if(request.body.status){
+      statusBusiness.updateStatus(req._id, {
+       status: request.body.status,
+       message: request.body.statusMessage,
+       updatedBy: request.session.userId
+      }).catch(error => {
+         throw error
+        })
+     }
+
     })
     .catch(error => {throw httpError(404, error.message)})
  }

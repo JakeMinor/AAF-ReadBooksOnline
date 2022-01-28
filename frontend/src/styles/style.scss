@@ -90,6 +90,74 @@ a {
   background: $Green-Background-Colour !important;
 }
 
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.chat-message-left,
+.chat-message-right {
+  display: flex;
+  flex-shrink: 0
+}
+
+.chat-message-left {
+  margin-top: 10px;
+  padding: 10px;
+  margin-right: auto;
+  background-color: $Green-Background-Colour;
+  color: $White-Text-Colour;
+  border-radius: 5px;
+  width: 50%;
+  .time-sent {
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+    font-size: 12px;
+    width: 25%;
+    margin-left: auto;
+  }
+
+  .message {
+    width: 75%;
+    text-align: start;
+    margin-right: 3px;
+    word-break: break-all;
+  }
+}
+
+.chat-message-right {
+  margin-top: 10px;
+  padding: 10px;
+  flex-direction: row-reverse;
+  margin-left: auto;
+  background-color: lightgrey;
+  color: $Black-Text-Colour;
+  border-radius: 5px;
+  width: 50%;
+  .time-sent{
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+    font-size: 12px;
+    margin-right: auto;
+    width: 25%;
+  }
+
+  .message {
+    width: 75%;
+    text-align: end;
+    margin-right: 3px;
+    word-break: break-all;
+  }
+}
+
+.word-break {
+  word-break: break-all;
+}
+
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
 @import '~vue-multiselect/dist/vue-multiselect.min.css';

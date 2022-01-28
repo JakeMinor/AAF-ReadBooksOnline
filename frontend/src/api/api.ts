@@ -84,8 +84,8 @@ export interface User {
 }
 
 export interface Users {
-  roles?: User[];
-  count?: number;
+  users: User[];
+  count: number;
 }
 
 export interface SignUpDetails {
@@ -98,7 +98,10 @@ export interface CreateUser {
   email?: string;
   username?: string;
   password?: string;
-  role?: string;
+}
+
+export interface UpdateUser {
+  roles?: string[];
 }
 
 export interface SignInDetails {
@@ -113,8 +116,8 @@ export interface Permission {
 }
 
 export interface Permissions {
-  roles?: Permission[];
-  count?: number;
+  permissions: Permission[];
+  count: number;
 }
 
 export interface CreatePermission {
@@ -135,8 +138,8 @@ export interface Role {
 }
 
 export interface Roles {
-  roles?: Role[];
-  count?: number;
+  roles: Role[];
+  count: number;
 }
 
 export interface CreateRole {
@@ -469,10 +472,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/user
      * @secure
      */
-    userList: (params: RequestParams = {}) =>
+    userList: (query?: { limit?: string; offset?: string }, params: RequestParams = {}) =>
       this.request<Users, string>({
         path: `/user`,
         method: "GET",
+        query: query,
         secure: true,
         format: "json",
         ...params,
@@ -487,11 +491,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/user
      * @secure
      */
-    userCreate: (params: RequestParams = {}) =>
+    userCreate: (user: CreateUser, params: RequestParams = {}) =>
       this.request<User, string>({
         path: `/user`,
         method: "POST",
+        body: user,
         secure: true,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
@@ -519,11 +525,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Users
      * @name UserUpdate
-     * @summary Updates a users role in the system. Requires authentication with Authoriser role
+     * @summary Updates a users roles in the system. Requires authentication with Authoriser role
      * @request PUT:/user/{id}
      * @secure
      */
-    userUpdate: (id: string, Role: UpdateRole, params: RequestParams = {}) =>
+    userUpdate: (id: string, Role: UpdateUser, params: RequestParams = {}) =>
       this.request<User, string>({
         path: `/user/${id}`,
         method: "PUT",

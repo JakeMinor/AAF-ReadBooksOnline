@@ -9,12 +9,12 @@ module.exports = {
   verifyToken(request)
     .then((payload) => {
      if(permission !== "") {
-      if (!payload.roles.every(role => role.permissions.find(payloadPermission => payloadPermission.name === permission))) 
+      if (!payload.roles.some(role => { return !!(role.permissions.find(payloadPermission => payloadPermission.name === permission))})) 
       {return response.status(403).send("You do not have the correct permission to access this content.")}
      }
      userBusiness.getUserById(payload.id)
        .then((user) => {
-        request.session.userId = user.id.toString()
+        request.session.userId = user._id.toString()
         next()
        }).catch(() => {return response.status(401).send("The provided token is invalid or has expired.")})
     })

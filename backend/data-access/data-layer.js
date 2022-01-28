@@ -11,6 +11,17 @@ module.exports = class DataService{
     .catch(error => {return error})
  }
  
+ async getAllAndPaginate(filter){
+  return this.model
+    .find()
+    .limit(filter.limit)
+    .skip((filter.offset * filter.limit))
+    .catch(error => {
+     if (error.message.includes("ObjectId"))
+      throw new Error("Could not convert value to ObjectId")
+    })
+ }
+ 
  async getAllAndPopulate(filter, populateFilter) {
   return this.model
     .find(JSON.parse(JSON.stringify(filter, ((key, value) => value === "null" ? null : value))))

@@ -16,7 +16,7 @@ export default new Vuex.Store({
       mutations: {
         parseUser (state, payload) {
           state.user = {
-            id: payload.id,
+            id: payload._id,
             username: payload.username,
             email: payload.email,
             role: payload.role

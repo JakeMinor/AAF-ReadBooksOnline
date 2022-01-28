@@ -8,6 +8,7 @@ import SignIn from '@/views/SignIn.vue'
 import SignUp from '@/views/SignUp.vue'
 import Error from '@/views/Error.vue'
 import store from '@/store/index'
+import UserManagement from '@/views/UserManagement.vue'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,11 @@ const routes: Array<RouteConfig> = [
     path: '/catalog',
     name: 'Catalog',
     component: Catalog
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: UserManagement
   },
   {
     path: '/sign-in',

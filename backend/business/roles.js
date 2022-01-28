@@ -9,8 +9,9 @@ module.exports = class RoleBusiness {
    limit: query.limit ?? 10,
    offset: query.offset ?? 0
   }
+  const totalDocuments = (await roleDataAccess.getAll(filter)).length
   return roleDataAccess.getAllAndPopulate(filter, { path: 'permissions' })
-    .then((roles) => {return {roles: roles, count: roles.length}})
+    .then((roles) => {return {roles: roles, count: totalDocuments}})
     .catch(error => {throw httpError(500, error.message)})
  }
 
@@ -35,7 +36,6 @@ module.exports = class RoleBusiness {
  async updateRole(id, roleDetails) {
   const roleId = utilities.convertToObjectId(id)
   await doesRoleExist(roleId)
-  await isRoleNameTaken(roleDetails.name)
   const updatedRole = {
    name: roleDetails.name,
    description: roleDetails.description,
@@ -64,7 +64,7 @@ function hasRequiredFields(roleDetails) {
  }
 }
 
-async function isRoleNameTaken(roleName) {
+async function isRoleNameTaken(roleId, roleName) {
  if ((await roleDataAccess.model.isRoleNameTaken(roleName))) {
   throw httpError(400, `Role with the name ${roleName} already exists.`)
  }

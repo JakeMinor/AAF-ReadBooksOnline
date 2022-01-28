@@ -418,6 +418,22 @@
     "/user": {
       "get": {
         "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Filter the amount of items which are included on a page.",
+            "type": "string",
+            "default": 10
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Filter the amount of items to skip.",
+            "type": "string",
+            "default": 0
+          }
+        ],
         "summary": "Get all users in the system. Requires authentication with an Authoriser role.",
         "produces": ["application/json"],
         "responses": {
@@ -447,6 +463,16 @@
         "tags": ["Users"],
         "summary": "Create a user in the system. Requires authentication with any Authoriser role.",
         "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User which is to be created.",
+            "schema": {
+              "$ref": "#/definitions/CreateUser"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "CREATED",
@@ -524,14 +550,14 @@
       },
       "put": {
         "tags": ["Users"],
-        "summary": "Updates a users role in the system. Requires authentication with Authoriser role",
+        "summary": "Updates a users roles in the system. Requires authentication with Authoriser role",
         "parameters": [
           {
             "name": "Role",
             "in": "body",
-            "description": "The new role which is to be assigned to the user.",
+            "description": "The new roles which are to be assigned to the user.",
             "schema": {
-              "$ref": "#/definitions/UpdateRole"
+              "$ref": "#/definitions/UpdateUser"
             }
           }
         ],
@@ -1151,8 +1177,7 @@
       "type": "object",
       "required": [
         "requests",
-        "count",
-        "pages"
+        "count"
       ],
       "properties": {
         "requests": {
@@ -1311,8 +1336,12 @@
       }
     },
     "Users": {
+      "required": [
+        "users",
+        "count"
+      ],
       "properties": {
-        "roles": {
+        "users": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/User"
@@ -1346,9 +1375,16 @@
         },
         "password": {
           "type": "string"
-        },
-        "role": {
-          "type": "string"
+        }
+      }
+    },
+    "UpdateUser": {
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1379,8 +1415,12 @@
       }
     },
     "Permissions": {
+      "required": [
+        "permissions",
+        "count"
+      ],
       "properties": {
-        "roles": {
+        "permissions": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Permission"
@@ -1444,6 +1484,10 @@
       }
     },
     "Roles": {
+      "required": [
+        "roles",
+        "count"
+      ],
       "properties": {
         "roles": {
           "type": "array",

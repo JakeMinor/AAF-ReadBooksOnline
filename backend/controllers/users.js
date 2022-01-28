@@ -2,7 +2,7 @@ const UserBusiness = require('../business/users')
 const userBusiness = new UserBusiness()
 
 exports.getAllUsers = async (request, response) => {
- userBusiness.getAllUsers()
+ userBusiness.getAllUsers(request.query)
    .then((users) => {return response.status(200).send(users)})
    .catch(error => {return response.status(error.status).send(error.message)});
 }
@@ -36,11 +36,13 @@ exports.signOut = async (request, response) => {
 exports.createUser = async (request, response) => {
  userBusiness.createUser(request.body)
    .then((allUsers) => {return response.status(201).send(allUsers)})
-   .catch(error => {return response.status(error.status).send(error.message)});
+   .catch(error => {
+    console.log(error)
+    return response.status(error.status).send(error.message)});
 }
 
 exports.updateUserRole = async (request, response) => {
- userBusiness.updateRoles(request.params.id, request.body)
+ userBusiness.updateRoles(request.params.id, request.body.roles)
    .then((updatedUser) => {return response.status(200).send(updatedUser)})
    .catch(error => {
     console.log(error)

@@ -9,8 +9,9 @@ module.exports = class permissionBusiness {
    limit: query.limit ?? 10,
    offset: query.offset ?? 0
   }
-  return permissionDataAccess.getAll(filter)
-    .then((permissions) => { return {permissions: permissions, count: permissions.length}})
+  const totalDocuments = (await permissionDataAccess.getAll({})).length
+  return permissionDataAccess.getAllAndPaginate(filter)
+    .then((permissions) => { return {permissions: permissions, count: totalDocuments}})
     .catch(error => {throw httpError(400, error.message)})
  }
  

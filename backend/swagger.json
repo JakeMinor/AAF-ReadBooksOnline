@@ -1121,6 +1121,83 @@
           }
         }
       }
+    },
+    "/admin/config": {
+      "get": {
+        "tags": ["Config"],
+        "summary": "Get config settings for the system. Requires authentication with an User Manager role.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Configs"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the role.",
+          "type": "string"
+        }
+      ],
+      "put": {
+        "tags": ["Config"],
+        "summary": "Updates a Config settings in the system. Requires authentication with Authoriser role",
+        "parameters": [
+          {
+            "name": "Permission",
+            "in": "body",
+            "description": "The new config settings.",
+            "schema": {
+              "$ref": "#/definitions/UpdateConfig"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Config"
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN",
+            "schema": {
+              "type": "string",
+              "example": "You do not have the correct permissions to access this content."
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1573,6 +1650,47 @@
         },
         "timeSent": {
           "type": "string"
+        }
+      }
+    },
+    "Config": {
+      "required": [
+        "_id",
+        "spendThreshold",
+        "monthlySpendThreshold",
+        "totalMonthlySpend"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "spendThreshold": {
+          "type": "number"
+        },
+        "monthlySpendThreshold": {
+          "type": "number"
+        },
+        "totalMonthlySpend": {
+          "type": "number"
+        }
+      }
+    },
+    "ConfigDetails": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Config"
+      }
+    },
+    "UpdateConfig": {
+      "properties": {
+        "spendThreshold": {
+          "type": "number"
+        },
+        "monthlySpendThreshold": {
+          "type": "number"
+        },
+        "totalMonthlySpend": {
+          "type": "number"
         }
       }
     }

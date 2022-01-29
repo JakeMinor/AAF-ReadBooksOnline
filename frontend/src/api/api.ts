@@ -163,6 +163,21 @@ export interface Message {
   timeSent: string;
 }
 
+export interface Config {
+  _id: string;
+  spendThreshold: number;
+  monthlySpendThreshold: number;
+  totalMonthlySpend: number;
+}
+
+export type ConfigDetails = Config[];
+
+export interface UpdateConfig {
+  spendThreshold?: number;
+  monthlySpendThreshold?: number;
+  totalMonthlySpend?: number;
+}
+
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 
 export type QueryParamsType = Record<string | number, any>;
@@ -752,6 +767,44 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/admin/role/${id}`,
         method: "DELETE",
         secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Config
+     * @name ConfigList
+     * @summary Get config settings for the system. Requires authentication with an User Manager role.
+     * @request GET:/admin/config
+     * @secure
+     */
+    configList: (params: RequestParams = {}) =>
+      this.request<any, string>({
+        path: `/admin/config`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Config
+     * @name ConfigUpdate
+     * @summary Updates a Config settings in the system. Requires authentication with Authoriser role
+     * @request PUT:/admin/config/{id}
+     * @secure
+     */
+    configUpdate: (id: string, Permission: UpdateConfig, params: RequestParams = {}) =>
+      this.request<Config, string>({
+        path: `/admin/config/${id}`,
+        method: "PUT",
+        body: Permission,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
         ...params,
       }),
   };

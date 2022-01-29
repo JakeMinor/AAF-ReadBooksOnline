@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const roleController = require('../../controllers/roles')
 const permissionController = require('../../controllers/permissions')
+const configController = require('../../controllers/config')
 const grantAccess = require('../router.middleware').grantAccess
 //AUTHORISER ROUTES
 
@@ -38,5 +39,11 @@ router.put('/permission/:id', (req, res, next) => grantAccess("UpdatePermission"
 
 //DELETE PERMISSION
 router.delete('/permission/:id', (req, res, next) => grantAccess("DeletePermission", req, res, next), permissionController.deletePermission)
+
+//CONFIG ROUTES 
+
+router.get('/config/', (req, res, next) => grantAccess("GetConfig", req, res, next), configController.getAllConfig)
+
+router.put('/config/:id', (req, res, next) => grantAccess("UpdateConfig", req, res, next), configController.updateConfig)
 
 module.exports = router

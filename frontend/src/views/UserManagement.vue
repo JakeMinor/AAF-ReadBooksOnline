@@ -5,7 +5,7 @@
       <b-form-radio-group buttons button-variant="outline-primary" v-model="page" :options="pages"
                           @change="getTableItems" />
     </b-form-group>
-    <b-button variant="primary" class="mb-2" @click="openCreateModal">Create</b-button>
+    <b-button variant="primary" class="mb-2" @click="openCreateModal" v-if="page !== 'Config'">Create</b-button>
     <b-table responsive striped hover :items="filteredList" :fields="tableHeaders" :current-page="offset" :per-page="0"
              show-empty empty-text="No data to show.">
       <template #head(username)="head">
@@ -35,12 +35,12 @@
           <b-link class="pb-2" v-b-modal.EditPermissionModal @click="selectedRow = row.item" v-if="page === 'Permissions'">Edit</b-link>
           <b-link class="pb-2" v-b-modal.EditRoleModal @click="selectedRow = row.item" v-if="page === 'Roles'">Edit</b-link>
           <b-link class="pb-2" v-b-modal.EditUserModal @click="selectedRow = row.item" v-if="page === 'Users'">Edit</b-link>
-
+          <b-link class="pb-2" v-b-modal.EditConfigModal @click="selectedRow = row.item" v-if="page === 'Config'">Edit</b-link>
           <b-link class="pb-2" v-if="page !== 'Config'" @click="deleteItem(row.item._id)">Delete</b-link>
         </div>
       </template>
     </b-table>
-    <div class="d-flex justify-content-between align-items-baseline">
+    <div class="d-flex justify-content-between align-items-baseline" v-if="page !== 'Config'">
       <span class="input-group w-auto align-items-baseline">
         <span class="input-group-append mr-2">Per Page: </span>
         <b-form-select v-model="limit" :options="[5, 10, 15]" class="custom-select custom-select-sm"
@@ -55,6 +55,7 @@
     <edit-permission-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-permission="selectedRow" v-if="selectedRow" id="EditPermissionModal"></edit-permission-modal>
     <edit-role-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-role="selectedRow" :permissions="permissionOptions" v-if="selectedRow" id="EditRoleModal"/>
     <edit-user-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-user="selectedRow" :roles="rolesOptions" v-if="selectedRow" id="EditUserModal" />
+    <edit-config-modal @Updated="modalClose" @Closed="selectedRow = null" :config-data="selectedRow" v-if="selectedRow" id="EditConfigModal"/>
   </div>
 </template>
 
@@ -68,11 +69,13 @@ import CreatePermissionModal from '@/components/Admin/CreatePermissionModal.vue'
 import EditPermissionModal from '@/components/Admin/EditPermissionModal.vue'
 import EditRoleModal from '@/components/Admin/EditRoleModal.vue'
 import EditUserModal from '@/components/Admin/EditUserModal.vue'
+import EditConfigModal from '@/components/Admin/EditConfigModal.vue'
 
 type pages = 'Users' | 'Roles' | 'Permissions' | 'Config'
 export default Vue.extend({
   name: 'UserManagement',
   components: {
+    EditConfigModal,
     EditUserModal,
     EditRoleModal,
     EditPermissionModal,
@@ -111,9 +114,13 @@ export default Vue.extend({
           { key: 'description', sortable: true },
           { key: 'permissions', sortable: false },
           { key: 'Actions', sortable: false }]
-      } else {
+      } else if (this.page === 'Permissions') {
         return [{ key: 'name', sortable: true },
           { key: 'description', sortable: true },
+          { key: 'Actions', sortable: false }]
+      } else {
+        return [{ key: 'spendThreshold', sortable: true },
+          { key: 'monthlySpendThreshold', sortable: true },
           { key: 'Actions', sortable: false }]
       }
     },
@@ -126,10 +133,12 @@ export default Vue.extend({
         return this.$data.tableData.filter((data: Role) =>
           data.name?.includes(this.filters.name) &&
           data.description?.includes(this.filters.description))
-      } else {
+      } else if (this.page === 'Permissions') {
         return this.$data.tableData.filter((data: Permission) =>
           data.name?.includes(this.filters.name) &&
           data.description?.includes(this.filters.description))
+      } else {
+        return this.$data.tableData
       }
     }
   },
@@ -144,11 +153,13 @@ export default Vue.extend({
         this.tableData = data.roles
         this.rolesOptions = data.roles
         this.totalCount = data.count
-      } else {
+      } else if (this.page === 'Permissions') {
         const data = (await api.admin.permissionList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
         this.tableData = data.permissions
         this.permissionOptions = data.permissions
         this.totalCount = data.count
+      } else {
+        this.tableData = (await api.admin.configList()).data
       }
     },
     openCreateModal () {

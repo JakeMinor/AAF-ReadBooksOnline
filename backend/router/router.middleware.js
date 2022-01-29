@@ -33,5 +33,6 @@ async function verifyToken(request) {
   
   return await jsonWebToken.verify(token, secret)
  } catch (error) {
+  console.log(error)
   throw httpError(401, "The provided token is invalid or has expired.")}
 }

@@ -57,6 +57,15 @@ module.exports = mongoose => {
   return previousStatuses.every(status => statusHistory.find(statush => statush.status === status))
  }
  
+ requestSchema.statics.isPriceBelowThreshold = async function(price, cb) {
+  const config = (await this.model('config').find().exec(cb))[0]
+  const purchased = ((config.spendThreshold > price) && (config.monthlySpendThreshold > (parseInt(config.totalMonthlySpend ?? 0) + parseInt(price))))
+  if(purchased){
+   await this.model('config').update({ totalMonthlySpend: (parseInt(config.totalMonthlySpend ?? 0) + parseInt(price))}).exec(cb)
+  }
+  return purchased
+ }
+ 
  return mongoose.model(
    "request",
    requestSchema

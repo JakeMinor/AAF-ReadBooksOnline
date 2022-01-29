@@ -2,6 +2,8 @@ const utilities = require("../utilities")
 const httpError = require("http-errors")
 const StatusBusiness = require('../business/statuses')
 const statusBusiness = new StatusBusiness()
+const ConfigBusiness = require('../business/config')
+const configBusiness = new ConfigBusiness()
 const DataAccess = require("../data-access/data-layer")
 const requestDataAccess = new DataAccess("request")
 
@@ -120,7 +122,8 @@ async function validateCompletedRequest(request){
  if (!(request.body.bookName && request.body.author &&
    request.body.price && request.body.isbn && utilities.bookTypes.includes(request.body.bookType))) {
    throw httpError(400, "Data was missing or invalid.")
-  }
+ }
+ await utilities.isPriceBelowThreshold(request.body.price) ? request.body.status = "Purchased" : "Awaiting Approval"
 }
 
 async function validateCreateRequestData(requestData){

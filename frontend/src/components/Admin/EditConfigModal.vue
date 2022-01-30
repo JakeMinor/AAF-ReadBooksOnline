@@ -46,7 +46,13 @@ export default Vue.extend({
         totalMonthlySpend: this.config.totalMonthlySpend
       } as UpdateConfig
 
-      await api.admin.configUpdate(this.config._id, updatedConfig)
+      await api.admin.configUpdate(this.config._id, updatedConfig).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.closeModal()
       this.$emit('Updated')
     },

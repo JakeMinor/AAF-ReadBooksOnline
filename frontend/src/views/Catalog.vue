@@ -88,9 +88,16 @@ export default Vue.extend({
     formatDate,
     formatPrice,
     async getCatalogItems () {
-      const data = (await api.bookRequest.bookRequestList({ limit: this.limit.toString(), offset: (this.offset - 1).toString(), status: 'Purchased' })).data
-      this.books = data.requests
-      this.totalCount = data.count
+      const data = await api.bookRequest.bookRequestList({ limit: this.limit.toString(), offset: (this.offset - 1).toString(), status: 'Purchased' })
+        .catch(error => {
+          this.$bvToast.toast(error.message, {
+            title: 'Error',
+            variant: 'danger',
+            solid: true
+          })
+        })
+      this.books = data.data.requests
+      this.totalCount = data.data.count
     }
   },
   async created () {

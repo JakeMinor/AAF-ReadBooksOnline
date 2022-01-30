@@ -51,7 +51,13 @@ export default Vue.extend({
         permissions: newPermissions
       } as UpdateRole
 
-      await api.admin.roleUpdate(this.role._id!, updateRole)
+      await api.admin.roleUpdate(this.role._id!, updateRole).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.closeModal()
       this.$emit('Updated')
     },

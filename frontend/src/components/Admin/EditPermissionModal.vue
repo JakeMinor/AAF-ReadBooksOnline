@@ -44,7 +44,13 @@ export default Vue.extend({
         description: this.permission.description
       } as UpdatePermission
 
-      await api.admin.permissionUpdate(this.permission._id!, updatedPermission)
+      await api.admin.permissionUpdate(this.permission._id!, updatedPermission).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.closeModal()
       this.$emit('Updated')
     },

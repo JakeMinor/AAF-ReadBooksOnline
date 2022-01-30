@@ -53,7 +53,13 @@ export default Vue.extend({
         requestedDateTime: new Date().toUTCString()
       } as CreateRequest
 
-      await api.bookRequest.bookRequestCreate(newRequest)
+      await api.bookRequest.bookRequestCreate(newRequest).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
 
       this.closeModal()
       this.$emit('Created')

@@ -117,9 +117,21 @@ export default Vue.extend({
     async getTableItems () {
       let data = {} as Requests
       if (this.page === 'Unallocated Requests') {
-        data = (await api.bookRequest.bookRequestList({ status: 'Pending Review', limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+        data = (await api.bookRequest.bookRequestList({ status: 'Pending Review', limit: this.limit.toString(), offset: (this.offset - 1).toString() }).catch(error => {
+          this.$bvToast.toast(error.message, {
+            title: 'Error',
+            variant: 'danger',
+            solid: true
+          })
+        })).data
       } else {
-        data = (await api.bookRequest.bookRequestList({ assignedTo: this.$store.getters['user/user'].id, status: 'In Review', limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+        data = (await api.bookRequest.bookRequestList({ assignedTo: this.$store.getters['user/user'].id, status: 'In Review', limit: this.limit.toString(), offset: (this.offset - 1).toString() }).catch(error => {
+          this.$bvToast.toast(error.message, {
+            title: 'Error',
+            variant: 'danger',
+            solid: true
+          })
+        })).data
       }
       this.requests = data.requests
       this.totalCount = data.count

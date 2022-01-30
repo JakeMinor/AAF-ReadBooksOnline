@@ -48,7 +48,13 @@ export default Vue.extend({
         ...this.newUser
       } as CreateUser
 
-      await api.user.userCreate(user)
+      await api.user.userCreate(user).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.closeModal()
       this.$emit('Created')
     },

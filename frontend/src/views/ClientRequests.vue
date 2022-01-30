@@ -113,7 +113,13 @@ export default Vue.extend({
   methods: {
     formatDate,
     async getTableItems () {
-      const data = (await api.bookRequest.bookRequestList({ requestedBy: this.$store.getters['user/user'].id, limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+      const data = (await api.bookRequest.bookRequestList({ requestedBy: this.$store.getters['user/user'].id, limit: this.limit.toString(), offset: (this.offset - 1).toString() }).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })).data
       this.requests = data.requests
       this.totalCount = data.count
     },
@@ -131,7 +137,6 @@ export default Vue.extend({
     },
     startChat (row : BRow) {
       this.selectedRequest = row.item
-      console.log(this.selectedRequest)
       this.$socket.client.connect()
       this.$socket.client.emit('join_request_chat', this.selectedRequest!._id!)
     }

@@ -9,7 +9,7 @@
     <b-table responsive striped hover :items="filteredList" :fields="tableHeaders" :current-page="offset" :per-page="0"
              show-empty empty-text="No data to show.">
       <template #head(username)="head">
-        {{head.label}}
+        {{ head.label }}
         <b-input v-model="filters.username" size="sm" class="mt-2" placeholder="Username..."></b-input>
       </template>
       <template #head(email)="head">
@@ -25,10 +25,12 @@
         <b-input v-model="filters.description" size="sm" class="mt-2" placeholder="Description..."></b-input>
       </template>
       <template #cell(roles)="row">
-        <b-badge class="mr-2" variant="primary" v-for="role in row.item.roles" :key="role._id">{{role.name}}</b-badge>
+        <b-badge class="mr-2" variant="primary" v-for="role in row.item.roles" :key="role._id">{{ role.name }}</b-badge>
       </template>
-      <template #cell(permissions)="row" >
-        <b-badge class="mr-2" variant="primary" v-for="permission in row.item.permissions" :key="permission._id">{{ permission.name }}</b-badge>
+      <template #cell(permissions)="row">
+        <b-badge class="mr-2" variant="primary" v-for="permission in row.item.permissions" :key="permission._id">
+          {{ permission.name }}
+        </b-badge>
       </template>
       <template #cell(spendThreshold)="row">
         {{ formatPrice(row.item.spendThreshold) }}
@@ -41,10 +43,15 @@
       </template>
       <template #cell(actions)="row">
         <div class="d-flex flex-column">
-          <b-link class="pb-2" v-b-modal.EditPermissionModal @click="selectedRow = row.item" v-if="page === 'Permissions'">Edit</b-link>
-          <b-link class="pb-2" v-b-modal.EditRoleModal @click="selectedRow = row.item" v-if="page === 'Roles'">Edit</b-link>
-          <b-link class="pb-2" v-b-modal.EditUserModal @click="selectedRow = row.item" v-if="page === 'Users'">Edit</b-link>
-          <b-link class="pb-2" v-b-modal.EditConfigModal @click="selectedRow = row.item" v-if="page === 'Config'">Edit</b-link>
+          <b-link class="pb-2" v-b-modal.EditPermissionModal @click="selectedRow = row.item"
+                  v-if="page === 'Permissions'">Edit
+          </b-link>
+          <b-link class="pb-2" v-b-modal.EditRoleModal @click="selectedRow = row.item" v-if="page === 'Roles'">Edit
+          </b-link>
+          <b-link class="pb-2" v-b-modal.EditUserModal @click="selectedRow = row.item" v-if="page === 'Users'">Edit
+          </b-link>
+          <b-link class="pb-2" v-b-modal.EditConfigModal @click="selectedRow = row.item" v-if="page === 'Config'">Edit
+          </b-link>
           <b-link class="pb-2" v-if="page !== 'Config'" @click="deleteItem(row.item._id)">Delete</b-link>
         </div>
       </template>
@@ -58,13 +65,18 @@
       <b-pagination :per-page="limit" :total-rows="totalCount" v-model="offset" @input="getTableItems"></b-pagination>
       <span>{{ totalCount }} requests in {{ Math.ceil(totalCount / limit) }} pages</span>
     </div>
-    <create-user-modal @Created="modalClose" v-if="page === 'Users'" id="CreateUserModal"/>
-    <create-role-modal @Created="modalClose" :permissions-options="permissionOptions" v-if="page === 'Roles'" id="CreateRoleModal"/>
-    <create-permission-modal @Created="modalClose" v-if="page === 'Permissions'" id="CreatePermissionModal"/>
-    <edit-permission-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-permission="selectedRow" v-if="selectedRow" id="EditPermissionModal"></edit-permission-modal>
-    <edit-role-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-role="selectedRow" :permissions="permissionOptions" v-if="selectedRow" id="EditRoleModal"/>
-    <edit-user-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-user="selectedRow" :roles="rolesOptions" v-if="selectedRow" id="EditUserModal" />
-    <edit-config-modal @Updated="modalClose" @Closed="selectedRow = null" :config-data="selectedRow" v-if="selectedRow" id="EditConfigModal"/>
+    <create-user-modal @Created="modalClose" v-if="page === 'Users'" id="CreateUserModal" />
+    <create-role-modal @Created="modalClose" :permissions-options="permissionOptions" v-if="page === 'Roles'"
+                       id="CreateRoleModal" />
+    <create-permission-modal @Created="modalClose" v-if="page === 'Permissions'" id="CreatePermissionModal" />
+    <edit-permission-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-permission="selectedRow"
+                           v-if="selectedRow" id="EditPermissionModal"></edit-permission-modal>
+    <edit-role-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-role="selectedRow"
+                     :permissions="permissionOptions" v-if="selectedRow" id="EditRoleModal" />
+    <edit-user-modal @Updated="modalClose" @Closed="selectedRow = null" :selected-user="selectedRow"
+                     :roles="rolesOptions" v-if="selectedRow" id="EditUserModal" />
+    <edit-config-modal @Updated="modalClose" @Closed="selectedRow = null" :config-data="selectedRow" v-if="selectedRow"
+                       id="EditConfigModal" />
   </div>
 </template>
 
@@ -136,7 +148,7 @@ export default Vue.extend({
     },
     filteredList () {
       if (this.page === 'Users') {
-        return this.$data.tableData.filter((data : User) =>
+        return this.$data.tableData.filter((data: User) =>
           data.username?.includes(this.filters.username) &&
           data.email?.includes(this.filters.email))
       } else if (this.page === 'Roles') {
@@ -156,16 +168,25 @@ export default Vue.extend({
     formatPrice,
     async getTableItems () {
       if (this.page === 'Users') {
-        const data = (await api.user.userList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+        const data = (await api.user.userList({
+          limit: this.limit.toString(),
+          offset: (this.offset - 1).toString()
+        })).data
         this.tableData = data.users
         this.totalCount = data.count
       } else if (this.page === 'Roles') {
-        const data = (await api.admin.roleList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+        const data = (await api.admin.roleList({
+          limit: this.limit.toString(),
+          offset: (this.offset - 1).toString()
+        })).data
         this.tableData = data.roles
         this.rolesOptions = data.roles
         this.totalCount = data.count
       } else if (this.page === 'Permissions') {
-        const data = (await api.admin.permissionList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+        const data = (await api.admin.permissionList({
+          limit: this.limit.toString(),
+          offset: (this.offset - 1).toString()
+        })).data
         this.tableData = data.permissions
         this.permissionOptions = data.permissions
         this.totalCount = data.count
@@ -185,7 +206,7 @@ export default Vue.extend({
     async modalClose () {
       await this.getTableItems()
     },
-    async deleteItem (id : string) {
+    async deleteItem (id: string) {
       if (this.page === 'Users') {
         await api.user.userDelete(id)
       } else if (this.page === 'Roles') {
@@ -198,20 +219,24 @@ export default Vue.extend({
   },
   async created () {
     await this.getTableItems()
-    this.permissionOptions = (await api.admin.permissionList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() }).catch(error => {
-      this.$bvToast.toast(error.message, {
-        title: 'Error',
-        variant: 'danger',
-        solid: true
+    this.$data.permissionOptions = api.admin.permissionList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })
+      .then((res) => { return res.data.permissions })
+      .catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
       })
-    })).data.permissions
-    this.rolesOptions = (await api.admin.roleList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() }).catch(error => {
-      this.$bvToast.toast(error.message, {
-        title: 'Error',
-        variant: 'danger',
-        solid: true
+    this.$data.rolesOptions = api.admin.roleList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })
+      .then((res) => { return res.data.roles })
+      .catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
       })
-    })).data.roles
   }
 })
 </script>

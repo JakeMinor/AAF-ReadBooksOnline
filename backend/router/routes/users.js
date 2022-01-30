@@ -17,8 +17,8 @@ router.post('/sign-out', (req, res, next) => grantAccess("", req, res, next), us
 //GET ALL USERS
 router.get('/', (req, res, next) => grantAccess("ReadUser", req, res, next), userController.getAllUsers)
 
-//GET USER BY ID
-router.get('/:id', (req, res, next) => grantAccess("ReadUser", req, res, next), userController.getByUserId)
+//GET USER NOTIFICATIONS BY ID
+router.get('/:id/notifications', (req, res, next) => grantAccess("", req, res, next), userController.getNotifications)
 
 //CREATE USER
 router.post('/', (req, res, next) => grantAccess("CreateUser", req, res, next), userController.createUser)

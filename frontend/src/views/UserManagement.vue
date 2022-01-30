@@ -30,6 +30,15 @@
       <template #cell(permissions)="row" >
         <b-badge class="mr-2" variant="primary" v-for="permission in row.item.permissions" :key="permission._id">{{ permission.name }}</b-badge>
       </template>
+      <template #cell(spendThreshold)="row">
+        {{ formatPrice(row.item.spendThreshold) }}
+      </template>
+      <template #cell(monthlySpendThreshold)="row">
+        {{ formatPrice(row.item.monthlySpendThreshold) }}
+      </template>
+      <template #cell(totalMonthlySpend)="row">
+        {{ formatPrice(row.item.totalMonthlySpend) }}
+      </template>
       <template #cell(actions)="row">
         <div class="d-flex flex-column">
           <b-link class="pb-2" v-b-modal.EditPermissionModal @click="selectedRow = row.item" v-if="page === 'Permissions'">Edit</b-link>
@@ -62,7 +71,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Permission, Role, User, Users } from '@/api/api'
-import { api } from '@/helper'
+import { api, formatPrice } from '@/helper'
 import CreateUserModal from '@/components/Admin/CreateUserModal.vue'
 import CreateRoleModal from '@/components/Admin/CreateRoleModal.vue'
 import CreatePermissionModal from '@/components/Admin/CreatePermissionModal.vue'
@@ -119,9 +128,10 @@ export default Vue.extend({
           { key: 'description', sortable: true },
           { key: 'Actions', sortable: false }]
       } else {
-        return [{ key: 'spendThreshold', sortable: true },
-          { key: 'monthlySpendThreshold', sortable: true },
-          { key: 'Actions', sortable: false }]
+        return [{ key: 'spendThreshold' },
+          { key: 'monthlySpendThreshold' },
+          { key: 'totalMonthlySpend' },
+          { key: 'Actions' }]
       }
     },
     filteredList () {
@@ -143,6 +153,7 @@ export default Vue.extend({
     }
   },
   methods: {
+    formatPrice,
     async getTableItems () {
       if (this.page === 'Users') {
         const data = (await api.user.userList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data

@@ -4,6 +4,17 @@
       <h2 class="m-0">ReadBooks Online</h2>
       <b-collapse is-nav>
         <b-navbar-nav class="ml-auto">
+          <b-nav-item-dropdown right @toggle="getNotifications">
+            <template #button-content>
+              Notifications ({{count}})
+            </template>
+            <b-dropdown-item v-for="notification in notis" :key="notification._id">
+              <div class="d-flex">
+                <span>{{ notification.message}}</span>
+                <b-icon-x @click="dismissNotification(notification._id)"/>
+              </div>
+            </b-dropdown-item>
+          </b-nav-item-dropdown>
           <b-nav-item-dropdown right class="font-spectral font-color-white">
             <template #button-content>
               {{ user.username }}
@@ -30,8 +41,18 @@
 import Vue from 'vue'
 import store from '../store/index'
 import { api } from '@/helper'
+import { mapState } from 'vuex'
+import { Notification } from '@/api/api'
+
 export default Vue.extend({
   name: 'NavigationBar',
+  data () {
+    return {
+      notifications: [] as Notification[],
+      count: 0,
+      render: true
+    }
+  },
   computed: {
     user () {
       return store.getters['user/user']
@@ -47,6 +68,10 @@ export default Vue.extend({
     },
     isAdmin () {
       return store.getters['user/isAdmin']
+    },
+    ...mapState(['user/user']),
+    notis () {
+      return this.$data.notifications
     }
   },
   methods: {
@@ -54,6 +79,21 @@ export default Vue.extend({
       await api.user.signOutCreate()
       await this.$store.dispatch('user/deleteToken')
       await this.$router.push({ name: 'Sign In' })
+    },
+    async dismissNotification (id : string) {
+      await api.notification.notificationDelete(id)
+      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id)).data
+      this.$data.count = this.$data.notifications.length
+      this.$forceUpdate()
+    },
+    async getNotifications () {
+      console.log('BOSs')
+      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id)).data
+      this.$data.count = this.$data.notifications.length
+      this.$data.render = false
+      this.$nextTick(() => {
+        this.$data.render = true
+      })
     }
   }
 })

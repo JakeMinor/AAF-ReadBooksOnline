@@ -504,7 +504,7 @@
         }
       }
     },
-    "/user/{id}": {
+    "/user/{id}/notifications": {
       "parameters": [
         {
           "name": "id",
@@ -515,14 +515,18 @@
         }
       ],
       "get": {
-        "tags": ["Users"],
-        "summary": "Get a user in the system using their id. Requires authentication with any Authoriser role.",
-        "produces": ["application/json"],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a user notifications.",
+        "produces": [
+          "application/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/Notifications"
             }
           },
           "401": {
@@ -530,13 +534,6 @@
             "schema": {
               "type": "string",
               "example": "The provided token is invalid or has expired."
-            }
-          },
-          "403": {
-            "description": "FORBIDDEN",
-            "schema": {
-              "type": "string",
-              "example": "You do not have the correct permissions to access this content."
             }
           },
           "404": {
@@ -547,7 +544,18 @@
             }
           }
         }
-      },
+      }
+    },
+    "/user/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The ObjectId of the user.",
+          "type": "string"
+        }
+      ],
       "put": {
         "tags": ["Users"],
         "summary": "Updates a users roles in the system. Requires authentication with Authoriser role",
@@ -625,6 +633,49 @@
             "schema": {
               "type": "string",
               "example": "You do not have the correct permissions to access this content."
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "schema": {
+              "type": "string",
+              "example": "No data found."
+            }
+          }
+        }
+      }
+    },
+    "/notification/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The ObjectId of the user.",
+          "type": "string"
+        }
+      ],
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a notification in the system. Requires authentication with Authoriser role",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "schema": {
+              "type": "string",
+              "example": "ID is not valid."
+            }
+          },
+          "401": {
+            "description": "UNAUTHORISED",
+            "schema": {
+              "type": "string",
+              "example": "The provided token is invalid or has expired."
             }
           },
           "404": {
@@ -1423,6 +1474,12 @@
           "items": {
             "$ref": "#/definitions/Role"
           }
+        },
+        "notifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Notification"
+          }
         }
       }
     },
@@ -1692,6 +1749,22 @@
         },
         "totalMonthlySpend": {
           "type": "number"
+        }
+      }
+    },
+    "Notifications": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Notification"
+      }
+    },
+    "Notification": {
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
         }
       }
     }

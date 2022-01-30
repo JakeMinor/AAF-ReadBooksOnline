@@ -18,6 +18,7 @@ module.exports = {
         next()
        }).catch(() => {return response.status(401).send("The provided token is invalid or has expired.")})
     })
+    .catch((error) => {return response.status(error.status).send(error.message)})
  },
 }
 

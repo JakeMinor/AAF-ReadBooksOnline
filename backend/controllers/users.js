@@ -7,6 +7,12 @@ exports.getAllUsers = async (request, response) => {
    .catch(error => {return response.status(error.status).send(error.message)});
 }
 
+exports.getNotifications = async (request, response) => {
+ userBusiness.getNotifications(request.params.id)
+   .then((user) => {return response.status(200).send(user)})
+   .catch(error => {return response.status(error.status).send(error.message)});
+}
+
 exports.getByUserId = async (request, response) => {
  userBusiness.getUserById(request.params.id)
    .then((user) => {return response.status(200).send(user)})

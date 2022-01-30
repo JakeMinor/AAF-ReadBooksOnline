@@ -6,7 +6,7 @@ const permissionDataAccess = new DataAccess('permission')
 module.exports = class permissionBusiness {
  async getAllPermissions(query) {
   const filter = {
-   limit: query.limit ?? 10,
+   limit: query.limit ?? Number.MAX_VALUE,
    offset: query.offset ?? 0
   }
   const totalDocuments = (await permissionDataAccess.getAll({})).length

@@ -5,6 +5,7 @@
         <b-form ref="requestForm" @submit.stop.prevent="updateRole">
           <custom-input rules="required" type="number" v-model="config.spendThreshold" label="Spend Threshold" />
           <custom-input rules="required" type="number" v-model="config.monthlySpendThreshold" label="Monthly Spend Threshold" class="mt-2" />
+          <custom-input rules="required" type="number" v-model="config.totalMonthlySpend" label="Total Monthly Spend" class="mt-2"/>
         </b-form>
       </ValidationObserver>
     </template>
@@ -41,7 +42,8 @@ export default Vue.extend({
 
       const updatedConfig = {
         spendThreshold: this.config.spendThreshold,
-        monthlySpendThreshold: this.config.monthlySpendThreshold
+        monthlySpendThreshold: this.config.monthlySpendThreshold,
+        totalMonthlySpend: this.config.totalMonthlySpend
       } as UpdateConfig
 
       await api.admin.configUpdate(this.config._id, updatedConfig)

@@ -1208,7 +1208,8 @@
         "author",
         "requestedDateTime",
         "requestedBy",
-        "chatHistory"
+        "chatHistory",
+        "status"
       ],
       "properties": {
         "_id": {

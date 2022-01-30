@@ -1,5 +1,8 @@
 <template>
-  <p>ERROR BOSS</p>
+  <div>
+    <p>Uh oh, the page you requested doesn't exist!</p>
+  </div>
+
 </template>
 
 <script lang="ts">

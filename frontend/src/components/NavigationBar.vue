@@ -87,23 +87,27 @@ export default Vue.extend({
     },
     async dismissNotification (id : string) {
       await api.notification.notificationDelete(id)
-      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id).catch(error => {
-        this.$bvToast.toast(error.message, {
-          title: 'Error',
-          variant: 'danger',
-          solid: true
+      this.$data.notifications = api.user.notificationsDetail(store.getters['user/user'].id)
+        .then((res) => { return res.data })
+        .catch(error => {
+          this.$bvToast.toast(error.message, {
+            title: 'Error',
+            variant: 'danger',
+            solid: true
+          })
         })
-      })).data
       this.$data.count = this.$data.notifications.length
     },
     async getNotifications () {
-      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id).catch(error => {
-        this.$bvToast.toast(error.message, {
-          title: 'Error',
-          variant: 'danger',
-          solid: true
-        })
-      })).data
+      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id)
+        .then((res) => { return res.data })
+        .catch(error => {
+          this.$bvToast.toast(error.message, {
+            title: 'Error',
+            variant: 'danger',
+            solid: true
+          })
+        }))
       this.$data.count = this.$data.notifications.length
     }
   }

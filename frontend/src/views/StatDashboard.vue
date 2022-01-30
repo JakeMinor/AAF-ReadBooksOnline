@@ -37,14 +37,24 @@ export default Vue.extend({
     }
   },
   async created () {
-    this.config = (await api.admin.configList()).data[0]
-    this.requests = (await api.bookRequest.bookRequestList({ offset: '0', limit: Number.MAX_VALUE.toString() }).catch(error => {
-      this.$bvToast.toast(error.message, {
-        title: 'Error',
-        variant: 'danger',
-        solid: true
-      })
-    })).data.requests
+    this.$data.config = api.admin.configList().then((res) => {
+      return res.data[0]
+    }).catch(error => this.$bvToast.toast(error.message, {
+      title: 'Error',
+      variant: 'danger',
+      solid: true
+    }))
+
+    this.$data.requests = api.bookRequest.bookRequestList({
+      offset: '0',
+      limit: Number.MAX_VALUE.toString()
+    }).then((res) => {
+      return res.data.requests
+    }).catch(error => this.$bvToast.toast(error.message, {
+      title: 'Error',
+      variant: 'danger',
+      solid: true
+    }))
   }
 })
 </script>

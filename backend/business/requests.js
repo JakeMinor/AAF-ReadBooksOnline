@@ -2,8 +2,8 @@ const utilities = require("../utilities")
 const httpError = require("http-errors")
 const StatusBusiness = require('../business/statuses')
 const statusBusiness = new StatusBusiness()
-const ConfigBusiness = require('../business/config')
-const configBusiness = new ConfigBusiness()
+const NotificationBusiness = require('../business/notification')
+const notificationBusiness = new NotificationBusiness()
 const DataAccess = require("../data-access/data-layer")
 const requestDataAccess = new DataAccess("request")
 
@@ -47,7 +47,13 @@ module.exports = class requestBusiness {
   }
   return requestDataAccess.create(newRequest)
     .then((req) => {
-     statusBusiness.updateStatus(req._id, {status: "Pending Review", message: "", updatedBy: request.session.userId})
+     statusBusiness.updateStatus(req._id, {status: "Pending Review", message: "", updatedBy: request.session.userId}).then((status) => {
+      notificationBusiness
+        .createNotification(req.requestedBy, `Status updated to ${status.status}`)
+        .catch(error => {
+         throw error
+        })
+     })
     })
     .catch(error => {throw httpError(500, error.message)})
  }
@@ -74,9 +80,11 @@ module.exports = class requestBusiness {
        status: request.body.status,
        message: request.body.statusMessage,
        updatedBy: request.session.userId
-      }).catch(error => {
-         throw error
-        })
+      }).then((status) => {
+       notificationBusiness
+         .createNotification(req.requestedBy, `Status updated to ${status.status}`)
+         .catch(error => {throw error})
+      }).catch(error => {throw error})
      }
 
     })

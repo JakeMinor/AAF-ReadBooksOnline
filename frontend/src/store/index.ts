@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getPayload } from '@/helper'
+import { getPayload, api } from '@/helper'
 import { Role, User } from '@/api/api'
 
 Vue.use(Vuex)
@@ -14,7 +14,7 @@ export default new Vuex.Store({
         token: ''
       }),
       mutations: {
-        parseUser (state, payload) {
+        async parseUser (state, payload) {
           state.user = {
             id: payload.id,
             username: payload.username,
@@ -27,19 +27,27 @@ export default new Vuex.Store({
         },
         deleteToken (state) {
           state.token = ''
+        },
+        setNotifications (state, notifications) {
+          state.user.notifications = notifications
         }
       },
       actions: {
-        getUser ({ commit }, token : string) {
+        async getUser ({ commit }, token : string) {
           commit('setToken', token)
-          commit('parseUser', getPayload(token))
+          await commit('parseUser', getPayload(token))
         },
         deleteToken ({ commit }) {
           commit('deleteToken')
+        },
+        async getNotifications ({ commit }) {
+          const notifications = (await api.user.notificationsDetail(this.getters['user/user'].id)).data
+          commit('setNotifications', notifications)
         }
       },
       getters: {
         user: state => state.user,
+        notifications: state => state.user.notifications,
         token: state => state.token,
         isClient: state => state.user.roles?.some((role: Role) => role.name === 'Client'),
         isEmployee: state => state.user.roles?.some((role: Role) => role.name === 'Employee'),

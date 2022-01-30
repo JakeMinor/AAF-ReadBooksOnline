@@ -16,18 +16,27 @@ module.exports = class userBusiness {
    offset: query.offset ?? 0
   }
   const totalDocuments = (await userDataAccess.getAll(filter)).length
-  return userDataAccess.getAllAndPopulate(filter, {path: 'roles', populate: {path: 'permissions', select: 'name'}}).then((users) => {
-   return { users: users.map(user => {return {_id: user._id, username: user.username, email: user.email, roles: user.roles}}), count: totalDocuments }
+  return userDataAccess.getAllAndPopulate(filter, [{path: 'roles', populate: {path: 'permissions', select: 'name'}}, {path: 'notifications', select: '_id, message'}]).then((users) => {
+   return { users: users.map(user => {return {_id: user._id, username: user.username, email: user.email, roles: user.roles, notifications: user.notifications}}), count: totalDocuments }
   }).catch(error => {throw httpError(500, error.message)})
  }
  
  async getUserById(id) {
   const userId = utilities.convertToObjectId(id)
-  return userDataAccess.getByIdAndPopulate(userId, {path: 'roles', populate: {path: 'permissions', select: 'name'}}).then((user) => {
-   return {_id: user._id, username: user.username, email: user.email, roles: user.roles, permissions: user.permissions}
+  await utilities.doesUserExist(userId)
+  return userDataAccess.getByIdAndPopulate(userId, [{path: 'roles', populate: {path: 'permissions', select: 'name'}}, {path: 'notifications', select: '_id, message'}]).then((user) => {
+   return {_id: user._id, username: user.username, email: user.email, roles: user.roles, notifications: user.notifications}
   }).catch(error => {throw httpError(404, error.message)})
  }
-
+ 
+ async getNotifications(id) {
+  const userId = utilities.convertToObjectId(id)
+  await utilities.doesUserExist(userId)
+  return userDataAccess.getByIdAndPopulate(userId, {path: 'notifications', select: '_id, message'}).then((user) => {
+   return user.notifications
+  }).catch(error => {throw httpError(404, error.message)})
+ }
+ 
  async signInUser(signInDetails) {
   const user = await validateCredentials(signInDetails)
   return generateJWTToken(user)

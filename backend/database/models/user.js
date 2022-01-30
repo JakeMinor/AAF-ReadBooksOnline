@@ -14,6 +14,7 @@ module.exports = mongoose => {
      type: String,
      required: [true, "A password is required."]
     },
+    notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: "notification"}],
     roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "role"}]
    }
  )

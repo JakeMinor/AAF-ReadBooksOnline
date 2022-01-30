@@ -83,6 +83,7 @@ export interface User {
   username?: string;
   email?: string;
   roles?: Role[];
+  notifications?: Notification[];
 }
 
 export interface Users {
@@ -176,6 +177,13 @@ export interface UpdateConfig {
   spendThreshold?: number;
   monthlySpendThreshold?: number;
   totalMonthlySpend?: number;
+}
+
+export type Notifications = Notification[];
+
+export interface Notification {
+  _id?: string;
+  message?: string;
 }
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
@@ -530,14 +538,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Users
-     * @name UserDetail
-     * @summary Get a user in the system using their id. Requires authentication with any Authoriser role.
-     * @request GET:/user/{id}
+     * @name NotificationsDetail
+     * @summary Get a user notifications.
+     * @request GET:/user/{id}/notifications
      * @secure
      */
-    userDetail: (id: string, params: RequestParams = {}) =>
-      this.request<User, string>({
-        path: `/user/${id}`,
+    notificationsDetail: (id: string, params: RequestParams = {}) =>
+      this.request<Notifications, string>({
+        path: `/user/${id}/notifications`,
         method: "GET",
         secure: true,
         format: "json",
@@ -576,6 +584,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     userDelete: (id: string, params: RequestParams = {}) =>
       this.request<void, string>({
         path: `/user/${id}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+  };
+  notification = {
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name NotificationDelete
+     * @summary Delete a notification in the system. Requires authentication with Authoriser role
+     * @request DELETE:/notification/{id}
+     * @secure
+     */
+    notificationDelete: (id: string, params: RequestParams = {}) =>
+      this.request<void, string>({
+        path: `/notification/${id}`,
         method: "DELETE",
         secure: true,
         ...params,

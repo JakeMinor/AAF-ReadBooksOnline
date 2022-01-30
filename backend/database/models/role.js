@@ -11,6 +11,11 @@ module.exports = mongoose => {
   permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: "permission" }]
  })
 
+ // roleSchema.post('remove', function (next) {
+ //  mongoose.models.user.updateMany({roles: this._id}, {$pull: {roles: this._id}}).exec()
+ //  next()
+ // })
+ 
  roleSchema.statics.doesRoleExist = async function (id, cb) {
   return ((await this.find({_id: id}).exec(cb)).length > 0)
  }

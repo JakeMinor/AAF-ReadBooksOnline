@@ -9,6 +9,7 @@ import SignUp from '@/views/SignUp.vue'
 import Error from '@/views/Error.vue'
 import store from '@/store/index'
 import UserManagement from '@/views/UserManagement.vue'
+import StatDashboard from '@/views/StatDashboard.vue'
 import { Role } from '@/api/api'
 
 Vue.use(VueRouter)
@@ -51,6 +52,14 @@ const routes: Array<RouteConfig> = [
     path: '/admin',
     name: 'Admin',
     component: UserManagement,
+    meta: {
+      role: 'UserManager'
+    }
+  },
+  {
+    path: '/admin/statistics',
+    name: 'Statistics Dashboard',
+    component: StatDashboard,
     meta: {
       role: 'UserManager'
     }

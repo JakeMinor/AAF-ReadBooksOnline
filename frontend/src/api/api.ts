@@ -20,7 +20,7 @@ export interface Request {
   assignedTo?: string;
   authorised?: boolean;
   price?: number;
-  status?: string;
+  status: string;
   chatHistory: Message[];
 }
 

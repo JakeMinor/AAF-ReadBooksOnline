@@ -9,6 +9,7 @@
               {{ user.username }}
             </template>
             <b-dropdown-item v-if="isAdmin" :to="{ name: 'Admin' }">Admin</b-dropdown-item>
+            <b-dropdown-item v-if="isAdmin" :to="{ name: 'Statistics Dashboard' }">Statistics</b-dropdown-item>
             <b-dropdown-item @click="signOut">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>

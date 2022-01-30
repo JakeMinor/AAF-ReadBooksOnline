@@ -47,7 +47,13 @@ export default Vue.extend({
         roles: newRoles
       } as UpdateUser
 
-      await api.user.userUpdate(this.user._id!, updateRole)
+      await api.user.userUpdate(this.user._id!, updateRole).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.closeModal()
       this.$emit('Updated')
     },

@@ -59,7 +59,13 @@ export default Vue.extend({
       this.message = ''
     },
     async closeModal () {
-      await api.bookRequest.bookRequestUpdate(this.id, { chatHistory: this.chat })
+      await api.bookRequest.bookRequestUpdate(this.id, { chatHistory: this.chat }).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.$socket.client.disconnect()
     }
   }

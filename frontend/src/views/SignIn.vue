@@ -1,6 +1,8 @@
 <template>
 <div class="vh-100 d-flex align-items-center justify-content-center">
     <b-card class="w-50" title="Sign in to ReadBooks Online">
+      <b-alert variant="danger" v-if="error">{{ error }}</b-alert>
+
       <template #default>
         <b-input-group class="flex-column p-3">
           <ValidationObserver ref="observer">
@@ -29,7 +31,8 @@ export default Vue.extend({
   data () {
     return {
       email: '' as string,
-      password: '' as string
+      password: '' as string,
+      error: ''
     }
   },
   methods: {
@@ -38,8 +41,15 @@ export default Vue.extend({
       if (!valid) {
         return
       }
-      await api.user.signInCreate({ email: this.email, password: this.password })
-      await this.$router.push({ name: 'Catalog' })
+      api.user.signInCreate({ email: this.email, password: this.password }).then(() => {
+        this.$router.push({ name: 'Catalog' })
+      }).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Invalid email or password',
+          variant: 'danger',
+          solid: true
+        })
+      })
     }
   }
 })

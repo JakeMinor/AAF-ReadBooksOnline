@@ -58,7 +58,13 @@ export default Vue.extend({
         permissions: this.newRole.permissions.map(permission => permission._id)
       } as CreateRole
 
-      await api.admin.roleCreate(role)
+      await api.admin.roleCreate(role).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.closeModal()
       this.$emit('Created')
     },

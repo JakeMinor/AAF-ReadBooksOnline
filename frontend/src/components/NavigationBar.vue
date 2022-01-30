@@ -49,8 +49,7 @@ export default Vue.extend({
   data () {
     return {
       notifications: [] as Notification[],
-      count: 0,
-      render: true
+      count: 0
     }
   },
   computed: {
@@ -76,24 +75,36 @@ export default Vue.extend({
   },
   methods: {
     async signOut () {
-      await api.user.signOutCreate()
+      await api.user.signOutCreate().catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       await this.$store.dispatch('user/deleteToken')
       await this.$router.push({ name: 'Sign In' })
     },
     async dismissNotification (id : string) {
       await api.notification.notificationDelete(id)
-      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id)).data
+      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })).data
       this.$data.count = this.$data.notifications.length
-      this.$forceUpdate()
     },
     async getNotifications () {
-      console.log('BOSs')
-      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id)).data
+      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })).data
       this.$data.count = this.$data.notifications.length
-      this.$data.render = false
-      this.$nextTick(() => {
-        this.$data.render = true
-      })
     }
   }
 })

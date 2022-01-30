@@ -198,8 +198,20 @@ export default Vue.extend({
   },
   async created () {
     await this.getTableItems()
-    this.permissionOptions = (await api.admin.permissionList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data.permissions
-    this.rolesOptions = (await api.admin.roleList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data.roles
+    this.permissionOptions = (await api.admin.permissionList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() }).catch(error => {
+      this.$bvToast.toast(error.message, {
+        title: 'Error',
+        variant: 'danger',
+        solid: true
+      })
+    })).data.permissions
+    this.rolesOptions = (await api.admin.roleList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() }).catch(error => {
+      this.$bvToast.toast(error.message, {
+        title: 'Error',
+        variant: 'danger',
+        solid: true
+      })
+    })).data.roles
   }
 })
 </script>

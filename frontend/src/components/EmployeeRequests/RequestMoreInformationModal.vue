@@ -43,7 +43,13 @@ export default Vue.extend({
         statusMessage: this.moreInformation
       } as UpdateRequest
 
-      await api.bookRequest.bookRequestUpdate(this.requestId, updatedRequest)
+      await api.bookRequest.bookRequestUpdate(this.requestId, updatedRequest).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.closeModal()
       this.$emit('MoreInformationRequested')
     },

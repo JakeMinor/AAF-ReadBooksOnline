@@ -64,7 +64,13 @@ export default Vue.extend({
     formatPrice,
     formatDate,
     async getTableItems () {
-      const data = (await api.bookRequest.bookRequestList({ status: 'Awaiting Approval', limit: this.limit.toString(), offset: (this.offset - 1).toString() })).data
+      const data = (await api.bookRequest.bookRequestList({ status: 'Awaiting Approval', limit: this.limit.toString(), offset: (this.offset - 1).toString() }).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })).data
       this.requests = data.requests
       this.totalCount = data.count
     },

@@ -44,7 +44,13 @@ export default Vue.extend({
         description: this.newPermission.description
       } as CreatePermission
 
-      await api.admin.permissionCreate(permission)
+      await api.admin.permissionCreate(permission).catch(error => {
+        this.$bvToast.toast(error.message, {
+          title: 'Error',
+          variant: 'danger',
+          solid: true
+        })
+      })
       this.closeModal()
       this.$emit('Created')
     },

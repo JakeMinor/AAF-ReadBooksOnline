@@ -3,6 +3,7 @@
     <template #default>
       <ValidationObserver ref="observer">
         <b-form ref="requestForm" @submit.stop.prevent="updateUser">
+          <label class="mb-0">Roles</label>
           <multiselect :options="roles" track-by="_id" label="name" :multiple="true"
                        v-model="user.roles" />
         </b-form>

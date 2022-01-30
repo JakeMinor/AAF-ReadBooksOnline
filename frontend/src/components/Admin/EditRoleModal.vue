@@ -5,6 +5,7 @@
         <b-form ref="requestForm" @submit.stop.prevent="updateRole">
           <custom-input rules="required" v-model="role.name" label="Name" />
           <custom-input v-model="role.description" label="Description" class="mt-2" />
+          <label class="mt-2 mb-0">Permissions</label>
           <multiselect :options="permissions" track-by="_id" label="name" :multiple="true"
                        v-model="role.permissions" />
         </b-form>

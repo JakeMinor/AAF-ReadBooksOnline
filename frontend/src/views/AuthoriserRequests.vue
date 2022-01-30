@@ -64,7 +64,7 @@ export default Vue.extend({
     formatPrice,
     formatDate,
     async getTableItems () {
-      const data = api.bookRequest.bookRequestList({ status: 'Awaiting Approval', limit: this.limit.toString(), offset: (this.offset - 1).toString() })
+      api.bookRequest.bookRequestList({ status: 'Awaiting Approval', limit: this.limit.toString(), offset: (this.offset - 1).toString() })
         .then((res) => {
           this.requests = res.data.requests
           this.totalCount = res.data.count

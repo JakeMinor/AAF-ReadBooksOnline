@@ -180,7 +180,6 @@ export default Vue.extend({
           offset: (this.offset - 1).toString()
         })).data
         this.tableData = data.roles
-        this.rolesOptions = data.roles
         this.totalCount = data.count
       } else if (this.page === 'Permissions') {
         const data = (await api.admin.permissionList({
@@ -188,7 +187,6 @@ export default Vue.extend({
           offset: (this.offset - 1).toString()
         })).data
         this.tableData = data.permissions
-        this.permissionOptions = data.permissions
         this.totalCount = data.count
       } else {
         this.tableData = (await api.admin.configList()).data
@@ -219,8 +217,8 @@ export default Vue.extend({
   },
   async created () {
     await this.getTableItems()
-    this.$data.permissionOptions = api.admin.permissionList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })
-      .then((res) => { return res.data.permissions })
+    api.admin.permissionList()
+      .then((res) => { this.permissionOptions = res.data.permissions })
       .catch(error => {
         this.$bvToast.toast(error.message, {
           title: 'Error',
@@ -228,8 +226,8 @@ export default Vue.extend({
           solid: true
         })
       })
-    this.$data.rolesOptions = api.admin.roleList({ limit: this.limit.toString(), offset: (this.offset - 1).toString() })
-      .then((res) => { return res.data.roles })
+    api.admin.roleList()
+      .then((res) => { this.rolesOptions = res.data.roles })
       .catch(error => {
         this.$bvToast.toast(error.message, {
           title: 'Error',

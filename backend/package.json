@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "set NODE_ENV=dev&& node ./bin/www",
-    "test": "set NODE_ENV=test&& nyc --reporter=text mocha --timeout 5000 --exit",
+    "test": "set NODE_ENV=test&& nyc --reporter=text mocha --recursive --timeout 5000 --exit",
     "generate-api-client": "sta -p ./swagger.json -o ../frontend/src/api --axios"
   },
   "dependencies": {

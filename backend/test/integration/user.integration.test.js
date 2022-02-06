@@ -1,11 +1,11 @@
 const chai = require('chai')
-const server = require('../app')
+const server = require('../../app')
 const should = chai.should();
 const expect = chai.expect
 const baseUrl = '/user/'
-const dbConfig = require("../database/database.config")
+const dbConfig = require("../../database/database.config")
 const jwt = require("jsonwebtoken")
-const accessSecret = require("../config/authentication.config").AccessSecret
+const accessSecret = require("../../config/authentication.config").AccessSecret
 chai.use(require('chai-http'))
 let userId = ""
 let clientAuthToken = ""

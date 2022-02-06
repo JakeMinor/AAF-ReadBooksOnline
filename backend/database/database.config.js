@@ -50,16 +50,24 @@ module.exports = {
   if (process.env.NODE_ENV === "test") {
    // Data to be inserted into the database.
    //Permissions
-   const permissions = [{_id: "123456789101", name: "ReadRequest"}, {_id: "123456789102",name: "CreateRequest"}, {_id: "123456789103",name: "DeleteRequest"}, {_id: "123456789104",name: "UpdateRequest"}, {_id: "123456789105",name: 'CompleteRequest'}]
+   const permissions = [{_id: "123456789101", name: "ReadRequest"}, {_id: "123456789102",name: "CreateRequest"}, 
+    {_id: "123456789103",name: "DeleteRequest"}, {_id: "123456789104",name: "UpdateRequest"}, 
+    {_id: "123456789105",name: 'CompleteRequest'}, {_id: "123456789114", name: 'AllocateRequest'}, 
+    {_id: "123456789115", name: 'RequestMoreInformation'}, {_id: "123456789116", name: "AuthoriseRequest"},
+    {_id: "123456789117", name: "ReadStatisticReport"}]
+   
+   const clientPermissions = ["123456789101", "123456789102", "123456789103", "123456789104"]
+   const employeePermissions = ["123456789101", "123456789104", "123456789105", "123456789114", "123456789115"]
+   const authoriserPermissions = ["123456789101", "123456789104", "123456789116", "123456789117"]
    
    //Roles
-   const roles = [{_id: "123456789106", name: 'Client'}, {_id: "123456789107", name: 'Employee'}, {_id: "123456789108", name: 'Authoriser'}]
-   
+   const roles = [{_id: "123456789106", name: 'Client', permissions: clientPermissions}, {_id: "123456789118", name: "Employee", permissions: employeePermissions}, {_id: "123456789119", name: "Authoriser", permissions: authoriserPermissions}]
+     
    // Users
    const users = [{_id: "123456789109", username: "SEEDED USER", email: "SEEDED EMAIL", password: await bcrypt.hash("SEEDED PASSWORD", 10), roles: [roles[0]._id]},
                   {_id: "123456789110", username: "SEEDED EMPLOYEE", email: "SEEDED EMPLOYEE EMAIL", password: await bcrypt.hash("SEEDED PASSWORD", 10), roles: [roles[1]._id]},
                   {_id: "123456789111", username: "SEEDED AUTHORISER", email: "SEEDED AUTHORISER EMAIL", password: await bcrypt.hash("SEEDED PASSWORD", 10), roles: [roles[2]._id]}]
-   
+
    //Requests
    const requests = [{_id: "123456789112", bookName: "SEEDED BOOK", bookType: "Book", author: "SEEDED AUTHOR", requestedDateTime: new Date().toUTCString(), requestedBy: users[0]._id}, 
                      {_id: "123456789113", bookName: "SEEDED BOOK 2", bookType: "Audiobook", author: "SEEDED AUTHOR 2", isbn: "SEEDEDISBN", requestedDateTime: 'Mon, 31 Jan 2022 18:38:00 GMT', requestedBy: users[0]._id, assignedTo: users[1]._id, status: "In Review"}]
@@ -79,9 +87,6 @@ module.exports = {
    await dbModel.mongoose.model("request").insertMany(requests) //Requests
    await dbModel.mongoose.model("status").insertMany(statusHistory) //StatusHistory
    await dbModel.mongoose.model("config").create(config) //Config
-   
-   // Return an object of ID's to use in the tests.
-   return { userId: users[0]._id, employeeId: users[1]._id, authoriserId: users[2]._id}
   }
  },
  getModel: (modelName) => {

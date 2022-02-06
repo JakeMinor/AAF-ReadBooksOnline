@@ -45,9 +45,7 @@ module.exports = class requestBusiness {
      statusBusiness.updateStatus(req._id, {status: "Pending Review", message: "", updatedBy: request.session.userId}).then((status) => {
       notificationBusiness
         .createNotification(req.requestedBy, `Status updated to ${status.status}`)
-        .catch(error => {
-         throw error
-        })
+        .catch(error => {throw error})
      })
      return req
     })
@@ -117,9 +115,8 @@ async function validateUpdatedRequest(request) {
 }
 
 async function validateReviewer(request){
- if(!request.body.statusMessage){
-  await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
- }
+ await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
+ await utilities.isUserEmployee(request.body.assignedTo)
 }
 
 async function validateCompletedRequest(request){

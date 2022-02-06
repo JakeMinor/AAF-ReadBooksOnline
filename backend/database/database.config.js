@@ -48,25 +48,40 @@ module.exports = {
  },
  async seedTestData() {
   if (process.env.NODE_ENV === "test") {
-   let user = await dbModel.mongoose.model("user").create({
-    "username": "SEEDED USER",
-    "email": "SEEDED EMAIL",
-    "password": await bcrypt.hash("SEEDED PASSWORD", 10),
-    "role": "Client"
-   }).catch(error => {
-    console.log(error)
-   })
+   // Data to be inserted into the database.
+   //Permissions
+   const permissions = [{_id: "123456789101", name: "ReadRequest"}, {_id: "123456789102",name: "CreateRequest"}, {_id: "123456789103",name: "DeleteRequest"}, {_id: "123456789104",name: "UpdateRequest"}, {_id: "123456789105",name: 'CompleteRequest'}]
    
-   dbModel.mongoose.model("request").create({
-    "bookName": "SEEDED BOOK",
-    "bookType": "Book",
-    "author": "SEEDED AUTHOR",
-    "requestedDateTime": new Date().toUTCString(),
-    "requestedBy": user._id
-   }).catch(error => {
-    console.log(error)
-   })
-   return user._id
+   //Roles
+   const roles = [{_id: "123456789106", name: 'Client'}, {_id: "123456789107", name: 'Employee'}, {_id: "123456789108", name: 'Authoriser'}]
+   
+   // Users
+   const users = [{_id: "123456789109", username: "SEEDED USER", email: "SEEDED EMAIL", password: await bcrypt.hash("SEEDED PASSWORD", 10), roles: [roles[0]._id]},
+                  {_id: "123456789110", username: "SEEDED EMPLOYEE", email: "SEEDED EMPLOYEE EMAIL", password: await bcrypt.hash("SEEDED PASSWORD", 10), roles: [roles[1]._id]},
+                  {_id: "123456789111", username: "SEEDED AUTHORISER", email: "SEEDED AUTHORISER EMAIL", password: await bcrypt.hash("SEEDED PASSWORD", 10), roles: [roles[2]._id]}]
+   
+   //Requests
+   const requests = [{_id: "123456789112", bookName: "SEEDED BOOK", bookType: "Book", author: "SEEDED AUTHOR", requestedDateTime: new Date().toUTCString(), requestedBy: users[0]._id}, 
+                     {_id: "123456789113", bookName: "SEEDED BOOK 2", bookType: "Audiobook", author: "SEEDED AUTHOR 2", isbn: "SEEDEDISBN", requestedDateTime: 'Mon, 31 Jan 2022 18:38:00 GMT', requestedBy: users[0]._id, assignedTo: users[1]._id, status: "In Review"}]
+
+   //Status History
+   const statusHistory = [{requestId: requests[1]._id, status: "Pending Review", updatedBy: users[0]._id, date: new Date().toUTCString()},
+                          {requestId: requests[1]._id, status: "In Review", updatedBy: users[1]._id, date: new Date().toUTCString()}]
+   
+   //Config
+   const config = {spendThreshold: 10, monthlySpendThreshold: 110, totalMonthlySpend: 0}
+   
+   
+   // Insert data into the test Database.
+   await dbModel.mongoose.model("permission").insertMany(permissions) //Permissions
+   await dbModel.mongoose.model("role").insertMany(roles) //Roles
+   await dbModel.mongoose.model("user").insertMany(users) //Users
+   await dbModel.mongoose.model("request").insertMany(requests) //Requests
+   await dbModel.mongoose.model("status").insertMany(statusHistory) //StatusHistory
+   await dbModel.mongoose.model("config").create(config) //Config
+   
+   // Return an object of ID's to use in the tests.
+   return { userId: users[0]._id, employeeId: users[1]._id, authoriserId: users[2]._id}
   }
  },
  getModel: (modelName) => {

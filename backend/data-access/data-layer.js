@@ -30,7 +30,7 @@ module.exports = class DataService{
     .populate(JSON.parse(JSON.stringify(populateFilter)))
     .catch(error => {
      if (error.message.includes("ObjectId"))
-      throw new Error("Could not convert value to ObjectId")
+      throw new Error("Could not convert value to ObjectId.")
     })
  }
 

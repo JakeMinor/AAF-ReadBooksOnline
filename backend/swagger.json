@@ -163,48 +163,6 @@
       }
     },
     "/bookRequest/{id}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The ID of the user.",
-            "type": "string"
-          }
-        ],
-        "tags": ["Requests"],
-        "summary": "Get all requests by user ID. Requires authentication with any role",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Requests"
-            }
-          },
-          "400": {
-            "description": "BAD REQUEST",
-            "schema": {
-              "type": "string",
-              "example": "ID is not valid."
-            }
-          },
-          "401": {
-            "description": "UNAUTHORISED",
-            "schema": {
-              "type": "string",
-              "example": "The provided token is invalid or has expired."
-            }
-          },
-          "404": {
-            "description": "NOT FOUND",
-            "schema": {
-              "type": "string",
-              "example": "No data found."
-            }
-          }
-        }
-      },
       "put": {
         "tags": ["Requests"],
         "summary": "Updates a request by an ID in the system. Requires authentication with any role",

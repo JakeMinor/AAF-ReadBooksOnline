@@ -371,23 +371,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Requests
-     * @name BookRequestDetail
-     * @summary Get all requests by user ID. Requires authentication with any role
-     * @request GET:/bookRequest/{id}
-     * @secure
-     */
-    bookRequestDetail: (id: string, params: RequestParams = {}) =>
-      this.request<Requests, string>({
-        path: `/bookRequest/${id}`,
-        method: "GET",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Requests
      * @name BookRequestUpdate
      * @summary Updates a request by an ID in the system. Requires authentication with any role
      * @request PUT:/bookRequest/{id}

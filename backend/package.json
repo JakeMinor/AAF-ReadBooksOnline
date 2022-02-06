@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "set NODE_ENV=dev&& node ./bin/www",
-    "test": "set NODE_ENV=test&& mocha --timeout 5000 --exit",
+    "test": "set NODE_ENV=test&& nyc --reporter=text mocha --timeout 5000 --exit",
     "generate-api-client": "sta -p ./swagger.json -o ../frontend/src/api --axios"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
     "mocha": "^9.1.3",
-    "mongodb-memory-server": "^8.2.0"
+    "mongodb-memory-server": "^8.2.0",
+    "nyc": "^15.1.0"
   }
 }

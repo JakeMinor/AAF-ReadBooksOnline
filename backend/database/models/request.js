@@ -1,4 +1,3 @@
-const utilities = require('../../utilities')
 module.exports = mongoose => {
  const requestSchema = mongoose.Schema(
    {
@@ -47,7 +46,7 @@ module.exports = mongoose => {
  })
  
  requestSchema.statics.doesRequestExist = async function(id, cb) {
-  return await this.find({_id: id}).exec(cb)
+  return await this.find({_id: id}).populate({path: 'statusHistory', populate: {path: 'updatedBy', select: 'username'}}).exec(cb)
  }
  
  requestSchema.methods.hasRequestBeenThroughPreviousStatuses = async function(newStatus, cb) {

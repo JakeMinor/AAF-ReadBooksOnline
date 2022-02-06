@@ -1,2 +1,3 @@
 ﻿.idea
 backend/node_modules
+backend/.nyc_output

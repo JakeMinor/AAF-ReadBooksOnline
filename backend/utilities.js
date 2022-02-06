@@ -9,7 +9,7 @@ module.exports = class Utilities{
   if (objectId.isValid(id)) {
    return objectId(id)
   }
-  throw new httpError(400, "ID is not valid.")
+  throw httpError(400, "ID is not valid.")
  }
 
  static async doesUserExist(userId) {

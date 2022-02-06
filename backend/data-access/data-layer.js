@@ -58,12 +58,10 @@ module.exports = class DataService{
  }
  
  async getByFilterAndPopulate(filter, populateFilter) {
-  console.log(populateFilter)
   return this.model.findOne(filter)
     .orFail(new Error("No data found."))
     .populate(populateFilter)
     .then((result) => {
-     console.log(result)
      return result})
     .catch(error => {throw error})
  }

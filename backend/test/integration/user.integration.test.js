@@ -56,7 +56,7 @@ describe("User", function () {
   * Tests for the GetNotifications Controller.
   */
  context("Get Notifications", () => {
-  it('GetNotifications should return a notifications related to a user and a 200 status', async function () {
+  it('GetNotifications should return notifications related to a user and a 200 status', async function () {
    //ARRANGE
    //ACT
    const getNotificationsResult = await chai.request(server).get(`${baseUrl}/${userId}/notifications`).set("Cookie", userManagerAuthToken)

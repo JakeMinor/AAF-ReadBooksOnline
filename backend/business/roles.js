@@ -36,6 +36,8 @@ module.exports = class RoleBusiness {
  async updateRole(id, roleDetails) {
   const roleId = utilities.convertToObjectId(id)
   await doesRoleExist(roleId)
+  hasRequiredFields(roleDetails)
+  await isRoleNameTaken(roleDetails.name)
   const updatedRole = {
    name: roleDetails.name,
    description: roleDetails.description,
@@ -60,11 +62,11 @@ async function doesRoleExist(id) {
 
 function hasRequiredFields(roleDetails) {
  if (!roleDetails.name) {
-  throw httpError(400, "A name for the role is required.")
+  throw httpError(400, "Data was missing or invalid.")
  }
 }
 
-async function isRoleNameTaken(roleId, roleName) {
+async function isRoleNameTaken(roleName) {
  if ((await roleDataAccess.model.isRoleNameTaken(roleName))) {
   throw httpError(400, `Role with the name ${roleName} already exists.`)
  }

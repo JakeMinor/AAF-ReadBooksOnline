@@ -15,7 +15,7 @@ let noPermissionsAuthToken = ""
 
 describe("Permission", function () {
  /**
-  * Tests for the GetAllRequests Controller.
+  * Tests for the GetAllPermissions Controller.
   */
  context("Get All Permissions", () => {
   it('GetAllPermissions should return 200 and all permissions', async function () {
@@ -301,10 +301,10 @@ describe("Permission", function () {
  })
 
  /**
-  * Tests for the DeleteRequest Controller.
+  * Tests for the DeletePermission Controller.
   */
  context("Delete Permission", () => {
-  it('DeletePermission should delete a request and return a 200 status', async function () {
+  it('DeletePermission should delete a permission and return a 200 status', async function () {
    //ARRANGE
    const permissionId = "313233343536373839313031"
 

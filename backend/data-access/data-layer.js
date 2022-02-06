@@ -16,10 +16,6 @@ module.exports = class DataService{
     .find()
     .limit(filter.limit)
     .skip((filter.offset * filter.limit))
-    .catch(error => {
-     if (error.message.includes("ObjectId"))
-      throw new Error("Could not convert value to ObjectId")
-    })
  }
  
  async getAllAndPopulate(filter, populateFilter) {
@@ -32,14 +28,6 @@ module.exports = class DataService{
      if (error.message.includes("ObjectId"))
       throw new Error("Could not convert value to ObjectId.")
     })
- }
-
- //Get a document by _id from the collection
- async getById(id){
-  return this.model.findById(id)
-    .orFail(new Error("No data found."))
-    .then((result) => {return result})
-    .catch(error => {throw error})
  }
  
  async getByIdAndPopulate(id, populateFilter){

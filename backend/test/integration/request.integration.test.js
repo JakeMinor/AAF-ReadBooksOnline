@@ -30,8 +30,8 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(2)
-   getAllRequestResult.body.requests.should.be.lengthOf(2)
+   getAllRequestResult.body.count.should.equal(3)
+   getAllRequestResult.body.requests.should.be.lengthOf(3)
   })
 
   it('GetAllRequests should return 200 and one request that matches the bookName filter', async function () {
@@ -43,8 +43,8 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(1)
-   getAllRequestResult.body.requests.should.be.lengthOf(1)
+   getAllRequestResult.body.count.should.equal(2)
+   getAllRequestResult.body.requests.should.be.lengthOf(2)
    getAllRequestResult.body.requests[0].bookName.should.equal(bookName)
   })
 
@@ -57,8 +57,8 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(1)
-   getAllRequestResult.body.requests.should.be.lengthOf(1)
+   getAllRequestResult.body.count.should.equal(2)
+   getAllRequestResult.body.requests.should.be.lengthOf(2)
    getAllRequestResult.body.requests[0].bookType.should.equal(bookType)
   })
 
@@ -71,8 +71,8 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(1)
-   getAllRequestResult.body.requests.should.be.lengthOf(1)
+   getAllRequestResult.body.count.should.equal(2)
+   getAllRequestResult.body.requests.should.be.lengthOf(2)
    getAllRequestResult.body.requests[0].isbn.should.equal(isbn)
   })
 
@@ -99,8 +99,8 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(1)
-   getAllRequestResult.body.requests.should.be.lengthOf(1)
+   getAllRequestResult.body.count.should.equal(2)
+   getAllRequestResult.body.requests.should.be.lengthOf(2)
    getAllRequestResult.body.requests[0].requestedDateTime.should.equal(requestedDateTime)
   })
 
@@ -113,8 +113,8 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(2)
-   getAllRequestResult.body.requests.should.be.lengthOf(2)
+   getAllRequestResult.body.count.should.equal(3)
+   getAllRequestResult.body.requests.should.be.lengthOf(3)
    getAllRequestResult.body.requests[1].requestedBy.should.equal(userId)
   })
 
@@ -127,8 +127,8 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(1)
-   getAllRequestResult.body.requests.should.be.lengthOf(1)
+   getAllRequestResult.body.count.should.equal(2)
+   getAllRequestResult.body.requests.should.be.lengthOf(2)
    getAllRequestResult.body.requests[0].assignedTo.should.equal(employeeId.toString())
   })
 
@@ -141,8 +141,8 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(1)
-   getAllRequestResult.body.requests.should.be.lengthOf(1)
+   getAllRequestResult.body.count.should.equal(2)
+   getAllRequestResult.body.requests.should.be.lengthOf(2)
    getAllRequestResult.body.requests[0].status.should.equal(status)
   })
 
@@ -155,7 +155,7 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(2)
+   getAllRequestResult.body.count.should.equal(3)
    getAllRequestResult.body.requests.should.be.lengthOf(1)
   })
 
@@ -168,7 +168,7 @@ describe("Request", function() {
 
    //ASSERT
    getAllRequestResult.should.have.status(200)
-   getAllRequestResult.body.count.should.equal(2)
+   getAllRequestResult.body.count.should.equal(3)
    getAllRequestResult.body.requests.should.be.lengthOf(0)
   })
 
@@ -456,19 +456,6 @@ describe("Request", function() {
    updateRequestResult.text.should.be.equal("Request must go through the previous statuses.")
   })
 
-  it('UpdateRequest should return a 400 if the reviewer isnt an employee', async function () {
-   //ARRANGE
-   requests[0].updatedBy = userId
-   requests[0].status = "In Review"
-
-   //ACT
-   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[0]._id}`).set("Cookie", employeeAuthToken).send(requests[0])
-
-   //ASSERT
-   updateRequestResult.should.have.status(400)
-   updateRequestResult.text.should.be.equal("User isn't an employee.")
-  })
-
   it('UpdateRequest should return 401 if user isnt authenticated', async function () {
    //ARRANGE
    //ACT
@@ -483,6 +470,30 @@ describe("Request", function() {
    //ARRANGE
    //ACT
    const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", noPermissionsAuthToken).send(requests[1])
+
+   //ASSERT
+   updateRequestResult.should.have.status(403)
+   updateRequestResult.text.should.be.equal("You do not have the correct permission to access this content.")
+  })
+
+  it('UpdateRequest should return a 403 if user doesnt have the correct permissions to update the request status to Purchased', async function () {
+   //ARRANGE
+   requests[2].status = "Purchased"
+
+   //ACT
+   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", clientAuthToken).send(requests[1])
+
+   //ASSERT
+   updateRequestResult.should.have.status(403)
+   updateRequestResult.text.should.be.equal("You do not have the correct permission to access this content.")
+  })
+
+  it('UpdateRequest should return a 403 if user doesnt have the correct permissions to update the request status to Denied', async function () {
+   //ARRANGE
+   requests[2].status = "Denied"
+
+   //ACT
+   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", clientAuthToken).send(requests[1])
 
    //ASSERT
    updateRequestResult.should.have.status(403)
@@ -527,7 +538,7 @@ describe("Request", function() {
 
    //ASSERT
    deleteRequestResult.should.have.status(200)
-   getAllRequestResult.requests.should.be.lengthOf(1)
+   getAllRequestResult.requests.should.be.lengthOf(2)
   })
 
   it('DeleteRequest should return a 400 status if the ID passed isnt valid', async function () {

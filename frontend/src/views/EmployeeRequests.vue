@@ -11,11 +11,7 @@
       </template>
       <template #head(author)="head">
         {{ head.label }}
-        <b-input v-model="filters.bookName" size="sm" class="mt-2" placeholder="Author..."></b-input>
-      </template>
-      <template #head(isbn)="head">
-        {{ head.label }}
-        <b-input v-model="filters.bookName" size="sm" class="mt-2" placeholder="ISBN..."></b-input>
+        <b-input v-model="filters.author" size="sm" class="mt-2" placeholder="Author..."></b-input>
       </template>
       <template #head(bookType)="head">
         {{ head.label }}
@@ -83,7 +79,6 @@ export default Vue.extend({
       filters: {
         bookName: '',
         author: '',
-        isbn: '',
         bookType: ''
       },
       totalCount: 0,
@@ -107,7 +102,6 @@ export default Vue.extend({
       return this.$data.requests.filter((request : Request) =>
         request.bookName.includes(this.filters.bookName) &&
         request.author.includes(this.filters.author) &&
-        request.isbn?.includes(this.filters.isbn) &&
         request.bookType.includes(this.filters.bookType)
       )
     }
@@ -115,10 +109,12 @@ export default Vue.extend({
   methods: {
     formatDate,
     async getTableItems () {
-      let data = {} as Requests
       if (this.page === 'Unallocated Requests') {
         api.bookRequest.bookRequestList({ status: 'Pending Review', limit: this.limit.toString(), offset: (this.offset - 1).toString() })
-          .then((res) => { data = res.data })
+          .then((res) => {
+            this.requests = res.data.requests
+            this.totalCount = res.data.count
+          })
           .catch(error => {
             this.$bvToast.toast(error.message, {
               title: 'Error',
@@ -128,7 +124,10 @@ export default Vue.extend({
           })
       } else {
         api.bookRequest.bookRequestList({ assignedTo: this.$store.getters['user/user'].id, status: 'In Review', limit: this.limit.toString(), offset: (this.offset - 1).toString() })
-          .then((res) => { data = res.data })
+          .then((res) => {
+            this.requests = res.data.requests
+            this.totalCount = res.data.count
+          })
           .catch(error => {
             this.$bvToast.toast(error.message, {
               title: 'Error',
@@ -137,8 +136,6 @@ export default Vue.extend({
             })
           })
       }
-      this.requests = data.requests
-      this.totalCount = data.count
     },
     async allocate (requestId : string) {
       const userToAllocate = {

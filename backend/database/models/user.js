@@ -31,7 +31,7 @@ module.exports = mongoose => {
  }
  
  userSchema.statics.isUserEmployee = async function(id, cb) {
-  return (await this.find({_id: id, role: "Employee"}).populate({path: 'roles', populate: {path: 'permissions', select: 'name'}}).length > 0)
+  return (await this.find({_id: id, role: "Employee"}).populate({path: 'roles', populate: {path: 'permissions', select: 'name'}}).length !== 0)
  }
 
  userSchema.statics.isUserAuthoriser = async function (id, cb) {

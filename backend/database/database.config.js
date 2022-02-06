@@ -79,11 +79,15 @@ module.exports = {
 
    //Requests
    const requests = [{_id: "123456789112", bookName: "SEEDED BOOK", bookType: "Book", author: "SEEDED AUTHOR", requestedDateTime: new Date().toUTCString(), requestedBy: users[0]._id}, 
-                     {_id: "123456789113", bookName: "SEEDED BOOK 2", bookType: "Audiobook", author: "SEEDED AUTHOR 2", isbn: "SEEDEDISBN", requestedDateTime: 'Mon, 31 Jan 2022 18:38:00 GMT', requestedBy: users[0]._id, assignedTo: users[1]._id, status: "In Review"}]
+                     {_id: "123456789113", bookName: "SEEDED BOOK 2", bookType: "Audiobook", author: "SEEDED AUTHOR 2", isbn: "SEEDEDISBN", requestedDateTime: 'Mon, 31 Jan 2022 18:38:00 GMT', requestedBy: users[0]._id, assignedTo: users[1]._id, status: "In Review"},
+                     {_id: "123456789136", bookName: "SEEDED BOOK 2", bookType: "Audiobook", author: "SEEDED AUTHOR 2", isbn: "SEEDEDISBN", requestedDateTime: 'Mon, 31 Jan 2022 18:38:00 GMT', requestedBy: users[0]._id, assignedTo: users[1]._id, status: "In Review"}]
 
    //Status History
    const statusHistory = [{requestId: requests[1]._id, status: "Pending Review", updatedBy: users[0]._id, date: new Date().toUTCString()},
-                          {requestId: requests[1]._id, status: "In Review", updatedBy: users[1]._id, date: new Date().toUTCString()}]
+                          {requestId: requests[1]._id, status: "In Review", updatedBy: users[1]._id, date: new Date().toUTCString()},
+                          {requestId: requests[2]._id, status: "Pending Review", updatedBy: users[1]._id, date: new Date().toUTCString()},
+                          {requestId: requests[2]._id, status: "In Review", updatedBy: users[1]._id, date: new Date().toUTCString()},
+                          {requestId: requests[2]._id, status: "Awaiting Approval", updatedBy: users[1]._id, date: new Date().toUTCString()}]
    
    const notifications = [{_id: "123456789134", message: "TEST NOTIFICATION", userId: users[0]._id}]
    

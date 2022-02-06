@@ -116,7 +116,6 @@ async function validateUpdatedRequest(request) {
 
 async function validateReviewer(request){
  await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
- await utilities.isUserEmployee(request.body.assignedTo)
 }
 
 async function validateCompletedRequest(request){

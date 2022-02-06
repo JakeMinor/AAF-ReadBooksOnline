@@ -88,7 +88,7 @@ module.exports = {
    const notifications = [{_id: "123456789134", message: "TEST NOTIFICATION", userId: users[0]._id}]
    
    //Config
-   const config = {spendThreshold: 10, monthlySpendThreshold: 110, totalMonthlySpend: 0}
+   const config = {_id: "123456789135", spendThreshold: 10, monthlySpendThreshold: 110, totalMonthlySpend: 0}
    
    
    // Insert data into the test Database.

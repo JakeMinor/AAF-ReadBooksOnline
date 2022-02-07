@@ -9,7 +9,7 @@ module.exports = class Utilities{
   if (objectId.isValid(id)) {
    return objectId(id)
   }
-  throw new httpError(400, "ID is not valid.")
+  throw httpError(400, "ID is not valid.")
  }
 
  static async doesUserExist(userId) {
@@ -25,7 +25,6 @@ module.exports = class Utilities{
  }
  
  static async isUserEmployee(userId) {
-  await this.doesUserExist(userId)
   if (!(await userDataAccess.model.isUserEmployee(userId))) {
    throw httpError(400, "User isn't an employee.")
   }
@@ -40,6 +39,7 @@ module.exports = class Utilities{
  
  static async doesRequestExist(requestId) {
   const request = await requestDataAccess.model.doesRequestExist(requestId)
+
   if (!(request)) {
    throw httpError(404, "Request does not exist in the database.")
   }
@@ -48,6 +48,10 @@ module.exports = class Utilities{
  
  static async isPriceBelowThreshold(price) {
   return await requestDataAccess.model.isPriceBelowThreshold(price);
+ }
+ 
+ static async updateTotalMonthlySpend(price) {
+  return await requestDataAccess.model.updateMonthlySpend(price)
  }
  
  static statuses = ['Pending Review', 'In Review', 'Additional Information Required', 'Awaiting Approval', 'Purchased', 'Denied']

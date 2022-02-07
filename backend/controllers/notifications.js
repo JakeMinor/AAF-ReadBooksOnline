@@ -6,7 +6,3 @@ exports.deleteNotification = (request, response) => {
    .then(() => response.status(200).send())
    .catch((error) => response.status(error.status).send(error.message))
 }
-
-exports.getUsersNotifications = (request, response) => {
- 
-}

@@ -1,15 +1,15 @@
 <template>
-  <div class="mb-4 shadow-sm">
+  <div class="mb-4 shadow-sm" v-if="!hide">
     <b-navbar class="navbar">
       <h2 class="m-0">ReadBooks Online</h2>
       <b-collapse is-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item-dropdown right @toggle="getNotifications">
             <template #button-content>
-              Notifications ({{count}})
+              Notifications ({{ notificationCount }})
             </template>
-            <b-dropdown-item v-for="notification in notis" :key="notification._id">
-              <div class="d-flex">
+            <b-dropdown-item v-for="notification in userNotifications" :key="notification._id">
+              <div class="d-flex" @click="dismissNotification(notification._id)">
                 <span>{{ notification.message}}</span>
                 <b-icon-x @click="dismissNotification(notification._id)"/>
               </div>
@@ -41,7 +41,6 @@
 import Vue from 'vue'
 import store from '../store/index'
 import { api } from '@/helper'
-import { mapState } from 'vuex'
 import { Notification } from '@/api/api'
 
 export default Vue.extend({
@@ -68,9 +67,14 @@ export default Vue.extend({
     isAdmin () {
       return store.getters['user/isAdmin']
     },
-    ...mapState(['user/user']),
-    notis () {
-      return this.$data.notifications
+    userNotifications () {
+      return store.getters['user/notifications'].notifications
+    },
+    notificationCount () {
+      return store.getters['user/notifications'].count
+    },
+    hide () {
+      return (this.$route.name === 'Sign In' || this.$route.name === 'Sign Up')
     }
   },
   methods: {
@@ -87,29 +91,14 @@ export default Vue.extend({
     },
     async dismissNotification (id : string) {
       await api.notification.notificationDelete(id)
-      this.$data.notifications = api.user.notificationsDetail(store.getters['user/user'].id)
-        .then((res) => { return res.data })
-        .catch(error => {
-          this.$bvToast.toast(error.message, {
-            title: 'Error',
-            variant: 'danger',
-            solid: true
-          })
-        })
-      this.$data.count = this.$data.notifications.length
+      await store.dispatch('user/getNotifications')
     },
     async getNotifications () {
-      this.$data.notifications = (await api.user.notificationsDetail(store.getters['user/user'].id)
-        .then((res) => { return res.data })
-        .catch(error => {
-          this.$bvToast.toast(error.message, {
-            title: 'Error',
-            variant: 'danger',
-            solid: true
-          })
-        }))
-      this.$data.count = this.$data.notifications.length
+      await store.dispatch('user/getNotifications')
     }
+  },
+  async created () {
+    await store.dispatch('user/getNotifications')
   }
 })
 </script>

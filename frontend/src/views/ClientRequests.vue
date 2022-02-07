@@ -113,7 +113,7 @@ export default Vue.extend({
   methods: {
     formatDate,
     async getTableItems () {
-      const data = api.bookRequest.bookRequestList({ requestedBy: this.$store.getters['user/user'].id, limit: this.limit.toString(), offset: (this.offset - 1).toString() })
+      api.bookRequest.bookRequestList({ requestedBy: this.$store.getters['user/user'].id, limit: this.limit.toString(), offset: (this.offset - 1).toString() })
         .then((res) => {
           this.requests = res.data.requests
           this.totalCount = res.data.count

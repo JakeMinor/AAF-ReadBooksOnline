@@ -34,6 +34,7 @@ module.exports = class permissionBusiness {
  
  async updatePermission(id, permissionDetails) {
   const permissionId = utilities.convertToObjectId(id)
+  hasRequiredFields(permissionDetails)
   await doesPermissionExist(permissionId)
   await isPermissionNameTaken(permissionDetails.name)
   const updatedPermission = {
@@ -59,7 +60,7 @@ async function doesPermissionExist(id) {
 
 function hasRequiredFields(permissionDetails){
  if (!permissionDetails.name) {
-  throw httpError(400, 'A name for the permission is required.')
+  throw httpError(400, 'Data was missing or invalid.')
  }
 }
 

@@ -2,6 +2,8 @@ const utilities = require("../utilities")
 const httpError = require("http-errors")
 const StatusBusiness = require('../business/statuses')
 const statusBusiness = new StatusBusiness()
+const ConfigBusiness = require('../business/config')
+const configBusiness = new ConfigBusiness()
 const NotificationBusiness = require('../business/notification')
 const notificationBusiness = new NotificationBusiness()
 const DataAccess = require("../data-access/data-layer")
@@ -28,12 +30,6 @@ module.exports = class requestBusiness {
     .catch(error => {throw httpError(400, error.message)})
  }
  
- async getAllRequestsByUserId(id){
-  const userId = utilities.convertToObjectId(id)
-  return requestDataAccess.getByFilter({ requestedBy: userId })
-    .catch(error => {throw httpError(404, error.message)})
- }
- 
  async createRequest(request) {
   await validateCreateRequestData(request.body)
   const newRequest = {
@@ -45,15 +41,15 @@ module.exports = class requestBusiness {
    requestedBy: utilities.convertToObjectId(request.session.userId),
    status: "Pending Review"
   }
+  
   return requestDataAccess.create(newRequest)
     .then((req) => {
      statusBusiness.updateStatus(req._id, {status: "Pending Review", message: "", updatedBy: request.session.userId}).then((status) => {
       notificationBusiness
         .createNotification(req.requestedBy, `Status updated to ${status.status}`)
-        .catch(error => {
-         throw error
-        })
+        .catch(error => {throw error})
      })
+     return req
     })
     .catch(error => {throw httpError(500, error.message)})
  }
@@ -72,7 +68,6 @@ module.exports = class requestBusiness {
    chatHistory: request.body.chatHistory
   }
   
-  
   return requestDataAccess.update(request.params.id, updatedRequest)
     .then((req) => {
      if(request.body.status){
@@ -86,7 +81,7 @@ module.exports = class requestBusiness {
          .catch(error => {throw error})
       }).catch(error => {throw error})
      }
-
+     return req
     })
     .catch(error => {throw httpError(404, error.message)})
  }
@@ -101,26 +96,34 @@ module.exports = class requestBusiness {
 }
 
 async function validateUpdatedRequest(request) {
- const req = await utilities.doesRequestExist(request.params.id)
+  const req = await utilities.doesRequestExist(request.params.id)
+    .catch((error) => {throw httpError(404, "Request doesn't exist.")})
  
- if(request.body.status){
-  if(!(await req[0].hasRequestBeenThroughPreviousStatuses(request.body.status))){
-   throw httpError(400, "Request must go through the previous statuses.")
+  if(request.body.status){
+   if(!(await req[0].hasRequestBeenThroughPreviousStatuses(request.body.status))){
+    throw httpError(400, "Request must go through the previous statuses.")
+   }
+ }
+ console.log(request.body.status)
+  switch (request.body.status) {
+   case "Awaiting Approval":
+    await validateCompletedRequest(request)
+    break;
+   case "In Review":
+    await validateReviewer(request)
+    break;
+   case "Denied": 
+    await utilities.hasCorrectPermission(request.session.userId, "AuthoriseRequest")
+    break;
+   case "Purchased":
+    await utilities.hasCorrectPermission(request.session.userId, "AuthoriseRequest")
+    await utilities.updateTotalMonthlySpend(request.body.price)
+    break;
   }
- }
- 
- switch(request.body.status){
-  case "Awaiting Approval":
-   await validateCompletedRequest(request)
-   break;
-  case "In Review":
-   await validateReviewer(request)
-   break;
- }
 }
 
 async function validateReviewer(request){
- if(!request.body.statusMessage){
+ if(request.body.message != null){
   await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
  }
 }

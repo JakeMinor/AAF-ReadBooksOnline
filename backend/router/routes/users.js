@@ -24,7 +24,7 @@ router.get('/:id/notifications', (req, res, next) => grantAccess("", req, res, n
 router.post('/', (req, res, next) => grantAccess("CreateUser", req, res, next), userController.createUser)
 
 //UPDATE USERS ROLE
-router.put('/:id', (req, res, next) => grantAccess("UpdateUser", req, res, next), userController.updateUserRole)
+router.put('/:id', (req, res, next) => grantAccess("UpdateUser", req, res, next), userController.updateRole)
 
 //DELETE USER
 router.delete('/:id', (req, res, next) => grantAccess("DeleteUser", req, res, next), userController.deleteUser)

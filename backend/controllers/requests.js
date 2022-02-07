@@ -7,12 +7,6 @@ exports.getAllRequests = async (request, response) => {
    .catch(error => { return response.status(error.status).send(error.message) });
 }
 
-exports.getAllRequestsByUserId = async (request, response) => {
- requestBusiness.getAllRequestsByUserId(request.params.id)
-   .then((request) => {return response.status(200).send(request)})
-   .catch(error => {return response.status(error.status).send(error.message)});
-}
-
 exports.createNewRequest = async (request, response) => {
  requestBusiness.createRequest(request)
    .then((allRequests) => { return response.status(201).send(allRequests) })
@@ -21,9 +15,8 @@ exports.createNewRequest = async (request, response) => {
 
 exports.updateRequest = async (request, response) => {
  requestBusiness.updateRequest(request)
-   .then(() => {return response.status(200).send()})
+   .then((updatedRequest) => {return response.status(200).send(updatedRequest)})
    .catch(error => {
-    console.log(error)
     return response.status(error.status).send(error.message)});
 }
 

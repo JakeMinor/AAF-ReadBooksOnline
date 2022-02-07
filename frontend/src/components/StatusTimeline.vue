@@ -12,7 +12,7 @@
       <ValidationObserver ref="observer" v-if="status === 'Additional Information Required'" >
         <div class="d-flex mt-2">
           <custom-input label="Additional Information" placeholder="Additional Information..." rules="required"
-                        v-model="information" class="mt-1"></custom-input>
+                        v-model="information" class="mt-1" @keypress.enter="sendAdditionalInformation"></custom-input>
           <b-button class="h-50 mt-4 mb-3 ml-2" @click="sendAdditionalInformation" variant="primary">Send</b-button>
         </div>
       </ValidationObserver>
@@ -26,6 +26,7 @@ import { Request, Status, UpdateRequest } from '@/api/api'
 import { api, formatDate } from '@/helper'
 import CustomInput from '@/components/CustomInput.vue'
 import { ValidationObserver } from 'vee-validate'
+import Store from '@/store'
 export default Vue.extend({
   name: 'StatusTimeline',
   components: { CustomInput, ValidationObserver },
@@ -72,6 +73,16 @@ export default Vue.extend({
       } as UpdateRequest
 
       await api.bookRequest.bookRequestUpdate(this.request._id!, updatedRequest)
+        .catch(error => {
+          this.$bvToast.toast(error.message, {
+            title: 'Error',
+            variant: 'danger',
+            solid: true
+          })
+        })
+
+      await Store.dispatch('user/getNotifications')
+
       this.$emit('AdditionalInformationSupplied')
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()

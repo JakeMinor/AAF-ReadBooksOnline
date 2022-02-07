@@ -1,5 +1,5 @@
 const chai = require('chai')
-const server = require('../app')
+const server = require('../../app')
 const should = chai.should();
 
 chai.use(require('chai-http'))

@@ -3,10 +3,10 @@
     <template #default>
       <ValidationObserver ref="observer">
         <b-form @submit.stop.prevent="updateRequest">
-          <custom-input label="Book Name" v-model="request.bookName" rules="required" />
-          <custom-input label="Author" v-model="request.author" rules="required" class="mt-3"/>
-          <custom-input label="Book Type" :options="bookTypes" v-model="request.bookType" rules="required" class="mt-3"/>
-          <custom-input label="ISBN" v-model="request.isbn" class="mt-3"/>
+          <custom-input label="Book Name" v-model="request.bookName" rules="required" @keypress.enter="updateRequest"/>
+          <custom-input label="Author" v-model="request.author" rules="required" class="mt-3" @keypress.enter="updateRequest"/>
+          <custom-input label="Book Type" :options="bookTypes" v-model="request.bookType" rules="required" class="mt-3" @keypress.enter="updateRequest"/>
+          <custom-input label="ISBN" v-model="request.isbn" class="mt-3" @keypress.enter="updateRequest"/>
         </b-form>
       </ValidationObserver>
     </template>
@@ -23,6 +23,7 @@ import CustomInput from '@/components/CustomInput.vue'
 import { api, bookTypes } from '@/helper'
 import { UpdateRequest, Request } from '@/api/api'
 import { ValidationObserver } from 'vee-validate'
+import Store from '@/store'
 
 export default Vue.extend({
   name: 'EditRequestModal',
@@ -60,6 +61,9 @@ export default Vue.extend({
           solid: true
         })
       })
+
+      await Store.dispatch('user/getNotifications')
+
       this.$emit('Updated')
       this.closeModal()
     },

@@ -10,8 +10,8 @@
       </template>
       <template #cell(actions)="row">
         <div class="d-flex flex-column">
-          <b-link class="mb-2" @click="authorise(true, row.item._id)">Approve</b-link>
-          <b-link class="mb-2" @click="authorise(false, row.item._id)">Deny</b-link>
+          <b-link class="mb-2" @click="authorise(true, row)">Approve</b-link>
+          <b-link class="mb-2" @click="authorise(false, row)">Deny</b-link>
           <b-link class="mb-2" @click="showStatusHistory(row)">Status History <b-icon :icon="row.detailsShowing ? 'chevron-up' : 'chevron-down'" /></b-link>
         </div>
       </template>
@@ -77,13 +77,14 @@ export default Vue.extend({
           })
         })
     },
-    async authorise (state : boolean, requestId : string) {
+    async authorise (state : boolean, row : BRow) {
       const updatedRequest = {
+        price: state ? row.item.price : 0,
         authorised: state,
         status: state ? 'Purchased' : 'Denied'
       } as UpdateRequest
 
-      await api.bookRequest.bookRequestUpdate(requestId, updatedRequest)
+      await api.bookRequest.bookRequestUpdate(row.item._id, updatedRequest)
       await this.getTableItems()
     },
     showStatusHistory (row: BRow) {

@@ -31,7 +31,4 @@ async function validateStatusDetails(statusDetails) {
     break;
   }
  }
- if (!(utilities.statuses.includes(statusDetails.status))) {
-  throw httpError(400, "Data was missing or invalid.")
- }
 }

@@ -68,6 +68,7 @@ module.exports = class userBusiness {
  
  async updateRoles(id, roles) {
   const userId = utilities.convertToObjectId(id)
+  await utilities.doesUserExist(userId)
   await validateRoles(roles)
   const newRoles = {
    roles: roles.map(role => utilities.convertToObjectId(role))
@@ -77,6 +78,7 @@ module.exports = class userBusiness {
  
  async deleteUser(id) {
   const userId = utilities.convertToObjectId(id)
+  await utilities.doesUserExist(userId)
   return userDataAccess.delete(userId).catch(error => {throw httpError(404, error.message)})
  }
 }
@@ -109,10 +111,9 @@ async function validateNewUserData(newUserData) {
 
 async function validateRoles(roles) {
  const rolesInDb = (await rolesBusiness.getAllRoles({})).roles
- console.log(roles)
  const valid = roles.every(role => rolesInDb.find(dbRole => dbRole._id.toString() === role.toString()))
  if(!(valid)){
-  throw httpError(400, `Invalid role, the supplied role should be either ${rolesInDb.values()}.`)
+  throw httpError(400, `The role supplied does not exist in the database.`)
  }
 }
 

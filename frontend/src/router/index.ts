@@ -95,6 +95,7 @@ router.beforeEach((to, from, next) => {
   if (document.cookie !== '') {
     const token = document.cookie.split('%20')[1]
     store.dispatch('user/getUser', token).then(() => next())
+    store.dispatch('user/getNotifications').then(() => next())
     if ((to.name === 'Sign In' || to.name === 'Sign Up') && store.getters['user/token'] !== '') {
       next({ name: 'Catalog' })
     }

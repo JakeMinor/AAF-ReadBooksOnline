@@ -3,11 +3,11 @@
     <template #default>
       <ValidationObserver ref="observer">
         <b-form ref="completeRequestForm" @submit.stop.prevent="completeRequest">
-          <custom-input label="Book Name" v-model="request.bookName" rules="required" />
-          <custom-input label="Author" v-model="request.author" rules="required" class="mt-3"/>
-          <custom-input label="Book Type" :options="bookTypes" v-model="request.bookType" rules="required" class="mt-3"/>
-          <custom-input label="ISBN" v-model="request.isbn" rules="required" class="mt-3"/>
-          <custom-input label="Price £" v-model="request.price" rules="required" class="mt-3"/>
+          <custom-input label="Book Name" v-model="request.bookName" rules="required" @keypress.enter="completeRequest"/>
+          <custom-input label="Author" v-model="request.author" rules="required" class="mt-3" @keypress.enter="completeRequest"/>
+          <custom-input label="Book Type" :options="bookTypes" v-model="request.bookType" rules="required" class="mt-3" @keypress.enter="completeRequest"/>
+          <custom-input label="ISBN" v-model="request.isbn" rules="required" class="mt-3" @keypress.enter="completeRequest"/>
+          <custom-input label="Price £" v-model="request.price" rules="required" class="mt-3" @keypress.enter="completeRequest"/>
         </b-form>
       </ValidationObserver>
     </template>

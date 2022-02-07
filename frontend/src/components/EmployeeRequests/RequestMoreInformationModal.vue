@@ -3,7 +3,7 @@
     <template #default>
       <ValidationObserver ref="observer">
         <b-form ref="moreInformationForm" @submit.stop.prevent="requestMoreInformation">
-          <custom-input label="More Information" v-model="moreInformation" type="text-area" rules="required" />
+          <custom-input label="More Information" v-model="moreInformation" type="text-area" rules="required" @keypress.enter="requestMoreInformation" />
         </b-form>
       </ValidationObserver>
     </template>

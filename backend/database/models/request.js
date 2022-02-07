@@ -52,8 +52,8 @@ module.exports = mongoose => {
  requestSchema.methods.hasRequestBeenThroughPreviousStatuses = async function(newStatus, cb) {
   const statuses = ['Pending Review', 'In Review', 'Additional Information Required', 'Awaiting Approval', 'Purchased', 'Denied']
   const statusHistory = await this.model('status').find({requestId: this._id}).exec(cb)
-  const previousStatuses = statuses.slice(0, (statuses.indexOf(newStatus) - 1)).filter(status => status !== 'Additional Information Required' && status !== 'Purchased' && status !== 'Denied')
-  return previousStatuses.every(status => statusHistory.find(statush => statush.status === status))
+  const previousStatuses = statuses.indexOf(newStatus) - 1 === -1 ? [] : statuses.slice(0, (statuses.indexOf(newStatus) - 1)).filter(status => status !== 'Additional Information Required' && status !== 'Purchased' && status !== 'Denied')
+  return previousStatuses.every(status => statusHistory.find(statusHistory => statusHistory.status === status))
  }
  
  requestSchema.statics.isPriceBelowThreshold = async function(price, cb) {
@@ -63,6 +63,11 @@ module.exports = mongoose => {
    await this.model('config').update({ totalMonthlySpend: (parseInt(config.totalMonthlySpend ?? 0) + parseInt(price))}).exec(cb)
   }
   return purchased
+ }
+ 
+ requestSchema.statics.updateMonthlySpend = async function(price, cb) {
+  const config = (await this.model('config').find().exec(cb))[0]
+  await this.model('config').update({totalMonthlySpend: (parseInt(config.totalMonthlySpend ?? 0) + parseInt(price))}).exec(cb)
  }
  
  return mongoose.model(

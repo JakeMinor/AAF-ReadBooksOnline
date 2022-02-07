@@ -13,6 +13,10 @@
         {{ head.label }}
         <b-input v-model="filters.author" size="sm" class="mt-2" placeholder="Author..."></b-input>
       </template>
+      <template #head(isbn)="head">
+        {{ head.label }}
+        <b-input v-model="filters.isbn" size="sm" class="mt-2" placeholder="ISBN..."></b-input>
+      </template>
       <template #head(bookType)="head">
         {{ head.label }}
         <b-select :options="bookTypes" v-model="filters.bookType" size="sm" class="mt-2"></b-select>
@@ -79,7 +83,8 @@ export default Vue.extend({
       filters: {
         bookName: '',
         author: '',
-        bookType: ''
+        bookType: '',
+        isbn: ''
       },
       totalCount: 0,
       offset: 1,
@@ -102,7 +107,8 @@ export default Vue.extend({
       return this.$data.requests.filter((request : Request) =>
         request.bookName.includes(this.filters.bookName) &&
         request.author.includes(this.filters.author) &&
-        request.bookType.includes(this.filters.bookType)
+        request.bookType.includes(this.filters.bookType) &&
+        (request.isbn?.includes(this.filters.isbn) || '')
       )
     }
   },

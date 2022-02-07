@@ -3,10 +3,10 @@
     <b-card class="w-50" title="Sign up to ReadBooks Online">
       <template #default>
         <b-input-group class="flex-column p-3">
-          <custom-input label="Email" v-model="email" rules="required|email"></custom-input>
-          <custom-input label="Username" v-model="username" class="mt-3" rules="required"></custom-input>
-          <custom-input label="Password" type="password" v-model="password" class="mt-3" rules="required"></custom-input>
-          <b-button variant="primary" class="mt-3" @click="signIn">Sign up</b-button>
+          <custom-input label="Email" v-model="email" rules="required|email" @keypress.enter="signUp"></custom-input>
+          <custom-input label="Username" v-model="username" class="mt-3" rules="required" @keypress.enter="signUp"></custom-input>
+          <custom-input label="Password" type="password" v-model="password" class="mt-3" rules="required" @keypress.enter="signUp"></custom-input>
+          <b-button variant="primary" class="mt-3" @click="signUp">Sign up</b-button>
           <span class="mt-4">Already have an account? <b-link to="sign-in" class="link">Sign in!</b-link></span>
         </b-input-group>
       </template>
@@ -31,7 +31,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    async signIn () {
+    async signUp () {
       await api.user.signUpCreate({ email: this.email, username: this.username, password: this.password })
         .then(() => { this.$router.push({ name: 'Sign In' }) })
         .catch(error => {

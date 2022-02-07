@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navigation-bar v-if="!hide"></navigation-bar>
+    <navigation-bar></navigation-bar>
     <div class="container vh-75">
       <router-view />
     </div>
@@ -11,17 +11,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import NavigationBar from '@/components/NavigationBar.vue'
-import { ValidationObserver } from 'vee-validate'
 
 export default Vue.extend({
   name: 'App',
   components: {
     NavigationBar
-  },
-  computed: {
-    hide () {
-      return (this.$route.name === 'Sign In' || this.$route.name === 'Sign Up')
-    }
   }
 })
 </script>

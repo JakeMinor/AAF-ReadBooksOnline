@@ -50,6 +50,10 @@ module.exports = class Utilities{
   return await requestDataAccess.model.isPriceBelowThreshold(price);
  }
  
+ static async updateTotalMonthlySpend(price) {
+  return await requestDataAccess.model.updateMonthlySpend(price)
+ }
+ 
  static statuses = ['Pending Review', 'In Review', 'Additional Information Required', 'Awaiting Approval', 'Purchased', 'Denied']
  static bookTypes = ['Audiobook', 'Book']
  static roles = ['Client', 'Employee', 'Authoriser']

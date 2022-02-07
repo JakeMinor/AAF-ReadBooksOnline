@@ -6,8 +6,8 @@
       <template #default>
         <b-input-group class="flex-column p-3">
           <ValidationObserver ref="observer">
-            <custom-input id="email" label="Email" v-model="email" rules="required|email"></custom-input>
-            <custom-input label="Password" type="password" v-model="password" rules="required" class="mt-3"></custom-input>
+            <custom-input id="email" label="Email" v-model="email" rules="required|email" @keypress.enter="signIn"></custom-input>
+            <custom-input label="Password" type="password" v-model="password" rules="required" class="mt-3" @keypress.enter="signIn"></custom-input>
           </ValidationObserver>
           <b-button variant="primary" class="mt-3" @click="signIn">Sign in</b-button>
           <span class="mt-4">New here? <b-link to="sign-up" class="link">Sign up!</b-link></span>

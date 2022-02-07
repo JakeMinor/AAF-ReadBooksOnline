@@ -3,10 +3,10 @@
       <template #default>
         <ValidationObserver ref="observer">
           <b-form ref="createRequestForm" @submit.stop.prevent="createRequest">
-            <custom-input label="Book Name" v-model="createForm.bookName" rules="required"/>
-            <custom-input label="Author" v-model="createForm.author" rules="required" class="mt-3"/>
-            <custom-input label="Book Type" :options="bookTypes" v-model="createForm.bookType" rules="required" class="mt-3"/>
-            <custom-input label="ISBN" v-model="createForm.isbn" class="mt-3"/>
+            <custom-input label="Book Name" v-model="createForm.bookName" rules="required" @keypress.enter="createRequest"/>
+            <custom-input label="Author" v-model="createForm.author" rules="required" class="mt-3" @keypress.enter="createRequest"/>
+            <custom-input label="Book Type" :options="bookTypes" v-model="createForm.bookType" rules="required" class="mt-3" @keypress.enter="createRequest"/>
+            <custom-input label="ISBN" v-model="createForm.isbn" class="mt-3" @keypress.enter="createRequest"/>
           </b-form>
         </ValidationObserver>
       </template>
@@ -23,6 +23,7 @@ import CustomInput from '@/components/CustomInput.vue'
 import { api, BookType, bookTypes } from '@/helper'
 import { CreateRequest } from '@/api/api'
 import { ValidationObserver } from 'vee-validate'
+import Store from '../../store/index'
 
 export default Vue.extend({
   name: 'CreateRequestModal',
@@ -60,6 +61,8 @@ export default Vue.extend({
           solid: true
         })
       })
+
+      await Store.dispatch('user/getNotifications')
 
       this.closeModal()
       this.$emit('Created')

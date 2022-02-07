@@ -2,7 +2,7 @@
   <div>
     <h1 class="font-color-black">Catalog</h1>
     <b-table responsive striped hover :items="filteredList" :fields="requestTableHeaders" :current-page="offset"
-             :per-page="0" show-empty empty-text="You have no requests, why not make one!">
+             :per-page="0" show-empty empty-text="We currently have no books available, why not request one!">
       <template #head(bookName)="head">
         {{ head.label }}
         <b-input v-model="filters.bookName" size="sm" class="mt-2" placeholder="Book Name..."></b-input>
@@ -80,7 +80,7 @@ export default Vue.extend({
         request.author.includes(this.filters.author) &&
         request.bookType.includes(this.filters.bookType) &&
         request.status!.includes(this.filters.status) &&
-        request.isbn?.includes(this.filters.isbn)
+        request.isbn!.includes(this.filters.isbn)
       )
     }
   },

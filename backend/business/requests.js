@@ -2,6 +2,8 @@ const utilities = require("../utilities")
 const httpError = require("http-errors")
 const StatusBusiness = require('../business/statuses')
 const statusBusiness = new StatusBusiness()
+const ConfigBusiness = require('../business/config')
+const configBusiness = new ConfigBusiness()
 const NotificationBusiness = require('../business/notification')
 const notificationBusiness = new NotificationBusiness()
 const DataAccess = require("../data-access/data-layer")
@@ -66,7 +68,6 @@ module.exports = class requestBusiness {
    chatHistory: request.body.chatHistory
   }
   
-  
   return requestDataAccess.update(request.params.id, updatedRequest)
     .then((req) => {
      if(request.body.status){
@@ -103,19 +104,28 @@ async function validateUpdatedRequest(request) {
     throw httpError(400, "Request must go through the previous statuses.")
    }
  }
- 
- switch(request.body.status){
-  case "Awaiting Approval":
-   await validateCompletedRequest(request)
-   break;
-  case "In Review":
-   await validateReviewer(request)
-   break;
- }
+ console.log(request.body.status)
+  switch (request.body.status) {
+   case "Awaiting Approval":
+    await validateCompletedRequest(request)
+    break;
+   case "In Review":
+    await validateReviewer(request)
+    break;
+   case "Denied": 
+    await utilities.hasCorrectPermission(request.session.userId, "AuthoriseRequest")
+    break;
+   case "Purchased":
+    await utilities.hasCorrectPermission(request.session.userId, "AuthoriseRequest")
+    await utilities.updateTotalMonthlySpend(request.body.price)
+    break;
+  }
 }
 
 async function validateReviewer(request){
- await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
+ if(request.body.message != null){
+  await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
+ }
 }
 
 async function validateCompletedRequest(request){

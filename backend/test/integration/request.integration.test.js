@@ -481,7 +481,7 @@ describe("Request", function() {
    requests[2].status = "Purchased"
 
    //ACT
-   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", clientAuthToken).send(requests[1])
+   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[2]._id}`).set("Cookie", clientAuthToken).send(requests[2])
 
    //ASSERT
    updateRequestResult.should.have.status(403)
@@ -493,7 +493,7 @@ describe("Request", function() {
    requests[2].status = "Denied"
 
    //ACT
-   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", clientAuthToken).send(requests[1])
+   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[2]._id}`).set("Cookie", clientAuthToken).send(requests[2])
 
    //ASSERT
    updateRequestResult.should.have.status(403)
@@ -502,7 +502,7 @@ describe("Request", function() {
 
   it('UpdateRequest should return a 403 if user doesnt have the correct permissions to complete a request', async function () {
    //ARRANGE
-   requests[1].bookType = "NOT A BOOK"
+   requests[1].status = "Awaiting Approval"
 
    //ACT
    const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", clientAuthToken).send(requests[1])

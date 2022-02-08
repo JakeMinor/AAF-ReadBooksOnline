@@ -122,7 +122,7 @@ async function validateUpdatedRequest(request) {
 }
 
 async function validateReviewer(request){
- if(request.body.message != null || request.body.message === undefined){
+ if(request.body.statusMessage === undefined){
   await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
  }
 }

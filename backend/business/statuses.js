@@ -20,10 +20,10 @@ module.exports = class statusBusiness {
 
 async function validateStatusDetails(statusDetails) {
  if(!(statusDetails.status === "Pending Review" && (statusDetails.status === "In Review" && statusDetails.message))){
-  if(statusDetails.status === "Additional Information Required"){
-   await utilities.hasCorrectPermission(statusDetails.updatedBy, "RequestMoreInformation")
-  }
   switch(statusDetails.status) {
+   case "Additional Information Required":
+    await utilities.hasCorrectPermission(statusDetails.updatedBy, "RequestMoreInformation")
+    break;
    case "Denied":
    case "Purchased":
     await utilities.hasCorrectPermission(statusDetails.updatedBy, "AuthoriseRequest")

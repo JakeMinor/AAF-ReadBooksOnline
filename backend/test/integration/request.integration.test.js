@@ -343,7 +343,7 @@ describe("Request", function() {
    requests[1].status = "Awaiting Approval"
    requests[1].price = 9
    requests[1].isbn = "123"
-
+   
    //ACT
    const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", employeeAuthToken).send(requests[1])
 
@@ -364,6 +364,17 @@ describe("Request", function() {
    //ASSERT
    updateRequestResult.should.have.status(200)
    updateRequestResult.body.status.should.equal("Awaiting Approval")
+  })
+
+  it('UpdateRequest should return a 200 if user has the correct permissions to update the request status to Additional Information Required', async function () {
+   //ARRANGE
+   requests[1].status = "Additional Information Required"
+
+   //ACT
+   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", employeeAuthToken).send(requests[1])
+
+   //ASSERT
+   updateRequestResult.should.have.status(200)
   })
 
   it('UpdateRequest should return a 400 if the book name isnt included', async function () {
@@ -470,6 +481,18 @@ describe("Request", function() {
    //ARRANGE
    //ACT
    const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[1]._id}`).set("Cookie", noPermissionsAuthToken).send(requests[1])
+
+   //ASSERT
+   updateRequestResult.should.have.status(403)
+   updateRequestResult.text.should.be.equal("You do not have the correct permission to access this content.")
+  })
+  
+  it('UpdateRequest should return a 403 if user doesnt have the correct permissions to update the request status to In Review', async function () {
+   //ARRANGE
+   requests[0].status = "In Review"
+
+   //ACT
+   const updateRequestResult = await chai.request(server).put(`${baseUrl}/${requests[0]._id}`).set("Cookie", clientAuthToken).send(requests[0])
 
    //ASSERT
    updateRequestResult.should.have.status(403)

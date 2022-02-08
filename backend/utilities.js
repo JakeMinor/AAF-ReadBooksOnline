@@ -20,7 +20,7 @@ module.exports = class Utilities{
  
  static async hasCorrectPermission(userId, permission) {
   if(!(await userDataAccess.model.hasCorrectPermission(userId, permission))){
-   throw(httpError(403, "You do not have the correct permission to access this content."))
+   throw httpError(403, "You do not have the correct permission to access this content.")
   }
  }
  
@@ -39,8 +39,7 @@ module.exports = class Utilities{
  
  static async doesRequestExist(requestId) {
   const request = await requestDataAccess.model.doesRequestExist(requestId)
-
-  if (!(request)) {
+  if (request.length === 0) {
    throw httpError(404, "Request does not exist in the database.")
   }
   return request

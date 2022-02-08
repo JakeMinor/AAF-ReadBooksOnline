@@ -103,8 +103,7 @@ async function validateUpdatedRequest(request) {
    if(!(await req[0].hasRequestBeenThroughPreviousStatuses(request.body.status))){
     throw httpError(400, "Request must go through the previous statuses.")
    }
- }
- console.log(request.body.status)
+  }
   switch (request.body.status) {
    case "Awaiting Approval":
     await validateCompletedRequest(request)
@@ -123,7 +122,7 @@ async function validateUpdatedRequest(request) {
 }
 
 async function validateReviewer(request){
- if(request.body.message != null){
+ if(request.body.statusMessage === undefined){
   await utilities.hasCorrectPermission(request.session.userId, "AllocateRequest")
  }
 }

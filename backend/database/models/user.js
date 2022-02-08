@@ -27,7 +27,7 @@ module.exports = mongoose => {
  
  userSchema.statics.hasCorrectPermission = async function(id, permission, cb) {
   const user = ((await this.find({_id: id}).populate({ path: 'roles', populate: { path: 'permissions', select: 'name'}})))[0]
-  return user.roles.every(role => role.permissions.find(userPermission => userPermission.name === permission))
+  return user.roles.some(role => role.permissions.find(userPermission => userPermission.name === permission))
  }
  
  userSchema.statics.isUserEmployee = async function(id, cb) {

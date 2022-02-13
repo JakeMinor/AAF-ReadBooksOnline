@@ -1,25 +1,40 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+const jwt = require("jsonwebtoken")
+const user = {
+  id: "1",
+  username: "Client",
+  email: "client@test.com",
+  roles: [
+    {
+      _id: "1",
+      description: "The base role for the system",
+      id: "1",
+      name: "Client",
+      permissions: [
+        {
+          _id: "1",
+          name: "ReadRequest"
+        },
+        {
+          _id: "2",
+          name: "CreateRequest"
+        },
+        {
+          _id: "3",
+          name: "UpdateRequest"
+        },
+        {
+          _id: "4",
+          name: "DeleteRequest"
+        }
+      ]
+    }
+  ]
+}
+
+Cypress.Commands.add("clientLogin", () => {
+  cy.server()
+
+  cy.route('/user/sign-in', () => {
+    cy.setCookie('access_token', `Bearer%20${jwt.sign(user, '123')}`)
+  })
+})

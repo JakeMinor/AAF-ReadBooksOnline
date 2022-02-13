@@ -5,23 +5,19 @@
              :per-page="0" show-empty empty-text="We currently have no books available, why not request one!">
       <template #head(bookName)="head">
         {{ head.label }}
-        <b-input v-model="filters.bookName" size="sm" class="mt-2" placeholder="Book Name..."></b-input>
+        <b-input id="Book-Name-Filter" v-model="filters.bookName" size="sm" class="mt-2" placeholder="Book Name..."></b-input>
       </template>
       <template #head(author)="head">
         {{ head.label }}
-        <b-input v-model="filters.author" size="sm" class="mt-2" placeholder="Author..."></b-input>
+        <b-input id="Author-Filter" v-model="filters.author" size="sm" class="mt-2" placeholder="Author..."></b-input>
       </template>
       <template #head(isbn)="head">
         {{ head.label }}
-        <b-input v-model="filters.isbn" size="sm" class="mt-2" placeholder="ISBN..."></b-input>
+        <b-input id="ISBN-Filter" v-model="filters.isbn" size="sm" class="mt-2" placeholder="ISBN..."></b-input>
       </template>
       <template #head(bookType)="head">
         {{ head.label }}
-        <b-select :options="bookTypes" v-model="filters.bookType" size="sm" class="mt-2"></b-select>
-      </template>
-      <template #head(status)="head">
-        {{ head.label }}
-        <b-select :options="statuses" v-model="filters.status" size="sm" class="mt-2"></b-select>
+        <b-select id="Book-Type-Filter" :options="bookTypes" v-model="filters.bookType" size="sm" class="mt-2"></b-select>
       </template>
       <template #cell(price)="cell">
         {{ formatPrice(cell.item.price) }}
@@ -34,7 +30,7 @@
                        @change="getCatalogItems" />
       </span>
       <b-pagination :per-page="limit" :total-rows="totalCount" v-model="offset" @input="getCatalogItems"></b-pagination>
-      <span>{{ totalCount }} books in {{ Math.ceil(totalCount / limit) }} pages</span>
+      <span id="Pagination-Details">{{ totalCount }} books in {{ Math.ceil(totalCount / limit) }} pages</span>
     </div>
   </div>
 </template>
@@ -55,8 +51,7 @@ export default Vue.extend({
         bookName: '',
         author: '',
         isbn: '',
-        bookType: '' as BookType,
-        status: '' as Status
+        bookType: '' as BookType
       }
     }
   },
@@ -71,15 +66,11 @@ export default Vue.extend({
     bookTypes () {
       return ['', ...bookTypes]
     },
-    statuses () {
-      return ['', ...statuses]
-    },
     filteredList () {
       return this.$data.books.filter((request: Request) =>
         request.bookName.includes(this.filters.bookName) &&
         request.author.includes(this.filters.author) &&
         request.bookType.includes(this.filters.bookType) &&
-        request.status!.includes(this.filters.status) &&
         request.isbn!.includes(this.filters.isbn)
       )
     }

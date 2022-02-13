@@ -15,7 +15,7 @@
               </div>
             </b-dropdown-item>
           </b-nav-item-dropdown>
-          <b-nav-item-dropdown right class="font-spectral font-color-white">
+          <b-nav-item-dropdown right class="font-spectral font-color-white" id="Username">
             <template #button-content>
               {{ user.username }}
             </template>

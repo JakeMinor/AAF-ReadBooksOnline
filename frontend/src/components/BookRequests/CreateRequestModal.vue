@@ -3,16 +3,16 @@
       <template #default>
         <ValidationObserver ref="observer">
           <b-form ref="createRequestForm" @submit.stop.prevent="createRequest">
-            <custom-input label="Book Name" v-model="createForm.bookName" rules="required" @keypress.enter="createRequest"/>
-            <custom-input label="Author" v-model="createForm.author" rules="required" class="mt-3" @keypress.enter="createRequest"/>
-            <custom-input label="Book Type" :options="bookTypes" v-model="createForm.bookType" rules="required" class="mt-3" @keypress.enter="createRequest"/>
-            <custom-input label="ISBN" v-model="createForm.isbn" class="mt-3" @keypress.enter="createRequest"/>
+            <custom-input id="Book-Name-Input" label="Book Name" v-model="createForm.bookName" rules="required" @keypress.enter="createRequest"/>
+            <custom-input id="Author-Input" label="Author" v-model="createForm.author" rules="required" class="mt-3" @keypress.enter="createRequest"/>
+            <custom-input id="Book-Type-Input" label="Book Type" :options="bookTypes" v-model="createForm.bookType" rules="required" class="mt-3" @keypress.enter="createRequest"/>
+            <custom-input id="ISBN-Input" label="ISBN" v-model="createForm.isbn" class="mt-3" @keypress.enter="createRequest"/>
           </b-form>
         </ValidationObserver>
       </template>
       <template #modal-footer>
         <b-button variant="primary-outline" class="mr-auto" @click="closeModal">Cancel</b-button>
-        <b-button variant="primary" @click="createRequest">Create</b-button>
+        <b-button id="Create" variant="primary" @click="createRequest">Create</b-button>
       </template>
   </b-modal>
 </template>

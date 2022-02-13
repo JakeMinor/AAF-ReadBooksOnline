@@ -11,7 +11,7 @@
       </b-alert>
       <ValidationObserver ref="observer" v-if="status === 'Additional Information Required'" >
         <div class="d-flex mt-2">
-          <custom-input label="Additional Information" placeholder="Additional Information..." rules="required"
+          <custom-input id="Additional-Information" label="Additional Information" placeholder="Additional Information..." rules="required"
                         v-model="information" class="mt-1" @keypress.enter="sendAdditionalInformation"></custom-input>
           <b-button class="h-50 mt-4 mb-3 ml-2" @click="sendAdditionalInformation" variant="primary">Send</b-button>
         </div>

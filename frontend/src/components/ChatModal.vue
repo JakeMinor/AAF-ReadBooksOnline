@@ -11,7 +11,7 @@
     </template>
     <template #modal-footer>
       <div class="flex-grow-1">
-        <b-input v-model="message" placeholder="Enter message..." @keypress.enter="sendMessage"></b-input>
+        <b-input id="Message" v-model="message" placeholder="Enter message..." @keypress.enter="sendMessage"></b-input>
       </div>
       <div>
         <b-button @click="sendMessage" variant="primary">Send</b-button>

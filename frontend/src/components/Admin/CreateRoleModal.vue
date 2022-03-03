@@ -32,6 +32,7 @@ export default Vue.extend({
     ValidationObserver
   },
   props: {
+    // Different permissions the user can choose from.
     permissionsOptions: {
       type: Array
     }
@@ -39,40 +40,57 @@ export default Vue.extend({
   data () {
     return {
       newRole: {
-        name: null as string | null,
-        description: null as string | null,
-        permissions: [] as Permission[]
+        name: null as string | null, // The name of the new role.
+        description: null as string | null, // The description of the new role.
+        permissions: [] as Permission[] // The permissions which are to be added to the role.
       }
     }
   },
   methods: {
+    /**
+     * Make an API call to create a new role.
+     */
     async createRole () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return
       }
 
+      // Format the role data.
       const role = {
         name: this.newRole.name,
         description: this.newRole.description,
         permissions: this.newRole.permissions.map(permission => permission._id)
       } as CreateRole
 
+      // Send the data to the api.
       await api.admin.roleCreate(role).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
+
+      // Close the modal.
       this.closeModal()
       this.$emit('Created')
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
       this.$bvModal.hide('CreateRoleModal')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
+
+      // Reset the data.
       this.newRole.name = null
       this.newRole.description = null
       this.newRole.permissions = []

@@ -18,6 +18,7 @@
 import Vue from 'vue'
 import { api } from '@/helper'
 import CustomInput from '@/components/CustomInput.vue'
+import { ValidationObserver } from "vee-validate";
 export default Vue.extend({
   name: 'SignUp',
   components: {
@@ -25,16 +26,28 @@ export default Vue.extend({
   },
   data () {
     return {
-      email: '',
-      username: '',
-      password: ''
+      email: '', // The Email of the users account.
+      username: '', // The Username for the users account.
+      password: '' // The Password for the users account.
     }
   },
   methods: {
+    /**
+     * Signs the user up to the system.
+     */
     async signUp () {
+      // Validate the data.
+      const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
+      if (!valid) {
+        return
+      }
+
+      // Send the sign in credentials to the API.
       await api.user.signUpCreate({ email: this.email, username: this.username, password: this.password })
+        // If successful, push the user to the sign in page.
         .then(() => { this.$router.push({ name: 'Sign In' }) })
         .catch(error => {
+          // Catch any errors and display a toast informing the user.
           this.$bvToast.toast(error.message, {
             title: 'Error',
             variant: 'danger',

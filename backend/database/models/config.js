@@ -1,3 +1,6 @@
+/**
+ * Config database schema.
+ */
 module.exports = mongoose => {
  let configScheme = mongoose.Schema({
   spendThreshold: {

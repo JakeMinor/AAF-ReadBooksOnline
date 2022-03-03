@@ -1,3 +1,6 @@
+/**
+ * Status database schema.
+ */
 module.exports = mongoose => {
  const statusSchema = mongoose.Schema({
    requestId: {

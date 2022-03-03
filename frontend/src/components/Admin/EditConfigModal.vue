@@ -26,41 +26,57 @@ export default Vue.extend({
   name: 'EditConfigModal',
   components: { CustomInput, ValidationObserver },
   props: {
-    configData: Object as () => Config
+    configData: Object as () => Config // The pre-existing config data.
   },
   data () {
     return {
-      config: { ...this.configData }
+      config: { ...this.configData } // The pre-existing config data.
     }
   },
   methods: {
+    /**
+     * Make and API call to update pre-existing config settings.
+     */
     async updateConfig () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return
       }
 
+      // Format the config data.
       const updatedConfig = {
         spendThreshold: this.config.spendThreshold,
         monthlySpendThreshold: this.config.monthlySpendThreshold,
         totalMonthlySpend: this.config.totalMonthlySpend
       } as UpdateConfig
 
+      // Send the data to the api.
       await api.admin.configUpdate(this.config._id, updatedConfig).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
+
+      // Close the modal.
       this.closeModal()
       this.$emit('Updated')
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
+      this.$bvModal.hide('EditConfigModal')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
-      this.$bvModal.hide('EditConfigModal')
+
       this.$emit('Closed')
     }
   }

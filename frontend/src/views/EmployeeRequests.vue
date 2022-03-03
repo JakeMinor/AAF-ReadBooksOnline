@@ -76,22 +76,25 @@ export default Vue.extend({
   },
   data () {
     return {
-      page: 'Unallocated Requests' as pages,
-      pages: ['Unallocated Requests', 'My Requests'] as pages[],
-      requests: [] as Request[],
-      selectedRequest: null as Request | null,
+      page: 'Unallocated Requests' as pages, // Sets the table to display unallocated requests.
+      pages: ['Unallocated Requests', 'My Requests'] as pages[], // The different displays for the table.
+      requests: [] as Request[], // The requests the client has made.
+      selectedRequest: null as Request | null, // The currently selected request.
       filters: {
-        bookName: '',
-        author: '',
-        bookType: '',
-        isbn: ''
+        bookName: '', // Filters the table by the book name.
+        author: '', // Filters the table by the author name.
+        bookType: '', // Filters the table by the book type.
+        isbn: '' // Filters the table by the books ISBN.
       },
-      totalCount: 0,
-      offset: 1,
-      limit: 10
+      totalCount: 0, // The total count of the requests displayed in the table.
+      offset: 1, // The tables current page.
+      limit: 10 // The amount of items to be shown on the table.
     }
   },
   computed: {
+    /**
+     * The headings for the table and if they are sortable fields.
+     */
     tableHeaders () {
       return [{ key: 'bookName', sortable: true },
         { key: 'author', sortable: true },
@@ -100,9 +103,15 @@ export default Vue.extend({
         { key: 'requestedDateTime', sortable: true },
         { key: 'Actions', sortable: false }]
     },
+    /**
+     * The available book types.
+     */
     bookTypes () {
       return ['', ...bookTypes]
     },
+    /**
+     * Applies any filters and updates the table.
+     */
     filteredList () {
       return this.$data.requests.filter((request : Request) =>
         request.bookName.includes(this.filters.bookName) &&
@@ -113,15 +122,25 @@ export default Vue.extend({
     }
   },
   methods: {
+    /**
+     * The format price method from helper.ts
+     */
     formatDate,
+    /**
+     * Gets the items which are to be displayed in the table.
+     */
     async getTableItems () {
+      // Displays unallocated requests if the table display is 'Unallocated Requests'
       if (this.page === 'Unallocated Requests') {
+        // Makes an API call to get the request filtering by the Pending Review status and pagination filter.
         api.bookRequest.bookRequestList({ status: 'Pending Review', limit: this.limit.toString(), offset: (this.offset - 1).toString() })
           .then((res) => {
+            // Sets the returned requests and count
             this.requests = res.data.requests
             this.totalCount = res.data.count
           })
           .catch(error => {
+            // Catch any errors and display a toast informing the user.
             this.$bvToast.toast(error.message, {
               title: 'Error',
               variant: 'danger',
@@ -129,12 +148,15 @@ export default Vue.extend({
             })
           })
       } else {
+        // Makes an API call to get requests which are assigned to the employee and where the status is In Review.
         api.bookRequest.bookRequestList({ assignedTo: this.$store.getters['user/user'].id, status: 'In Review', limit: this.limit.toString(), offset: (this.offset - 1).toString() })
           .then((res) => {
+            // Sets the returned requests and count
             this.requests = res.data.requests
             this.totalCount = res.data.count
           })
           .catch(error => {
+            // Catch any errors and display a toast informing the user.
             this.$bvToast.toast(error.message, {
               title: 'Error',
               variant: 'danger',
@@ -143,28 +165,60 @@ export default Vue.extend({
           })
       }
     },
+    /**
+     * Allocates a request to an employee.
+     * @param requestId - The ID of the request which is to be allocated.
+     */
     async allocate (requestId : string) {
+      // Format the request data.
       const userToAllocate = {
         assignedTo: this.$store.getters['user/user'].id,
         status: 'In Review'
       } as UpdateRequest
+
+      // Send the data to the api.
       await api.bookRequest.bookRequestUpdate(requestId, userToAllocate)
+
+      // Update the table items.
       await this.getTableItems()
     },
+    /**
+     * Toggle the row details to show the status history.
+     */
     showStatusHistory (row: BRow) {
+      // Sets the selected request.
       this.selectedRequest = row.item
+
+      // Displays the row details which contains the status history.
       row.toggleDetails()
     },
+    /**
+     * Closes the modal.
+     */
     async modalClose () {
+      // Resets the selected request.
       this.selectedRequest = null
+
+      // Update the table items.
       await this.getTableItems()
     },
+    /**
+     * Connects to chat room for a request.
+     */
     startChat (row : BRow) {
+      // Updates the selected request.
       this.selectedRequest = row.item
+
+      // Connects to the client socket.
       this.$socket.client.connect()
+
+      // Joins the request chat based on the request ID, this stops any unauthorised users from joining the chat.
       this.$socket.client.emit('join_request_chat', this.selectedRequest!._id!)
     }
   },
+  /**
+   * Created hook which gets the table items.
+   */
   async created () {
     await this.getTableItems()
   }

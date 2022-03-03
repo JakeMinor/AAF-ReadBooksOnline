@@ -30,20 +30,28 @@ export default Vue.extend({
   },
   data () {
     return {
-      email: '' as string,
-      password: '' as string,
-      error: ''
+      email: '' as string, // The Email of the users account.
+      password: '' as string, // The Password for the users account.
+      error: '' // Any validation errors which may occur.
     }
   },
   methods: {
+    /**
+     * Authenticates the user in the system.
+     */
     async signIn () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return
       }
+
+      // Send the sign in credentials to the API.
       api.user.signInCreate({ email: this.email, password: this.password }).then(() => {
+        // If successful, push the user to the catalog page.
         this.$router.push({ name: 'Catalog' })
       }).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Invalid email or password',
           variant: 'danger',

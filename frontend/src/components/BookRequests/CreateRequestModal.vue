@@ -31,30 +31,37 @@ export default Vue.extend({
   data () {
     return {
       createForm: {
-        bookName: null as string | null,
-        author: null as string | null,
-        bookType: null as BookType | null,
-        isbn: '' as string
+        bookName: null as string | null, // The name of the requested book.
+        author: null as string | null, // The author of the requested book.
+        bookType: null as BookType | null, // The type of the requested book.
+        isbn: '' as string // The ISBN of the requested book.
       }
     }
   },
   computed: {
     bookTypes () {
-      return bookTypes
+      return bookTypes // The available book types.
     }
   },
   methods: {
+    /**
+     * Make an API call to create a new book request.
+     */
     async createRequest () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) { return }
 
+      // Format the request data.
       const newRequest = {
         ...this.createForm,
         requestedBy: this.$store.getters['user/user'].id,
         requestedDateTime: new Date().toUTCString()
       } as CreateRequest
 
+      // Send the data to the api.
       await api.bookRequest.bookRequestCreate(newRequest).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
@@ -62,16 +69,26 @@ export default Vue.extend({
         })
       })
 
+      // Get the users notifications from the api.
       await Store.dispatch('user/getNotifications')
 
+      // Close the modal.
       this.closeModal()
       this.$emit('Created')
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
       this.$bvModal.hide('createModal')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
+
+      // Reset the data.
       this.createForm.bookName = ''
       this.createForm.isbn = ''
       this.createForm.bookType = ''

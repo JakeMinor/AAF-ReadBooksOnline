@@ -1,23 +1,36 @@
 module.exports = class DataService{ 
+ // Gets the model dependant on the name passed in on initialisation in the business logic
  constructor(modelName){
   this.model = require('../database/database.config').getModel(modelName)
  }
- 
- //Get all documents from collection
+
+ /**
+  * Get All.
+  * @param filter - A mongoose filter supplied by the business logic.
+  */
  async getAll(filter) {
   return this.model
     .find(JSON.parse(JSON.stringify(filter)))
     .then((result) => {return result})
     .catch(error => {return error})
  }
- 
+
+ /**
+  * Get All and Paginate.
+  * @param filter  - A mongoose pagination filter supplied by the business logic.
+  */
  async getAllAndPaginate(filter){
   return this.model
     .find()
     .limit(filter.limit)
     .skip((filter.offset * filter.limit))
  }
- 
+
+ /**
+  * Get All and Populate.
+  * @param filter - A mongoose filter containing pagination and data filtering.
+  * @param populateFilter - A mongoose populate filter which populates related data.
+  */
  async getAllAndPopulate(filter, populateFilter) {
   return this.model
     .find(JSON.parse(JSON.stringify(filter, ((key, value) => value === "null" ? null : value))))
@@ -29,7 +42,12 @@ module.exports = class DataService{
       throw new Error("Could not convert value to ObjectId.")
     })
  }
- 
+
+ /**
+  * Get By Id and Populate.
+  * @param id - The ID of the model.
+  * @param populateFilter - A mongoose populate filter which populates related data.
+  */
  async getByIdAndPopulate(id, populateFilter){
   return this.model.findById(id)
     .orFail(new Error("No data found."))
@@ -37,14 +55,23 @@ module.exports = class DataService{
     .then((result) => {return result})
     .catch(error => {throw error})
  }
- 
+
+ /**
+  * Get By Filter.
+  * @param filter - A mongoose pagination filter supplied by the business logic.
+  */
  async getByFilter(filter){
   return this.model.findOne(filter)
     .orFail(new Error("No data found."))
     .then((result) => {return result})
     .catch(error => {throw error})
  }
- 
+
+ /**
+  * Get By Filter and Populate.
+  * @param filter - A mongoose pagination filter supplied by the business logic. 
+  * @param populateFilter - A mongoose populate filter which populates related data.
+  */
  async getByFilterAndPopulate(filter, populateFilter) {
   return this.model.findOne(filter)
     .orFail(new Error("No data found."))
@@ -53,17 +80,24 @@ module.exports = class DataService{
      return result})
     .catch(error => {throw error})
  }
- 
- //Create a new document in the collection
+
+ /**
+  * Create
+  * @param requestData - The data which is to be created in the database
+  */
  async create(requestData){
   return this.model.create(requestData)
     .catch((error) => {
-     if(error.code === 11000){ throw new Error("Email is already in use.")} //TODO: NOT SURE THIS WILL WORK LATER ON BUT WHO KNOWS LOL
+     if(error.code === 11000){ throw new Error("Email is already in use.")}
      throw error
     })
  }
 
- //Update a request in the database
+ /**
+  * Update
+  * @param id - The ID of the model which is to be updated.
+  * @param requestData - The data which is to be updated in the database
+  */
  async update(id, requestData) {
   return this.model.findByIdAndUpdate(id, requestData)
     .orFail(new Error("No data found."))
@@ -75,7 +109,10 @@ module.exports = class DataService{
     .catch(error => {throw error})
  }
 
-//Delete a request in the database
+ /**
+  * Delete
+  * @param id - The ID of the model which is to be updated.
+  */
  async delete(id) {
   return this.model.findByIdAndDelete(id)
     .orFail(new Error("No data found."))

@@ -18,11 +18,11 @@ export default Vue.extend({
   name: 'CustomInput',
   components: { ValidationProvider },
   props: {
-    options: Array,
-    type: String,
-    label: String,
-    rules: String,
-    placeholder: String
+    options: Array, // The options which are to be included in the select input.
+    type: String, // The type of input which is required.
+    label: String, // The string to be included in the label.
+    rules: String, // The validation rules which are to be applied to the input.
+    placeholder: String // The string to be included in the placeholder for the input.
   }
 })
 </script>

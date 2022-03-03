@@ -378,7 +378,7 @@ describe("Role", function () {
 
    //ASSERT
    deleteRoleResult.should.have.status(404)
-   deleteRoleResult.text.should.be.equal("No data found.")
+   deleteRoleResult.text.should.be.equal("Role does not exist in the database.")
   })
  })
 

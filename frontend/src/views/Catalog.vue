@@ -43,19 +43,22 @@ export default Vue.extend({
   name: 'Catalog',
   data () {
     return {
-      books: [] as Request[],
-      totalCount: 0,
-      limit: 10,
-      offset: 1,
+      books: [] as Request[], // The books which have been purchased.
+      totalCount: 0, // The total count of the books displayed in the table.
+      limit: 10, // The amount of items to be shown on the table.
+      offset: 1, // The tables current page.
       filters: {
-        bookName: '',
-        author: '',
-        isbn: '',
-        bookType: '' as BookType
+        bookName: '', // Filters the table by the book name.
+        author: '', // Filters the table by the author name.
+        isbn: '', // Filters the table by the books ISBN.
+        bookType: '' as BookType // Filters the table by the book type.
       }
     }
   },
   computed: {
+    /**
+     * The headings for the table and if they are sortable fields.
+     */
     requestTableHeaders () {
       return [{ key: 'bookName', sortable: true },
         { key: 'author', sortable: true },
@@ -63,9 +66,15 @@ export default Vue.extend({
         { key: 'bookType', sortable: true },
         { key: 'price', sortable: true }]
     },
+    /**
+     * The available book types.
+     */
     bookTypes () {
       return ['', ...bookTypes]
     },
+    /**
+     * Applies any filters and updates the table.
+     */
     filteredList () {
       return this.$data.books.filter((request: Request) =>
         request.bookName.includes(this.filters.bookName) &&
@@ -76,15 +85,27 @@ export default Vue.extend({
     }
   },
   methods: {
+    /**
+     * The format price method from helper.ts
+     */
     formatDate,
+    /**
+     * The format date method from helper.ts
+     */
     formatPrice,
+    /**
+     * Gets the items which are to be displayed in the table.
+     */
     async getCatalogItems () {
+      // Makes an API call to get the request filtering by the Purchased status and pagination filter.
       api.bookRequest.bookRequestList({ limit: this.limit.toString(), offset: (this.offset - 1).toString(), status: 'Purchased' })
         .then((res) => {
+          // Sets the returned books and count
           this.books = res.data.requests
           this.totalCount = res.data.count
         })
         .catch(error => {
+          // Catch any errors and display a toast informing the user.
           this.$bvToast.toast(error.message, {
             title: 'Error',
             variant: 'danger',
@@ -93,6 +114,9 @@ export default Vue.extend({
         })
     }
   },
+  /**
+   * Created hook which gets the table items.
+   */
   async created () {
     await this.getCatalogItems()
   }

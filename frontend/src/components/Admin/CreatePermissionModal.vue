@@ -27,38 +27,55 @@ export default Vue.extend({
   data () {
     return {
       newPermission: {
-        name: null as string | null,
-        description: null as string | null
+        name: null as string | null, // Name of the permission.
+        description: null as string | null // Description of the permission.
       }
     }
   },
   methods: {
+    /**
+     * Make an API call to create a new permission.
+     */
     async createPermission () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return
       }
 
+      // Format the permission data.
       const permission = {
         name: this.newPermission.name,
         description: this.newPermission.description
       } as CreatePermission
 
+      // Send the data to the API.
       await api.admin.permissionCreate(permission).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
+
+      // Close the modal.
       this.closeModal()
       this.$emit('Created')
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
       this.$bvModal.hide('CreatePermissionModal')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
+
+      // Reset the data.
       this.newPermission.name = null
       this.newPermission.description = null
     }

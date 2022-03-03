@@ -11,6 +11,9 @@ import './validation'
 
 import { io } from 'socket.io-client'
 
+/**
+ * Creates a connection to the API socket.
+ */
 const socket = io('http://localhost:3000')
 
 Vue.use(VueApexCharts)
@@ -19,6 +22,9 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.config.productionTip = false
 
+/**
+ * Intercepts an axios requests and throws a Javascript error if the Axios requests reruns an error.
+ */
 api.instance.interceptors.response.use(response => response, (error) => {
   throw Error(error.response.data)
 })

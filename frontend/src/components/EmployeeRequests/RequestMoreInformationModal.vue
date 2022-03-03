@@ -25,41 +25,56 @@ export default Vue.extend({
   components: { CustomInput, ValidationObserver },
   data () {
     return {
-      moreInformation: null as string | null
+      moreInformation: null as string | null // The additional information required for the request.
     }
   },
   props: {
-    requestId: String
+    requestId: String // The ID of the selected request.
   },
   methods: {
     async requestMoreInformation () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return
       }
 
+      // Format the request data.
       const updatedRequest = {
         status: 'Additional Information Required',
         statusMessage: this.moreInformation
       } as UpdateRequest
 
+      // Send the data to the api.
       await api.bookRequest.bookRequestUpdate(this.requestId, updatedRequest).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
+
+      // Close the modal.
       this.closeModal()
       this.$emit('MoreInformationRequested')
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
       this.$bvModal.hide('moreInformationModal')
-      this.$emit('Closed')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
+
+      // Reset the data.
       this.moreInformation = null
+
+      this.$emit('Closed')
     }
   }
 })

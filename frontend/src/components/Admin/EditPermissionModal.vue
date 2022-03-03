@@ -25,40 +25,56 @@ export default Vue.extend({
   name: 'EditPermissionModal',
   components: { CustomInput, ValidationObserver },
   props: {
-    selectedPermission: Object as () => Permission
+    selectedPermission: Object as () => Permission // The Permission to be updated.
   },
   data () {
     return {
-      permission: { ...this.selectedPermission }
+      permission: { ...this.selectedPermission } // The Permission to be updated.
     }
   },
   methods: {
+    /**
+     * Make and API call to update a pre-existing permission.
+     */
     async updatePermission () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return
       }
 
+      // Format the permission data.
       const updatedPermission = {
         name: this.permission.name,
         description: this.permission.description
       } as UpdatePermission
 
+      // Send data to the api.
       await api.admin.permissionUpdate(this.permission._id!, updatedPermission).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
+
+      // Close the modal.
       this.closeModal()
       this.$emit('Updated')
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
+      this.$bvModal.hide('EditPermissionModal')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
-      this.$bvModal.hide('EditPermissionModal')
+
       this.$emit('Closed')
     }
   }

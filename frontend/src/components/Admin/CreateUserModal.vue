@@ -31,38 +31,55 @@ export default Vue.extend({
   data () {
     return {
       newUser: {
-        username: null as string | null,
-        email: null as string | null,
-        password: null as string | null
+        username: null as string | null, // The name of the new user.
+        email: null as string | null, // The email of the new user.
+        password: null as string | null // The password of the new user.
       }
     }
   },
   methods: {
+    /**
+     * Make and API call to create a new user.
+     */
     async createUser () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
-
       if (!valid) {
         return
       }
+
+      // Format the user data.
       const user = {
         ...this.newUser
       } as CreateUser
 
+      // Send the data to the api.
       await api.user.userCreate(user).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
+
+      // Close the modal.
       this.closeModal()
       this.$emit('Created')
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
       this.$bvModal.hide('CreateUserModal')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
+
+      // Reset the data.
       this.newUser.username = null
       this.newUser.password = null
       this.newUser.email = null

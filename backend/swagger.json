@@ -85,12 +85,6 @@
           },
           {
             "in": "query",
-            "name": "price",
-            "description": "Filter results down by the price of the request.",
-            "type": "string"
-          },
-          {
-            "in": "query",
             "name": "limit",
             "description": "Filter the amount of items which are included on a page.",
             "type": "string",

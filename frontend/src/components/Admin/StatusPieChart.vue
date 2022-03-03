@@ -16,23 +16,24 @@ export default Vue.extend({
   components: { Apexcharts },
   props: {
     data: {
-      type: Array
+      type: Array // Array of data which is to be displayed on the pie chart.
     }
   },
   data () {
     return {
+      // Pie Chart Options
       options: {
-        labels: [...statuses] as string[],
+        labels: [...statuses] as string[], // The labels for the pie chart
         noData: {
-          text: 'No Requests in the system.'
+          text: 'No Requests in the system.' // The message which is displayed when there is no data.
         },
         dataLabels: {
-          formatter: function (value, { seriesIndex, dataPointIndex, w }) {
+          formatter: function (value, { seriesIndex, dataPointIndex, w }) { // Adds a tooltip to the pie chart displaying the data.
             return `${w.config.series[seriesIndex]}`
           }
         },
         legend: {
-          position: 'bottom'
+          position: 'bottom' // Positions the tooltip at the bottom of the pie chart.
         }
       } as ApexOptions
     }

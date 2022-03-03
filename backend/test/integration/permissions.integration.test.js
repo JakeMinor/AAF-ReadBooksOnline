@@ -350,7 +350,7 @@ describe("Permission", function () {
 
    //ASSERT
    deletePermissionResult.should.have.status(404)
-   deletePermissionResult.text.should.be.equal("No data found.")
+   deletePermissionResult.text.should.be.equal("Permission does not exist in the database.")
   })
  })
 

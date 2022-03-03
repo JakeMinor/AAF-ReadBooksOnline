@@ -14,6 +14,7 @@ import { Role } from '@/api/api'
 
 Vue.use(VueRouter)
 
+// The available routes for web app.
 const routes: Array<RouteConfig> = [
   {
     path: '/',
@@ -24,7 +25,7 @@ const routes: Array<RouteConfig> = [
     name: 'ClientRequests',
     component: ClientRequests,
     meta: {
-      role: 'Client'
+      role: 'Client' // Only accessible if the user is a client.
     }
   },
   {
@@ -32,7 +33,7 @@ const routes: Array<RouteConfig> = [
     name: 'EmployeeRequests',
     component: EmployeeRequests,
     meta: {
-      role: 'Employee'
+      role: 'Employee' // Only accessible if the user is an employee.
     }
   },
   {
@@ -40,7 +41,7 @@ const routes: Array<RouteConfig> = [
     name: 'AuthoriserRequests',
     component: AuthoriserRequests,
     meta: {
-      role: 'Authoriser'
+      role: 'Authoriser' // Only accessible if the user is an authoriser.
     }
   },
   {
@@ -53,7 +54,7 @@ const routes: Array<RouteConfig> = [
     name: 'Admin',
     component: UserManagement,
     meta: {
-      role: 'UserManager'
+      role: 'UserManager' // Only accessible if the user is a user manager.
     }
   },
   {
@@ -61,7 +62,7 @@ const routes: Array<RouteConfig> = [
     name: 'Statistics Dashboard',
     component: StatDashboard,
     meta: {
-      role: 'UserManager'
+      role: 'UserManager' // Only accessible if the user is a user manager.
     }
   },
   {
@@ -79,36 +80,53 @@ const routes: Array<RouteConfig> = [
     name: 'Error',
     component: Error
   },
+  /**
+   * Bounces any unrecognised routes to the error page.
+   */
   {
     path: '*',
     redirect: '/error'
   }
 ]
 
+// Creates an instance of Vue Router with the routes defined above.
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
 })
 
+// Checks the user has been authenticated and authorised before entering a route.
 router.beforeEach((to, from, next) => {
+  // Checks if the user has an access token set in the cookie.
   if (document.cookie !== '') {
+    // Gets the access token from the cookie.
     const token = document.cookie.split('%20')[1]
+
+    // Gets the user and their notifications from the store using the token.
     store.dispatch('user/getUser', token).then(() => next())
     store.dispatch('user/getNotifications').then(() => next())
+
+    // Checks if the user has a token and that they arent going to the sign in or sign up page.
     if ((to.name === 'Sign In' || to.name === 'Sign Up') && store.getters['user/token'] !== '') {
       next({ name: 'Catalog' })
     }
 
+    // Checks if the route is protected by a role.
     if (to.meta && Object.keys(to.meta).length !== 0) {
+      // Redirects the user to the Error page if they dont have the required role to access the route.
       if (!store.getters['user/user'].roles.some((role : Role) => role.name === to.meta?.role)) {
         next({ name: 'Error' })
       }
     }
     next()
-  } else if ((to.name === 'Sign In' || to.name === 'Sign Up')) {
+  }
+  // Allows the user to access the sign in and sign up page if they are unauthenticated.
+  else if ((to.name === 'Sign In' || to.name === 'Sign Up')) {
     next()
-  } else {
+  }
+  // Redirects the user to the sign in page if they are unauthenticated.
+  else {
     next({ name: 'Sign In' })
   }
 })

@@ -106,24 +106,27 @@ export default Vue.extend({
   },
   data () {
     return {
-      page: 'Users' as pages,
-      pages: ['Users', 'Roles', 'Permissions', 'Config'] as pages[],
-      tableData: [] as User[] | Role[] | Permission[],
-      selectedRow: null as User | Role | Permission | null,
-      permissionOptions: [] as Permission[],
-      rolesOptions: [] as Role[],
-      totalCount: 0,
-      offset: 1,
-      limit: 10,
+      page: 'Users' as pages, // Sets the table to display users.
+      pages: ['Users', 'Roles', 'Permissions', 'Config'] as pages[], // The different displays for the table.
+      tableData: [] as User[] | Role[] | Permission[], // Stores the table data.
+      selectedRow: null as User | Role | Permission | null, // The currently selected row.
+      permissionOptions: [] as Permission[], // The array of available permissions.
+      rolesOptions: [] as Role[], // The array of available roles.
+      totalCount: 0, // The total count of the requests displayed in the table.
+      offset: 1, // The tables current page.
+      limit: 10, // The amount of items to be shown on the table.
       filters: {
-        username: '',
-        email: '',
-        name: '',
-        description: ''
+        username: '', // Filters the table by the users username.
+        email: '', // Filters the table by the users email.
+        name: '', // Filters the table by the datas name.
+        description: '' // Filters the table by the datas description.
       }
     }
   },
   computed: {
+    /**
+     * The headings for the table and if they are sortable fields, returns depending on the page.
+     */
     tableHeaders () {
       if (this.page === 'Users') {
         return [{ key: 'username', sortable: true },
@@ -146,6 +149,9 @@ export default Vue.extend({
           { key: 'Actions' }]
       }
     },
+    /**
+     * Applies any filters and updates the table, depending on the selected page.
+     */
     filteredList () {
       if (this.page === 'Users') {
         return this.$data.tableData.filter((data: User) =>
@@ -165,33 +171,52 @@ export default Vue.extend({
     }
   },
   methods: {
+    /**
+     * The format price method from helper.ts
+     */
     formatPrice,
+    /**
+     * Gets the items which are to be displayed in the table, depending on the selected page.
+     */
     async getTableItems () {
       if (this.page === 'Users') {
+        // Gets Users from the data and paginates them.
         const data = (await api.user.userList({
           limit: this.limit.toString(),
           offset: (this.offset - 1).toString()
         })).data
+
+        // Sets the returned users and count.
         this.tableData = data.users
         this.totalCount = data.count
       } else if (this.page === 'Roles') {
+        // Gets Roles from the data and paginates them.
         const data = (await api.admin.roleList({
           limit: this.limit.toString(),
           offset: (this.offset - 1).toString()
         })).data
+
+        // Sets the returned roles and count.
         this.tableData = data.roles
         this.totalCount = data.count
       } else if (this.page === 'Permissions') {
+        // Gets Permissions from the data and paginates them.
         const data = (await api.admin.permissionList({
           limit: this.limit.toString(),
           offset: (this.offset - 1).toString()
         })).data
+
+        // Sets the returned permissions and count.
         this.tableData = data.permissions
         this.totalCount = data.count
       } else {
+        // Defaults the table to contain the config data.
         this.tableData = (await api.admin.configList()).data
       }
     },
+    /**
+     * Opens the create modal dependant on the selected page.
+     */
     openCreateModal () {
       if (this.page === 'Users') {
         this.$bvModal.show('CreateUserModal')
@@ -201,9 +226,16 @@ export default Vue.extend({
         this.$bvModal.show('CreatePermissionModal')
       }
     },
+    /**
+     * Closes the modal and updates the table.
+     */
     async modalClose () {
       await this.getTableItems()
     },
+    /**
+     * Deletes an item from the table dependant on the selected page.
+     * @param id
+     */
     async deleteItem (id: string) {
       if (this.page === 'Users') {
         await api.user.userDelete(id)
@@ -212,23 +244,34 @@ export default Vue.extend({
       } else {
         await api.admin.permissionDelete(id)
       }
+      // Updates the table items.
       await this.getTableItems()
     }
   },
+  /**
+   * Created hook which gets the permission and role lists.
+   */
   async created () {
+    // Updates the table items.
     await this.getTableItems()
+
+    // Sends API call to get the permission list.
     api.admin.permissionList()
       .then((res) => { this.permissionOptions = res.data.permissions })
       .catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
+
+    // Sends API call to get the role list.
     api.admin.roleList()
       .then((res) => { this.rolesOptions = res.data.roles })
       .catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',

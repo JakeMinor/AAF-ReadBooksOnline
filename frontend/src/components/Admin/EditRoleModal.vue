@@ -29,44 +29,61 @@ export default Vue.extend({
   name: 'EditRoleModal',
   components: { CustomInput, ValidationObserver, Multiselect },
   props: {
-    selectedRole: Object as () => Role,
-    permissions: Array
+    selectedRole: Object as () => Role, // The Role to be updated.
+    permissions: Array // The array of available permissions.
   },
   data () {
     return {
-      role: { ...this.selectedRole }
+      role: { ...this.selectedRole } // The Role to be updated.
     }
   },
   methods: {
+    /**
+     * Make and API call to update a pre-existing Role.
+     */
     async updateRole () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return
       }
 
+      // Get the ID's from the selected permissions.
       const newPermissions = this.role.permissions!.map(permission => permission._id)
 
+      // Format the role data.
       const updateRole = {
         name: this.role.name,
         description: this.role!.description,
         permissions: newPermissions
       } as UpdateRole
 
+      // Send the data to the api.
       await api.admin.roleUpdate(this.role._id!, updateRole).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
+
+      // Close the modal.
       this.closeModal()
       this.$emit('Updated')
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
+      this.$bvModal.hide('EditRoleModal')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
-      this.$bvModal.hide('EditRoleModal')
+
       this.$emit('Closed')
     }
   }

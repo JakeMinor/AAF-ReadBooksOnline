@@ -2,7 +2,8 @@ let connectionString = "mongodb://localhost:27017/readBooksOnlineDb"
 const mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
 const { MongoMemoryServer } = require('mongodb-memory-server')
-//Models
+
+//Models.
 const request = require('../database/models/request')(mongoose)
 const status = require('../database/models/status')(mongoose)
 const user = require('../database/models/user')(mongoose)
@@ -13,16 +14,28 @@ const notification = require('../database/models/notifications')(mongoose)
 
 mongoose.Promise = global.Promise
 
+// Creates the database Model.
 const dbModel = {mongoose: mongoose, url: connectionString, permission: permission, role: role,  request: request, status: status, user: user, config: config, notification: notification }
 
+// Enables validators for before data is saved to the database.
 mongoose.plugin(schema => {
  schema.pre('createRequest', enableValidators)
+ schema.pre('updateRequest', enableValidators)
  schema.pre('createUser', enableValidators)
+ schema.pre('updateUser', enableValidators)
+ schema.pre('createRole', enableValidators)
+ schema.pre('updateRole', enableValidators)
+ schema.pre('createPermission', enableValidators)
+ schema.pre('updatePermission', enableValidators)
+ schema.pre('createStatus', enableValidators)
+ schema.pre('createNotification', enableValidators)
+ schema.pre('updateConfig', enableValidators)
 })
 
 function enableValidators() { this.setOptions({ runValidators: true}) }
 
 module.exports = {
+ // Creates a connection to the database.
  async connectToDb() {
   if(process.env.NODE_ENV === "test"){
    connectionString = (await MongoMemoryServer.create()).getUri()
@@ -38,6 +51,7 @@ module.exports = {
      process.exit()
     })
  },
+ // Clears the test database.
  async clearTestDb() {
   if (process.env.NODE_ENV === "test") {
    for (collection in mongoose.connection.collections)
@@ -46,6 +60,7 @@ module.exports = {
    }
   }
  },
+ // Seeds the test database.
  async seedTestData() {
   if (process.env.NODE_ENV === "test") {
    // Data to be inserted into the database.
@@ -105,6 +120,7 @@ module.exports = {
    await dbModel.mongoose.model("config").create(config) //Config
   }
  },
+ // Gets the model based on the model name which is passed in.
  getModel: (modelName) => {
   return dbModel.mongoose.model(modelName)
  },

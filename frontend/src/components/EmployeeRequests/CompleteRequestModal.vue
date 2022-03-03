@@ -29,44 +29,59 @@ export default Vue.extend({
   components: { CustomInput, ValidationObserver },
   data () {
     return {
-      request: { ...this.selectedRequest }
+      request: { ...this.selectedRequest }  // The Request which is to be completed.
     }
   },
   props: {
-    selectedRequest: Object as () => Request
+    selectedRequest: Object as () => Request  // The Request which is to be completed.
   },
   computed: {
-    bookTypes () { return bookTypes }
+    bookTypes () { return bookTypes } // The available book types.
   },
   methods: {
+    /**
+     * Make an API call to complete a book request.
+     */
     async completeRequest () {
+      // Validate the data.
       const valid = await (this.$refs.observer as InstanceType<typeof ValidationObserver>).validate()
       if (!valid) {
         return
       }
 
+      // Format the request data.
       const updatedRequest = {
         ...this.request,
         status: 'Awaiting Approval'
       } as UpdateRequest
 
+      // Send the data to the api.
       await api.bookRequest.bookRequestUpdate(this.request._id!, updatedRequest).catch(error => {
+        // Catch any errors and display a toast informing the user.
         this.$bvToast.toast(error.message, {
           title: 'Error',
           variant: 'danger',
           solid: true
         })
       })
-      this.$emit('Completed')
 
+      // Close the modal.
+      this.$emit('Completed')
       this.closeModal()
     },
+    /**
+     * Closes the modal.
+     */
     closeModal () {
+      // Closes the modal.
       this.$bvModal.hide('completeRequestModal')
-      this.$emit('Closed')
+
+      // Resets the validation.
       this.$nextTick(() => {
         (this.$refs.observer as InstanceType<typeof ValidationObserver>).reset()
       })
+
+      this.$emit('Closed')
     }
   }
 })

@@ -21,9 +21,9 @@ import Vue from 'vue'
 export default Vue.extend({
   name: 'MonthlySpendWidget',
   props: {
-    percentage: Number,
-    monthlySpend: Number,
-    monthlyCap: Number
+    percentage: Number, // The Percentage to be displayed in the progress bar.
+    monthlySpend: Number, // The total monthly spend.
+    monthlyCap: Number // The total monthly cap.
   }
 })
 </script>

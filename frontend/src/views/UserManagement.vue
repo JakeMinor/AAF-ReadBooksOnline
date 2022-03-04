@@ -63,7 +63,7 @@
                        @change="getTableItems" />
       </span>
       <b-pagination :per-page="limit" :total-rows="totalCount" v-model="offset" @input="getTableItems"></b-pagination>
-      <span>{{ totalCount }} requests in {{ Math.ceil(totalCount / limit) }} pages</span>
+      <span>{{ totalCount }} items in {{ Math.ceil(totalCount / limit) }} pages</span>
     </div>
     <create-user-modal @Created="modalClose" v-if="page === 'Users'" id="CreateUserModal" />
     <create-role-modal @Created="modalClose" :permissions-options="permissionOptions" v-if="page === 'Roles'"

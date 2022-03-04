@@ -4,7 +4,7 @@
       <ValidationObserver ref="observer">
         <b-form ref="requestForm" @submit.stop.prevent="createRole">
           <custom-input rules="required" v-model="newRole.name" label="Name" />
-          <custom-input v-model="newRole.description" label="Description" class="mt-2"/>
+          <custom-input rules="required" v-model="newRole.description" label="Description" class="mt-2"/>
           <label class="w-100 mb-0 mt-2">Permissions</label>
           <multiselect :options="permissionsOptions" track-by="_id" label="name" :multiple="true" v-model="newRole.permissions"/>
         </b-form>

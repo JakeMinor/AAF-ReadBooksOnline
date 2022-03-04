@@ -1,7 +1,11 @@
 <template>
-  <div class="d-flex">
-    <status-pie-chart v-if="requests" :data="pieChartData" class="mr-3"/>
-    <monthly-spend-widget v-if="config" :monthly-cap="monthlyCap" :monthly-spend="monthlySpend" :percentage="monthlySpendPercentage"/>
+  <div>
+    <h1 class="font-color-black">Statistics</h1>
+    <div class="d-flex">
+      <status-pie-chart v-if="requests" :data="pieChartData" class="mr-3" />
+      <monthly-spend-widget v-if="config" :monthly-cap="monthlyCap" :monthly-spend="monthlySpend"
+                            :percentage="monthlySpendPercentage" />
+    </div>
   </div>
 </template>
 
@@ -11,6 +15,7 @@ import { Config, Request } from '@/api/api'
 import { api, statuses } from '@/helper'
 import StatusPieChart from '@/components/Admin/StatusPieChart.vue'
 import MonthlySpendWidget from '@/components/Admin/MonthlySpendWidget.vue'
+
 export default Vue.extend({
   name: 'StatDashboard',
   components: { StatusPieChart, MonthlySpendWidget },
@@ -55,12 +60,12 @@ export default Vue.extend({
       // Sets the config data.
       this.$data.config = res.data[0]
     })
-    // Catch any errors and display a toast informing the user.
-    .catch(error => this.$bvToast.toast(error.message, {
-      title: 'Error',
-      variant: 'danger',
-      solid: true
-    }))
+      // Catch any errors and display a toast informing the user.
+      .catch(error => this.$bvToast.toast(error.message, {
+        title: 'Error',
+        variant: 'danger',
+        solid: true
+      }))
 
     // Sends an API call to get all the requests.
     api.bookRequest.bookRequestList({
@@ -70,12 +75,12 @@ export default Vue.extend({
       // Sets the requests data.
       this.$data.requests = res.data.requests
     })
-    // Catch any errors and display a toast informing the user.
-    .catch(error => this.$bvToast.toast(error.message, {
-      title: 'Error',
-      variant: 'danger',
-      solid: true
-    }))
+      // Catch any errors and display a toast informing the user.
+      .catch(error => this.$bvToast.toast(error.message, {
+        title: 'Error',
+        variant: 'danger',
+        solid: true
+      }))
   }
 })
 </script>

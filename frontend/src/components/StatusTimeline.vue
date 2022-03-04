@@ -32,9 +32,9 @@ export default Vue.extend({
   components: { CustomInput, ValidationObserver },
   data () {
     return {
-      request: { ...this.selectedRequest },  // The Request which has been selected.
-      status: this.selectedRequest.status,  // The selected requests status.
-      information: null as string | null  // The additional information which is to be added to the request.
+      request: { ...this.selectedRequest }, // The Request which has been selected.
+      status: this.selectedRequest.status, // The selected requests status.
+      information: null as string | null // The additional information which is to be added to the request.
     }
   },
   props: {

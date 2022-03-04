@@ -120,13 +120,9 @@ router.beforeEach((to, from, next) => {
       }
     }
     next()
-  }
-  // Allows the user to access the sign in and sign up page if they are unauthenticated.
-  else if ((to.name === 'Sign In' || to.name === 'Sign Up')) {
+  } else if ((to.name === 'Sign In' || to.name === 'Sign Up')) { // Allows the user to access the sign in and sign up page if they are unauthenticated.
     next()
-  }
-  // Redirects the user to the sign in page if they are unauthenticated.
-  else {
+  } else { // Redirects the user to the sign in page if they are unauthenticated.
     next({ name: 'Sign In' })
   }
 })

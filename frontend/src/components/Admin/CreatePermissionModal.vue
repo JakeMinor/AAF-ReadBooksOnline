@@ -4,7 +4,7 @@
       <ValidationObserver ref="observer">
         <b-form ref="requestForm" @submit.stop.prevent="createPermission">
           <custom-input rules="required" v-model="newPermission.name" label="Name" />
-          <custom-input v-model="newPermission.description" label="Description" class="mt-2" />
+          <custom-input rules="required" v-model="newPermission.description" label="Description" class="mt-2" />
         </b-form>
       </ValidationObserver>
     </template>

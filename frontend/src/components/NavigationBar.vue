@@ -137,7 +137,6 @@ export default Vue.extend({
      * Gets an updated list of the users notifications.
      */
     async getNotifications () {
-
       await store.dispatch('user/getNotifications')
     }
   },

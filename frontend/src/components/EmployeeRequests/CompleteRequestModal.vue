@@ -29,11 +29,11 @@ export default Vue.extend({
   components: { CustomInput, ValidationObserver },
   data () {
     return {
-      request: { ...this.selectedRequest }  // The Request which is to be completed.
+      request: { ...this.selectedRequest } // The Request which is to be completed.
     }
   },
   props: {
-    selectedRequest: Object as () => Request  // The Request which is to be completed.
+    selectedRequest: Object as () => Request // The Request which is to be completed.
   },
   computed: {
     bookTypes () { return bookTypes } // The available book types.

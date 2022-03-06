@@ -10,11 +10,15 @@ Run the System
 
 2. Open a new terminal and navigate to the 'backend' folder using the command 'cd backend' from the AAF-ReadBooksOnline directory.
 
-3. Start the API by using the command 'nodemon start'.
+3. Install any dependencies using 'npm i'
 
-4. Open a new terminal and navigate to the 'frontend' folder using the command 'cd frontend' from the AAF-ReadBooksOnline directory.
+4. Start the API by using the command 'npx nodemon start'.
 
-5. Start the frontend by using the command 'npm run serve'.
+5. Open a new terminal and navigate to the 'frontend' folder using the command 'cd frontend' from the AAF-ReadBooksOnline directory.
+
+6. Install any dependencies using 'npm i'
+
+7. Start the frontend by using the command 'npm run serve'.
 
 Testing the system
 
@@ -25,3 +29,39 @@ In the backend folder, run the command 'npm run test'. This command will run bot
 In the frontend folder, run the command 'npm run test:e2e'. This command will run the Web GUI tests, from here a cypress UI should load and you will be able to run the Web GUI tests.
 
 Video Link: https://youtu.be/1AiM77ClnbU
+
+
+
+Account Details:
+
+Client 1:
+
+email: Client1@email.com
+password: ClientPassword
+
+Client 2:
+
+email: Client2@email.com
+password: ClientPassword
+
+Employee 1:
+
+email: Employee1@email.com
+password: Employee
+
+Employee 2:
+
+email: Employee2@email.com
+password: EmployeePassword
+
+Authoriser:
+
+Authoriser:
+
+email: Authoriser@email.com
+password: AuthoriserPassword
+
+User Manager:
+
+email: UserManager@email.com
+password: UserManagerPassword

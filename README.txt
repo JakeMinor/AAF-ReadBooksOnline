@@ -24,4 +24,4 @@ In the backend folder, run the command 'npm run test'. This command will run bot
 
 In the frontend folder, run the command 'npm run test:e2e'. This command will run the Web GUI tests, from here a cypress UI should load and you will be able to run the Web GUI tests.
 
-Video Link: *VIDEO LINK*
+Video Link: https://youtu.be/1AiM77ClnbU

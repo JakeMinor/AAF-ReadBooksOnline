@@ -86,7 +86,7 @@ module.exports = {
    {_id: "123456789131", name: "UpdateConfig", description: "Allows a user to update config information."}]
 
    const clientPermissions = ["123456789101", "123456789102", "123456789103", "123456789104"]
-   const employeePermissions = ["123456789101", "123456789104", "123456789105", "123456789114", "123456789115"]
+   const employeePermissions = ["123456789101", "123456789104", "123456789105", "123456789114", "123456789115", '123456789116']
    const authoriserPermissions = ["123456789101", "123456789104", "123456789116", "123456789117"]
    const userManagerPermissions = ["123456789101", "123456789118", "123456789119", "123456789120", "123456789121", "123456789122", "123456789123", "123456789124", "123456789125", "123456789126", "123456789127", "123456789128", "123456789129", "123456789130", "123456789131"]
 
@@ -243,7 +243,7 @@ module.exports = {
   ]
 
   // Config
-  const config = {_id: "123456789135", spendThreshold: 10, monthlySpendThreshold: 110, totalMonthlySpend: 108.46}
+  const config = {_id: "123456789135", spendThreshold: 10, monthlySpendThreshold: 150, totalMonthlySpend: 108.46}
 
   // Insert data into the test Database.
   await dbModel.mongoose.model("permission").insertMany(permissions) //Permissions

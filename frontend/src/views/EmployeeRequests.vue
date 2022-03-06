@@ -123,7 +123,7 @@ export default Vue.extend({
   },
   methods: {
     /**
-     * The format price method from helper.ts
+     * The format date method from helper.ts
      */
     formatDate,
     /**
